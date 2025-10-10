@@ -1,0 +1,36 @@
+{% block conections %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+{% endblock %}
+
+{% block body%}
+
+<div class="register-container">
+    <div class="register-left">
+        <div class="welcome-invite">
+            <span class="line-1">Welcome to</span>
+            <span class="line-2">Pro Room's Application</span>
+        </div>
+    </div>
+    <div class="register-right">
+        <p>Join us <br /> Create a Pro Room's account </p>
+        <span class="motivate"> Let's create again , share the creativity's </span>
+        <form action="">
+            <input type="text" placeholder="Full Name">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Password">
+            <input type="password" placeholder="Confirm Password">
+
+            <input type="submit" value="register">
+        </form>
+
+        <div class="separator">
+            <hr> <span>OR</span>
+            <hr>
+        </div>
+
+        <div class="continue-google"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue with Google </div>
+
+        <span class="login-link">Already have an account? <a href="/login">login</a></span>
+    </div>
+</div>
+{% endblock %}

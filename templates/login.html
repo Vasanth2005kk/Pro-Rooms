@@ -1,0 +1,42 @@
+{% block conections %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block body%}
+
+<div class="login-container">
+    <div class="login-left">
+        <div class="welcome-invite">
+            <span class="line-1">Welcome to</span>
+            <span class="line-2">Pro Room's Application</span>
+        </div>
+    </div>
+    <div class="login-right">
+        <p>Welcome back! <br /> Login to your account</p>
+        <span class="motivate"> Let's enter again , share the creativity's </span>
+        <form action="">
+            <input type="text" placeholder="Your username or email">
+            <input type="password" placeholder="Your password">
+
+            <div class="form-footer">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <a href="#" class="forgot-password">Forgot password ?</a>
+            </div>
+
+            <input type="submit" value="Login">
+        </form>
+
+        <div class="separator">
+            <hr> <span>OR</span>
+            <hr>
+        </div>
+
+        <div class="continue-google"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue with Google </div>
+
+        <span class="signup-link">Don't have an account ? <a href="/signup">Sign up</a></span>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% block conections %}
+    <!-- Extra head content (CSS, meta, etc.) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+{% endblock %}
+
+{% block header %}
+<div class="menu-bar">
+    {% include 'menuBar.html' %}
+    <p> pro rooms </p>
+    <a href="/user/VASANTH">
+        <img class="avatar" src="{{ url_for('static', filename='images/avatar.png')}}" alt=""></a>
+    
+    <!-- setting icon waiting process -->
+    <!-- <a href="#">
+        <img class="setting" src="{{ url_for('static', filename='images/setting.png')}}" alt="setting logo" >
+    </a> -->
+</div>
+
+{% endblock %}

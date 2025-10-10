@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Aladin&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #202C33;
+}
+
+.menu-bar {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    background: #10191E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Center text */
+.menu-bar p {
+    font-family: "Aladin", system-ui;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 50px;
+    margin: 0;
+    color: white;
+    text-transform: capitalize;
+    text-align: center;
+    flex: 1;
+    letter-spacing: 5px;
+}
+
+/* Right side icons */
+.menu-bar .avatar,
+.menu-bar .setting {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* Align the right icons properly */
+.menu-bar .avatar {
+    margin-right: 40px;
+    margin-top: 5px;
+    width: 65px;
+    height: 65px;
+}
+
+.menu-bar .setting {
+    margin-right: 10px;
+    width: 55px;
+    height: 55px;
+}
+
+/* Optional: make responsive */
+@media (max-width: 600px) {
+    .menu-bar p {
+        font-size: 28px;
+    }
+
+    .menu-bar .avatar,
+    .menu-bar .setting {
+        width: 30px;
+        height: 30px;
+    }
+}

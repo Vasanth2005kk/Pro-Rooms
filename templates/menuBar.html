@@ -1,0 +1,44 @@
+{% block connections %}
+<!-- Extra head content (CSS, meta, etc.) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/menuBar.css') }}">
+{% endblock %}
+
+<div class="container" onclick="toggleNav(this)">
+  <div class="bar1"></div>
+  <div class="bar2"></div>
+  <div class="bar3"></div>
+</div>
+
+<div id="mySidenav" class="sidenav">
+  <a href="#">About</a>
+  <a href="#">Services</a>
+  <a href="#">Clients</a>
+  <a href="#">Contact</a>
+</div>
+
+<script>
+function toggleNav(x) {
+  x.classList.toggle("change");
+  const sidenav = document.getElementById("mySidenav");
+  if (sidenav.style.width === "350px") {
+    sidenav.style.width = "0";
+  } else {
+    sidenav.style.width = "350px";
+  }
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.querySelector(".container").classList.remove("change");
+}
+
+// Optional: close when clicking outside
+window.addEventListener("click", function(e) {
+  const sidenav = document.getElementById("mySidenav");
+  const container = document.querySelector(".container");
+  if (!sidenav.contains(e.target) && !container.contains(e.target)) {
+    sidenav.style.width = "0";
+    container.classList.remove("change");
+  }
+});
+</script>

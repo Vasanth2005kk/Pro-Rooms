@@ -1,0 +1,217 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+.login-container {
+    display: flex;
+    /* width: 900px; */
+    max-width: 100%;
+    height: 100vh;
+    /* Use min-height for better content fit */
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background-color: #202C33;
+    /* Card background */
+}
+
+/* --- Left Side (60% Width) --- */
+
+.login-left {
+    width: 60%;
+    /* As requested: 60% width */
+    background: linear-gradient(135deg, #10191E, #202C33);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.welcome-invite .line-1 {
+    color: #FFFFFF;
+    font-size: 3.5em;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.welcome-invite .line-2 {
+    font-size: 4.5em;
+    padding-top: 10px;
+    font-weight: bolder;
+    display: block;
+    color: #28a745;
+    /* Green accent color for impact */
+}
+
+/* --- Right Side (40% Width) --- */
+
+.login-right {
+    width: 40%;
+    /* As requested: 40% width */
+    background-color: #202C33;
+    margin: 0px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Align content to the left of the container */
+    justify-content: center;
+}
+
+.login-right p {
+    color: #FFFFFF;
+    font-size: 2.2em;
+    line-height: 1.4;
+    text-align: left;
+    font-weight: 500;
+    margin-left: -20%;
+}
+.login-right .motivate{
+    color: #FFFFFF;
+    font-size: 1em;
+    padding-bottom: 7%;
+    margin-left: -30%;
+    line-height: 1.4;
+
+
+
+}
+/* Form styling */
+.login-right form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    width: 70%;
+    margin-bottom: 20px;
+   
+}
+
+.login-right input[type="text"],
+.login-right input[type="password"] {
+    padding: 12px 15px;
+    border: 1px solid #3E505B;
+    border-radius: 6px;
+    background-color: #10191E;
+    /* Darker input background */
+    font-size: 1.2em;
+    color: #FFFFFF;
+}
+
+.login-right input::placeholder {
+    color: #9AA4AD;
+}
+
+/* Login Button */
+.login-right input[type="submit"] {
+    background-color: #28a745;
+    /* Green button color */
+    color: #FFFFFF;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    order: 4;
+    /* Puts the submit button at the end of the form flow */
+}
+
+.login-right input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Checkbox and Forgot Password area */
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 0.9em;
+}
+
+.remember-me {
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+}
+
+.remember-me label {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #28a745;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.forgot-password:hover {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+/* Separator styling for 'OR' */
+.separator {
+    display: flex;
+    align-items: center;
+    width: 70%;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.separator hr {
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid #3E505B;
+}
+
+.separator span {
+    padding: 0 15px;
+    font-size: 1.3em;
+    color: #9AA4AD;
+}
+
+/* 'Continue with Google' button styling */
+.continue-google {
+    border: 1px solid #3E505B;
+    padding: 10px;
+    width: 70%;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    box-sizing: border-box;
+    position: relative;
+    color: #FFFFFF;
+}
+.continue-google img {
+    position: absolute;
+    top: 5px;
+    right: 68%;
+}
+.continue-google:hover {
+    background-color: #3E505B;
+}
+
+/* Sign up link styling */
+.signup-link {
+    color: #FFFFFF;
+    font-size: 0.9em;
+    margin-top: 25px;
+    width: 100%;
+    text-align: center;
+}
+
+.signup-link a {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+    color: #FFFFFF;
+}

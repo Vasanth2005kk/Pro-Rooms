@@ -1,0 +1,512 @@
+{% include 'header.html' %}
+
+{% block connections %}
+<!-- Extra head content (CSS, meta, etc.) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="chat-place">
+    <!-- Header -->
+    <div class="chat-header">
+        <div class="group-avatar">G</div>
+        <div class="group-info">
+            <div class="group-name">Study Group 📚</div>
+            <div class="group-status" id="status">You, Alex, Sarah, Mike and 5 others</div>
+        </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="chat-messages" id="messages">
+        <!-- Typing indicator -->
+        <div class="typing-indicator" id="typing">
+            <div class="message-avatar">A</div>
+            <div class="typing-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emoji Picker Popup -->
+    <div class="picker-popup" id="emoji-picker">
+        <div class="picker-header">Emojis</div>
+        <div class="emoji-grid" id="emoji-grid"></div>
+    </div>
+
+    <!-- Sticker Picker Popup -->
+    <div class="picker-popup" id="sticker-picker">
+        <div class="picker-header">Stickers</div>
+        <div class="sticker-grid" id="sticker-grid"></div>
+    </div>
+
+    <!-- Recording Indicator -->
+    <div class="recording-indicator" id="recording-indicator">
+        <div class="recording-dot"></div>
+        <div class="recording-time">0:00</div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input">
+        <button class="input-button" id="emoji-btn" title="Emoji">😊</button>
+        <button class="input-button" id="sticker-btn" title="Stickers">🧩</button>
+        <button class="input-button" id="attach-btn" title="Attach file">📎</button>
+        <input type="file" id="file-input" accept="image/*,video/*,audio/*,.pdf,.txt,.doc,.docx" multiple>
+        <textarea class="message-textarea" id="message-input" placeholder="Type a message" rows="1"></textarea>
+        <button class="input-button" id="mic-btn" title="Voice message">🎤</button>
+        <button class="input-button send-button" id="send-btn" title="Send">📩</button>
+    </div>
+</div>
+<script>
+    // ========== Initialize Variables ==========
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+    const emojiBtn = document.getElementById('emoji-btn');
+    const stickerBtn = document.getElementById('sticker-btn');
+    const attachBtn = document.getElementById('attach-btn');
+    const micBtn = document.getElementById('mic-btn');
+    const fileInput = document.getElementById('file-input');
+    const emojiPicker = document.getElementById('emoji-picker');
+    const stickerPicker = document.getElementById('sticker-picker');
+    const emojiGrid = document.getElementById('emoji-grid');
+    const stickerGrid = document.getElementById('sticker-grid');
+    const typingIndicator = document.getElementById('typing');
+    const recordingIndicator = document.getElementById('recording-indicator');
+    const statusEl = document.getElementById('status');
+
+    // Message storage
+    let messages = [];
+
+    // Recording variables
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordingTimer = null;
+    let recordingSeconds = 0;
+
+    // Sample users
+    const users = ['Alex', 'Sarah', 'Mike', 'Emma', 'John'];
+
+    // ========== Emojis and Stickers ==========
+    const emojis = ['😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠', '👍', '👎', '👏', '🙏', '💪', '❤️', '💔', '💯', '🔥', '✨', '🎉', '🎊', '🎈', '🎁', '🏆', '⭐', '🌟', '💫', '⚡', '🌈', '☀️', '🌙', '⛅', '🌻', '🌺', '🌹', '🌷', '🍕', '🍔', '🍟', '🌮', '🍿', '🍦', '🍰', '🎂', '☕', '🥤'];
+
+    const stickers = ['🎉', '🎊', '🎈', '🎁', '🏆', '⭐', '🌟', '💖', '💝', '💗', '💓', '💕', '💞', '💘', '❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍', '👍', '👎', '👌', '✌️', '🤞', '🤟', '🤘', '🤙'];
+
+    // ========== Populate Emoji Picker ==========
+    emojis.forEach(emoji => {
+        const span = document.createElement('span');
+        span.className = 'emoji';
+        span.textContent = emoji;
+        span.onclick = () => {
+            insertAtCursor(messageInput, emoji);
+            messageInput.focus();
+        };
+        emojiGrid.appendChild(span);
+    });
+
+    // ========== Populate Sticker Picker ==========
+    stickers.forEach(sticker => {
+        const span = document.createElement('span');
+        span.className = 'sticker';
+        span.textContent = sticker;
+        span.onclick = () => {
+            addMessage('You', sticker, 'sticker', true);
+            stickerPicker.classList.remove('active');
+        };
+        stickerGrid.appendChild(span);
+    });
+
+    // ========== Toggle Emoji Picker ==========
+    emojiBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        emojiPicker.classList.toggle('active');
+        stickerPicker.classList.remove('active');
+    });
+
+    // ========== Toggle Sticker Picker ==========
+    stickerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        stickerPicker.classList.toggle('active');
+        emojiPicker.classList.remove('active');
+    });
+
+    // ========== Close Pickers When Clicking Outside ==========
+    document.addEventListener('click', (e) => {
+        if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+            emojiPicker.classList.remove('active');
+        }
+        if (!stickerPicker.contains(e.target) && e.target !== stickerBtn) {
+            stickerPicker.classList.remove('active');
+        }
+    });
+
+    // ========== Attach File Button ==========
+    attachBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // ========== Handle File Upload ==========
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        for (let file of files) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const fileType = file.type.split('/')[0];
+
+                if (fileType === 'image' || fileType === 'video' || fileType === 'audio') {
+                    addMessage('You', event.target.result, fileType, true);
+                } else {
+                    // Handle other file types (PDF, TXT, etc.)
+                    addMessage('You', {
+                        data: event.target.result,
+                        name: file.name,
+                        size: formatFileSize(file.size)
+                    }, 'file', true);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+        fileInput.value = ''; // Reset input
+    });
+
+    // ========== Voice Recording ==========
+    micBtn.addEventListener('click', async () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            // Stop recording
+            mediaRecorder.stop();
+        } else {
+            // Start recording
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                recordingSeconds = 0;
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    addMessage('You', audioUrl, 'audio', true, recordingSeconds);
+
+                    // Stop all tracks
+                    stream.getTracks().forEach(track => track.stop());
+
+                    // Hide recording indicator
+                    recordingIndicator.classList.remove('active');
+                    clearInterval(recordingTimer);
+                    micBtn.style.color = '#8696a0';
+                };
+
+                mediaRecorder.start();
+
+                // Show recording indicator
+                recordingIndicator.classList.add('active');
+                micBtn.style.color = '#f44336';
+
+                // Update timer
+                recordingTimer = setInterval(() => {
+                    recordingSeconds++;
+                    const minutes = Math.floor(recordingSeconds / 60);
+                    const seconds = recordingSeconds % 60;
+                    recordingIndicator.querySelector('.recording-time').textContent =
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+
+            } catch (err) {
+                alert('Microphone access denied or not available');
+                console.error('Error accessing microphone:', err);
+            }
+        }
+    });
+
+    // ========== Auto-resize Textarea ==========
+    messageInput.addEventListener('input', () => {
+        messageInput.style.height = 'auto';
+        messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+    });
+
+    // ========== Handle Shift+Enter for Multiline ==========
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // ========== Send Message Function ==========
+    function sendMessage() {
+        const text = messageInput.value.trim();
+        if (text) {
+            addMessage('You', text, 'text', true);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Simulate reply from random user
+            setTimeout(() => {
+                simulateReply();
+            }, 2000 + Math.random() * 3000);
+        }
+    }
+
+    // ========== Send Button Click ==========
+    sendBtn.addEventListener('click', sendMessage);
+
+    // ========== Add Message to Chat ==========
+    function addMessage(sender, content, type = 'text', isSent = false, duration = 0) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+
+        // Create avatar
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.textContent = sender[0];
+
+        // Create message content wrapper
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+
+        // Create bubble
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+
+        // Add sender name (only for received messages)
+        if (!isSent) {
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'sender-name';
+            nameDiv.textContent = sender;
+            bubble.appendChild(nameDiv);
+        }
+
+        // Add content based on type
+        if (type === 'text') {
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = content;
+            bubble.appendChild(textDiv);
+        } else if (type === 'sticker') {
+            const stickerDiv = document.createElement('div');
+            stickerDiv.className = 'message-sticker';
+            stickerDiv.textContent = content;
+            stickerDiv.style.fontSize = '80px';
+            bubble.style.background = 'transparent';
+            bubble.style.padding = '0';
+            bubble.appendChild(stickerDiv);
+        } else if (type === 'image') {
+            const img = document.createElement('img');
+            img.className = 'message-image';
+            img.src = content;
+            img.onclick = () => window.open(content, '_blank');
+            bubble.appendChild(img);
+        } else if (type === 'video') {
+            const video = document.createElement('video');
+            video.className = 'message-video';
+            video.src = content;
+            video.controls = true;
+            bubble.appendChild(video);
+        } else if (type === 'audio') {
+            const audioDiv = document.createElement('div');
+            audioDiv.className = 'message-audio';
+
+            const playBtn = document.createElement('button');
+            playBtn.className = 'audio-play-btn';
+            playBtn.innerHTML = '▶';
+
+            const audio = new Audio(content);
+
+            playBtn.onclick = function () {
+                if (audio.paused) {
+                    audio.play();
+                    this.innerHTML = '⏸';
+                } else {
+                    audio.pause();
+                    this.innerHTML = '▶';
+                }
+            };
+
+            audio.onended = () => {
+                playBtn.innerHTML = '▶';
+            };
+
+            const waveformDiv = document.createElement('div');
+            waveformDiv.className = 'audio-waveform';
+
+            // Create random waveform bars
+            for (let i = 0; i < 20; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'waveform-bar';
+                bar.style.height = (10 + Math.random() * 14) + 'px';
+                waveformDiv.appendChild(bar);
+            }
+
+            const durationDiv = document.createElement('div');
+            durationDiv.className = 'audio-duration';
+            const mins = Math.floor(duration / 60);
+            const secs = duration % 60;
+            durationDiv.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            audioDiv.appendChild(playBtn);
+            audioDiv.appendChild(waveformDiv);
+            audioDiv.appendChild(durationDiv);
+            bubble.appendChild(audioDiv);
+        } else if (type === 'file') {
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'message-file';
+            fileDiv.onclick = () => {
+                const link = document.createElement('a');
+                link.href = content.data;
+                link.download = content.name;
+                link.click();
+            };
+
+            const icon = document.createElement('div');
+            icon.className = 'file-icon';
+            icon.textContent = '📄';
+
+            const info = document.createElement('div');
+            info.className = 'file-info';
+
+            const name = document.createElement('div');
+            name.className = 'file-name';
+            name.textContent = content.name;
+
+            const size = document.createElement('div');
+            size.className = 'file-size';
+            size.textContent = content.size;
+
+            info.appendChild(name);
+            info.appendChild(size);
+            fileDiv.appendChild(icon);
+            fileDiv.appendChild(info);
+            bubble.appendChild(fileDiv);
+        }
+
+        // Add timestamp
+        const time = document.createElement('div');
+        time.className = 'message-time';
+        time.textContent = getCurrentTime();
+        bubble.appendChild(time);
+
+        contentDiv.appendChild(bubble);
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(contentDiv);
+
+        // Insert before typing indicator
+        messagesContainer.insertBefore(messageDiv, typingIndicator);
+
+        // Store message
+        messages.push({
+            sender,
+            content,
+            type,
+            isSent,
+            timestamp: getCurrentTime()
+        });
+
+        scrollToBottom();
+    }
+
+    // ========== Show Typing Indicator ==========
+    function showTyping() {
+        typingIndicator.classList.add('active');
+        scrollToBottom();
+    }
+
+    // ========== Hide Typing Indicator ==========
+    function hideTyping() {
+        typingIndicator.classList.remove('active');
+    }
+
+    // ========== Simulate Reply from Other Users ==========
+    function simulateReply() {
+        const randomUser = users[Math.floor(Math.random() * users.length)];
+        const messages = [
+            "That sounds great! 👍",
+            "I agree with that",
+            "When is the deadline?",
+            "Can we discuss this later?",
+            "Thanks for sharing! 😊",
+            "Let me check and get back to you",
+            "Good idea! 💡",
+            "I'll work on that today",
+            "Perfect timing! ⏰",
+            "Count me in! 🙋",
+            "Awesome work! 🎉",
+            "Need any help with that?",
+            "That makes sense 👌",
+            "I'm on it! 💪",
+            "Let's do this! 🚀"
+        ];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+        showTyping();
+        setTimeout(() => {
+            hideTyping();
+            addMessage(randomUser, randomMessage, 'text', false);
+        }, 1500 + Math.random() * 1000);
+    }
+
+    // ========== Get Current Time ==========
+    function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ========== Format File Size ==========
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    // ========== Insert Text at Cursor Position ==========
+    function insertAtCursor(input, text) {
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const value = input.value;
+        input.value = value.substring(0, start) + text + value.substring(end);
+        input.selectionStart = input.selectionEnd = start + text.length;
+    }
+
+    // ========== Scroll to Bottom ==========
+    function scrollToBottom() {
+        setTimeout(() => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 100);
+    }
+
+    // ========== Update Online Status Periodically ==========
+    function updateStatus() {
+        const statuses = [
+            'You, Alex, Sarah, Mike and 5 others',
+            'Alex, Sarah online',
+            'Mike, Emma online',
+            'You and 8 others',
+            'John, Sarah, Alex online'
+        ];
+        statusEl.textContent = statuses[Math.floor(Math.random() * statuses.length)];
+    }
+
+    setInterval(updateStatus, 10000);
+
+    // ========== Add Welcome Messages on Load ==========
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            addMessage('Sarah', 'Hey everyone! Ready for the exam? 📖', 'text', false);
+        }, 500);
+
+        setTimeout(() => {
+            addMessage('Mike', 'Yes! Been studying all week 💪', 'text', false);
+        }, 1500);
+
+        setTimeout(() => {
+            addMessage('Alex', 'Good luck everyone! 🍀', 'text', false);
+        }, 2500);
+    });
+</script>
+{% endblock %}
