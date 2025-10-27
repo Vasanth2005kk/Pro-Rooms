@@ -1,0 +1,46 @@
+{% block header %}
+<!-- Flash message container -->
+<div id="flash-messages" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-box {{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+<style>
+    .flash-box {
+        color: white;
+        padding: 15px 25px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        font-family: Arial, sans-serif;
+        text-align: center;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+    }
+    .flash-box.error {
+        background-color: #f44336; /* Red for error */
+    }
+    .flash-box.success {
+        background-color: #4CAF50; /* Green for success */
+    }
+</style>
+
+<script>
+    window.onload = function() {
+        const flashBox = document.querySelectorAll('.flash-box');
+        flashBox.forEach(function(box) {
+            setTimeout(function() {
+                box.style.opacity = '0';
+                setTimeout(() => box.remove(), 500);
+            }, 3000);
+        });
+    };
+    </script>
+{% endblock %}

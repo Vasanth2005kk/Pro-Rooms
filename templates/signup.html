@@ -3,7 +3,7 @@
 {% endblock %}
 
 {% block body%}
-
+{% include 'flash_massage.html' %}
 <div class="register-container">
     <div class="register-left">
         <div class="welcome-invite">
@@ -14,23 +14,24 @@
     <div class="register-right">
         <p>Join us <br /> Create a Pro Room's account </p>
         <span class="motivate"> Let's create again , share the creativity's </span>
-        <form action="">
-            <input type="text" placeholder="Full Name">
-            <input type="email" placeholder="Email">
-            <input type="password" placeholder="Password">
-            <input type="password" placeholder="Confirm Password">
+        <form action="/signup" method="post">
+            <input type="text" name="username" placeholder="Full Name" required value={{username}}  > 
+            <input type="email" name="email" placeholder="Email" required value={{email}}  >
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="ConfirmPassword" placeholder="Confirm Password" required >
 
             <input type="submit" value="register">
         </form>
-
         <div class="separator">
             <hr> <span>OR</span>
             <hr>
         </div>
 
-        <div class="continue-google"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue with Google </div>
+        <div class="continue-google"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue
+            with Google </div>
 
         <span class="login-link">Already have an account? <a href="/login">login</a></span>
     </div>
 </div>
+
 {% endblock %}
