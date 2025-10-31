@@ -192,6 +192,10 @@ body {
     top: 5px;
     right: 68%;
 }
+.continue-google a{
+    text-decoration: none;
+    color: #FFFFFF;
+}
 .continue-google:hover {
     background-color: #3E505B;
 }

@@ -44,6 +44,7 @@ if not os.path.exists(venv_dir):
     else:
         print(f"❌ requirements.txt not found at {requirements_file}")
 else:
+    db_create(db_folder)
     print("Allready Virtual Environment Created ✅ !!!")
     subprocess.run([python_path, os.path.join(base_dir, "app.py")])
 

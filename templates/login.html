@@ -14,7 +14,7 @@
     <div class="login-right">
         <p>Welcome back! <br /> Login to your account</p>
         <span class="motivate"> Let's enter again , share the creativity's </span>
-        <form action="">
+        <form action="/login" method="post">
             <input type="text" placeholder="Your username or email">
             <input type="password" placeholder="Your password">
 
@@ -34,7 +34,8 @@
             <hr>
         </div>
 
-        <div class="continue-google"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue with Google </div>
+        <div class="continue-google"><a style="text-decoration:none;" href="{{ url_for('google_login') }}" class="google-btn"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue
+            with Google </a></div>
 
         <span class="signup-link">Don't have an account ? <a href="/signup">Sign up</a></span>
     </div>

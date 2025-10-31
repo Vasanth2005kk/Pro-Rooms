@@ -159,6 +159,10 @@ body{
     position: relative;
     color: #FFFFFF;
 }
+.continue-google a{
+    text-decoration: none;
+    color: #FFFFFF;
+}
 .continue-google img {
     position: absolute;
     top: 5px;
