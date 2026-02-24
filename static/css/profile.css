@@ -1,0 +1,49 @@
+/*
+ * Pro-Rooms — Profile Page Styles
+ * Extracted from profile.html inline <style> block.
+ * Pure vanilla CSS — no Bootstrap dependency.
+ */
+
+/* ─── Form container ────────────────────────────────────────────── */
+.profile-form-wrapper {
+    width: 100%;
+    max-width: 800px;
+}
+
+/* ─── Profile image ─────────────────────────────────────────────── */
+.profile-img-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    display: block;
+}
+
+/* ─── Image container with hover overlay ───────────────────────── */
+.profile-img-container {
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.profile-img-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.profile-img-container:hover .profile-img-overlay {
+    opacity: 1;
+}

@@ -10,6 +10,7 @@ from datetime import datetime
 import psycopg2
 import psycopg2.extras
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,70 +37,98 @@ def get_db_connection():
 
 # ── ORM Models ────────────────────────────────────────────────────────────────
 
-class SSO_User(db.Model):
-    """Stores users who sign in via Google OAuth."""
-
-    __tablename__ = "sso_users"
-
-    id        = db.Column(db.Integer, primary_key=True)
-    google_id = db.Column(db.String(255), unique=True, nullable=False, index=True)
-    email     = db.Column(db.String(255), unique=True, nullable=False, index=True)
-    name      = db.Column(db.String(255), nullable=False)
-    picture   = db.Column(db.String(500), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    last_login = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
-
-    def __repr__(self):
-        return f"<SSO_User {self.email}>"
-
-    def to_dict(self):
-        return {
-            "id":         self.id,
-            "google_id":  self.google_id,
-            "email":      self.email,
-            "name":       self.name,
-            "picture":    self.picture,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "last_login": self.last_login.isoformat() if self.last_login else None,
-        }
-
-
-class User(db.Model):
-    """Stores users who register with username/email/password."""
+class User(db.Model, UserMixin):
+    """Unified user model for local and Google SSO authentication."""
 
     __tablename__ = "users"
 
     id         = db.Column(db.Integer, primary_key=True)
-    username   = db.Column(db.String(100), nullable=False)
+    username   = db.Column(db.String(100), nullable=True)
     email      = db.Column(db.String(150), unique=True, nullable=False, index=True)
-    password   = db.Column(db.String(255), nullable=False)   # SHA-256 hex digest
+    password   = db.Column(db.String(255), nullable=True)   # SHA-256 hex digest
+    
+    # SSO Profile Fields
+    google_id  = db.Column(db.String(255), unique=True, nullable=True, index=True)
+    name       = db.Column(db.String(255), nullable=True) # Full name from Google
+    
+    # Common Profile Fields
+    picture    = db.Column(db.String(500), nullable=True)
+    bio        = db.Column(db.String(500), nullable=True)
+    github     = db.Column(db.String(255), nullable=True)
+    linkedin   = db.Column(db.String(255), nullable=True)
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    last_login = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
+
+    # Relationships
+    messages = db.relationship('Message', backref='author', lazy=True)
 
     def __repr__(self):
-        return f"<User {self.username}>"
+        return f"<User {self.email}>"
+
+    def to_dict(self):
+        return {
+            "id":         self.id,
+            "username":   self.username,
+            "email":      self.email,
+            "name":       self.name,
+            "picture":    self.picture,
+            "bio":        self.bio,
+            "github":     self.github,
+            "linkedin":   self.linkedin,
+            "created_at": self.created_at.isoformat()
+        }
 
 
 class Room(db.Model):
-    """Stores information about student/pro rooms (WhatsApp group links)."""
+    """Stores information about student/pro rooms (Internal Chat or WhatsApp)."""
 
     __tablename__ = "rooms"
 
     id            = db.Column(db.Integer, primary_key=True)
     name          = db.Column(db.String(100), nullable=False)
     description   = db.Column(db.Text, nullable=True)
-    whatsapp_link = db.Column(db.String(500), nullable=False)
-    password      = db.Column(db.String(6), nullable=False)  # 6-digit password
-    # Linking to users is tricky since we have two types. 
-    # For now, we'll store creator_info as a string or use two optional FKs.
-    creator_id    = db.Column(db.Integer, nullable=False)
-    creator_type  = db.Column(db.String(20), nullable=False) # 'local' or 'sso'
+    topic         = db.Column(db.String(100), nullable=True)
+    category      = db.Column(db.String(50), nullable=True)
+    privacy       = db.Column(db.String(20), default='Public') # 'Public' or 'Private'
+    whatsapp_link = db.Column(db.String(500), nullable=True)   # Optional if internal chat used
+    password      = db.Column(db.String(6), nullable=True)    # 6-digit password for private
+    creator_id    = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at    = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    # Relationships
+    messages = db.relationship('Message', backref='room', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
             "id":          self.id,
             "name":        self.name,
             "description": self.description,
+            "topic":       self.topic,
+            "category":    self.category,
+            "privacy":     self.privacy,
             "created_at":  self.created_at.isoformat(),
-            "creator_type": self.creator_type
+            "creator_id":  self.creator_id
         }
+
+
+class Message(db.Model):
+    """Stores internal chat messages for rooms."""
+
+    __tablename__ = "messages"
+
+    id           = db.Column(db.Integer, primary_key=True)
+    content      = db.Column(db.Text, nullable=False)
+    timestamp    = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    user_id      = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    room_id      = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id":        self.id,
+            "content":   self.content,
+            "timestamp": self.timestamp.isoformat(),
+            "user_id":   self.user_id
+        }
+

@@ -1,0 +1,140 @@
+/*
+ * Pro-Rooms — Chat Page Styles
+ * Extracted from chat.html inline <style> block.
+ * Pure vanilla CSS — no Bootstrap dependency.
+ */
+
+/* ─── Outer wrapper ─────────────────────────────────────────────── */
+.chat-wrapper {
+    display: flex;
+    height: calc(100vh - 70px);
+    /* full viewport minus navbar height */
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* ─── Sidebar ───────────────────────────────────────────────────── */
+.chat-sidebar {
+    width: 320px;
+    background: rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+/* Mobile: sidebar hidden by default (d-md-flex handles this) */
+@media (max-width: 767px) {
+    .chat-sidebar {
+        display: none;
+    }
+}
+
+/* ─── Main chat area ────────────────────────────────────────────── */
+.chat-main {
+    flex-grow: 1;
+    position: relative;
+    background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+    background-blend-mode: overlay;
+    background-color: #0b141a;
+    overflow: hidden;
+}
+
+/* ─── Chat header ───────────────────────────────────────────────── */
+.chat-header {
+    background: #202c33;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+/* ─── Messages area ─────────────────────────────────────────────── */
+.messages-container {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ─── Input area ────────────────────────────────────────────────── */
+.chat-input-area {
+    background: #202c33;
+    flex-shrink: 0;
+}
+
+/* Chat text input */
+.chat-input {
+    background: #2a3942 !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 8px !important;
+}
+
+.chat-input:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* ─── Message bubbles ───────────────────────────────────────────── */
+.message {
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+}
+
+/* Incoming message (left-aligned) */
+.message-in {
+    align-self: flex-start;
+    background: #202c33;
+    color: #e9edef;
+    border-bottom-left-radius: 0;
+}
+
+/* Outgoing message (right-aligned) */
+.message-out {
+    align-self: flex-end;
+    background: #005c4b;
+    color: #e9edef;
+    border-bottom-right-radius: 0;
+}
+
+/* Message timestamp */
+.message-meta {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 4px;
+    display: block;
+    text-align: right;
+}
+
+/* ─── Online indicator ──────────────────────────────────────────── */
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-indicator.online {
+    background: #00d26a;
+}
+
+/* ─── Send button ───────────────────────────────────────────────── */
+.btn-send {
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    padding: 0 !important;
+    flex-shrink: 0;
+}
+
+/* ─── Room avatar icon wrapper ──────────────────────────────────── */
+.room-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 210, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}

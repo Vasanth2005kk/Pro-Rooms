@@ -54,10 +54,8 @@ class Config:
         if not Config.GOOGLE_CLIENT_SECRET:
             missing.append("GOOGLE_CLIENT_SECRET")
         if missing:
-            raise ValueError(
-                f"❌ Missing required environment variables: {', '.join(missing)}\n"
-                "   Copy .env.example → .env and fill in the values."
-            )
+            print(f"⚠️ Warning: Google OAuth credentials missing ({', '.join(missing)}). "
+                  "Google Login will not function.")
 
 
 # ── OAuth configuration helper ────────────────────────────────────────────────

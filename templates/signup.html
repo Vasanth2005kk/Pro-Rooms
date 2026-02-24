@@ -1,37 +1,80 @@
-{% block conections %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
-{% endblock %}
+{% extends "base.html" %}
 
-{% block body%}
-{% include 'flash_massage.html' %}
-<div class="register-container">
-    <div class="register-left">
-        <div class="welcome-invite">
-            <span class="line-1">Welcome to</span>
-            <span class="line-2">Pro Room's Application</span>
+{% block content %}
+<div class="container flex items-center justify-center" style="min-height: calc(100vh - 100px);">
+    <div class="glass-card p-4 animate-scale-up" style="max-width: 500px; width: 100%;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-white mb-2">Create Account</h2>
+            <p class="text-white-50">Join the Pro Rooms community today</p>
         </div>
-    </div>
-    <div class="register-right">
-        <p>Join us <br /> Create a Pro Room's account </p>
-        <span class="motivate"> Let's create again , share the creativity's </span>
-        <form action="/signup" method="post">
-            <input type="text" name="username" placeholder="Full Name" required value={{username}}  > 
-            <input type="email" name="email" placeholder="Email" required value={{email}}  >
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="ConfirmPassword" placeholder="Confirm Password" required >
 
-            <input type="submit" value="register">
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2">
+                    <label class="form-label small">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-tag"></i>
+                        </span>
+                        <input type="text" name="username" class="form-control" placeholder="johndoe" required
+                            value="{{ username }}">
+                    </div>
+                </div>
+
+                <div class="col-span-2">
+                    <label class="form-label small">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input type="email" name="email" class="form-control" placeholder="john@example.com" required
+                            value="{{ email }}">
+                    </div>
+                </div>
+
+                <div class="col-span-1">
+                    <label class="form-label small">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="col-span-1">
+                    <label class="form-label small">Confirm</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-check-double"></i>
+                        </span>
+                        <input type="password" name="ConfirmPassword" class="form-control" placeholder="••••••••"
+                            required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full py-3 mt-4 mb-4">
+                Sign Up
+            </button>
         </form>
-        <div class="separator">
-            <hr> <span>OR</span>
-            <hr>
+
+        <div class="divider">
+            <span class="divider-text">OR</span>
         </div>
 
-        <div class="continue-google"><a style="text-decoration:none;" href="{{ url_for('google_login') }}" class="google-btn"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue
-            with Google </a></div>
+        <div class="flex flex-col gap-3 mb-4">
+            <a href="{{ url_for('google_login') }}"
+                class="btn btn-outline-light flex items-center justify-center gap-2 py-3">
+                <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="20" alt="Google">
+                Sign up with Google
+            </a>
+        </div>
 
-        <span class="login-link">Already have an account? <a href="/login">login</a></span>
+        <div class="text-center text-white-50 small">
+            Already have an account? <a href="{{ url_for('login') }}"
+                class="text-primary text-decoration-none fw-bold">Login</a>
+        </div>
     </div>
 </div>
-
 {% endblock %}

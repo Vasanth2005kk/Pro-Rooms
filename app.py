@@ -26,9 +26,13 @@ from flask import (
     Flask, flash, jsonify, redirect,
     render_template, request, session, url_for
 )
+from flask_login import (
+    LoginManager, login_user, logout_user, 
+    login_required, current_user
+)
 
 from rooms.Config import Config, init_oauth
-from rooms.Models import db, get_db_connection, User, SSO_User, Room
+from rooms.Models import db, get_db_connection, User, Room, Message
 
 # ── App Initialisation ────────────────────────────────────────────────────────
 load_dotenv()
@@ -39,8 +43,17 @@ Config.validate()
 
 app.secret_key = Config.SECRET_KEY
 
-# Initialise SQLAlchemy (ORM – used for SSO_User / User tables)
+# Initialise SQLAlchemy
 db.init_app(app)
+
+# Initialise Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Initialise Google OAuth
 oauth  = init_oauth(app)
@@ -54,6 +67,9 @@ google = oauth.google
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Handle local username/email + password login."""
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard"))
+
     if request.method == "POST":
         identifier = request.form.get("identifier", "").strip()
         password   = request.form.get("password",   "").strip()
@@ -62,35 +78,19 @@ def login():
             flash("Please enter your username/email and password ❗", "error")
             return redirect(url_for("login"))
 
-        conn = cursor = None
-        try:
-            conn   = get_db_connection()
-            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        user = User.query.filter((User.username == identifier) | (User.email == identifier)).first()
+        print(user)
+        if not user or not user.password:
+            flash("Invalid credentials or SSO-only account 📧", "error")
+            return redirect(url_for("login"))
 
-            cursor.execute(
-                "SELECT * FROM users WHERE username = %s OR email = %s",
-                (identifier, identifier)
-            )
-            user = cursor.fetchone()
-
-            if not user:
-                flash("No account found with that username or email 📧", "error")
-                return redirect(url_for("login"))
-
-            hashed_input = hashlib.sha256(password.encode()).hexdigest()
-            if hashed_input == user["password"]:
-                session["user_id"]  = user["id"]
-                session["username"] = user["username"]
-                flash(f"Welcome back, {user['username']} 👋", "success")
-                return redirect(url_for("dashboard"))
-            else:
-                flash("Incorrect password ❌", "error")
-
-        except psycopg2.Error as err:
-            flash(f"Database error: {err}", "error")
-        finally:
-            if cursor: cursor.close()
-            if conn:   conn.close()
+        hashed_input = hashlib.sha256(password.encode()).hexdigest()
+        if hashed_input == user.password:
+            login_user(user)
+            flash(f"Welcome back, {user.username or user.name} 👋", "success")
+            return redirect(url_for("dashboard"))
+        else:
+            flash("Incorrect password ❌", "error")
 
     return render_template("login.html")
 
@@ -101,6 +101,9 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     """Handle new user registration."""
+    if current_user.is_authenticated:
+        return redirect(url_for("dashboard"))
+
     if request.method == "POST":
         username   = request.form.get("username",        "").strip()
         email      = request.form.get("email",           "").strip()
@@ -115,33 +118,22 @@ def signup():
             flash("Passwords do not match ⚠️", "error")
             return redirect(url_for("signup", username=username, email=email))
 
-        conn = cursor = None
-        try:
-            conn   = get_db_connection()
-            cursor = conn.cursor()
-
-            hashed = hashlib.sha256(password.encode()).hexdigest()
-
-            # PostgreSQL SERIAL handles auto-increment; no manual ID needed.
-            cursor.execute(
-    "INSERT INTO users (username, email, password, created_at) VALUES (%s, %s, %s, %s)",
-    (username, email, hashed, datetime.utcnow())
-)
-            conn.commit()
-
-            flash("Account created successfully ✅ Please log in.", "success")
-            return redirect(url_for("login"))
-
-        except psycopg2.errors.UniqueViolation:
-            conn.rollback()
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
             flash("An account with that email already exists 📧", "error")
             return redirect(url_for("signup", username=username))
-        except psycopg2.Error as err:
-            if conn: conn.rollback()
-            flash(f"Database error: {err}", "error")
-        finally:
-            if cursor: cursor.close()
-            if conn:   conn.close()
+
+        hashed = hashlib.sha256(password.encode()).hexdigest()
+        new_user = User(
+            username=username,
+            email=email,
+            password=hashed
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Account created successfully ✅ Please log in.", "success")
+        return redirect(url_for("login"))
 
     username = request.args.get("username", "")
     email    = request.args.get("email",    "")
@@ -154,6 +146,9 @@ def signup():
 @app.route("/auth/google")
 def google_login():
     """Redirect user to Google's OAuth consent screen."""
+    if not Config.GOOGLE_CLIENT_ID:
+        flash("Google Login is not configured on this server 🛑", "error")
+        return redirect(url_for("login"))
     redirect_uri = url_for("google_callback", _external=True)
     return google.authorize_redirect(redirect_uri)
 
@@ -174,36 +169,30 @@ def google_callback():
         name      = user_info.get("name")
         picture   = user_info.get("picture")
 
-        user = SSO_User.query.filter_by(google_id=google_id).first()
+        user = User.query.filter_by(email=email).first()
 
         if user:
-            # Returning user – update profile snapshot
+            # Update existing user with Google details
+            user.google_id = google_id
             user.last_login = datetime.utcnow()
-            user.name       = name
-            user.picture    = picture
+            user.name = name
+            if not user.picture:
+                user.picture = picture
             db.session.commit()
-
-            session["user_id"]    = user.id
-            session["user_email"] = user.email
-            session["is_new_user"] = False
-            flash(f"Welcome back, {user.name}! 👋", "success")
-
+            login_user(user)
+            flash(f"Welcome back, {user.name or user.username}! 👋", "success")
         else:
-            # First sign-in – create record
-            new_user = SSO_User(
+            # Create new user via Google
+            new_user = User(
                 google_id=google_id,
                 email=email,
                 name=name,
                 picture=picture,
-                created_at=datetime.utcnow(),
-                last_login=datetime.utcnow(),
+                last_login=datetime.utcnow()
             )
             db.session.add(new_user)
             db.session.commit()
-
-            session["user_id"]    = new_user.id
-            session["user_email"] = new_user.email
-            session["is_new_user"] = True
+            login_user(new_user)
             flash(f"Welcome to Pro Rooms, {new_user.name}! 🎉", "success")
 
         return redirect(url_for("dashboard"))
@@ -221,69 +210,100 @@ def google_callback():
 # DASHBOARD
 # ─────────────────────────────────────────────────────────────────────────────
 @app.route("/dashboard")
+@login_required
 def dashboard():
     """Main dashboard page."""
-    if "user_id" not in session:
-        flash("Please log in first ❗", "error")
-        return redirect(url_for("login"))
-    
-    # Get initial list of rooms
     rooms = Room.query.order_by(Room.created_at.desc()).all()
     return render_template("index.html", rooms=rooms)
 
 
-# ── Room API ──────────────────────────────────────────────────────────────────
+# ─ Profile ───────────────────────────────────────────────────────────────────
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    """GitHub-style profile editing."""
+    if request.method == "POST":
+        current_user.username = request.form.get("username", current_user.username)
+        current_user.email    = request.form.get("email",    current_user.email)
+        current_user.bio      = request.form.get("bio",      "")
+        current_user.github   = request.form.get("github",   "")
+        current_user.linkedin = request.form.get("linkedin", "")
+        
+        picture_url = request.form.get("picture_url", "")
+        if picture_url:
+            current_user.picture = picture_url
+
+        db.session.commit()
+        flash("Profile updated successfully! ✨", "success")
+        return redirect(url_for("profile"))
+
+    return render_template("profile.html")
+
+
+# ─ Chat ──────────────────────────────────────────────────────────────────────
+@app.route("/chat/<int:room_id>")
+@login_required
+def chat_room(room_id):
+    """WhatsApp-style chat interface."""
+    room = Room.query.get_or_404(room_id)
+    return render_template("chat.html", room=room)
+
+
+# ── API ──────────────────────────────────────────────────────────────────────
 
 @app.route("/api/rooms", methods=["GET"])
+@login_required
 def get_rooms():
     """Fetch rooms with search and filtering."""
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-    
     search_query = request.args.get("search", "").strip()
-    
+    category     = request.args.get("category", "").strip()
+    privacy      = request.args.get("privacy", "").strip()
+
     query = Room.query
     if search_query:
         query = query.filter(Room.name.ilike(f"%{search_query}%") | 
                            Room.description.ilike(f"%{search_query}%"))
-    
+    if category:
+        query = query.filter(Room.category == category)
+    if privacy:
+        query = query.filter(Room.privacy == privacy)
+
     rooms = query.order_by(Room.created_at.desc()).all()
     return jsonify([room.to_dict() for room in rooms])
 
 
 @app.route("/api/rooms", methods=["POST"])
+@login_required
 def create_room():
     """Create a new room."""
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-    
     data = request.get_json()
     if not data:
         return jsonify({"error": "Invalid data"}), 400
     
-    name = data.get("name", "").strip()
+    name        = data.get("name", "").strip()
     description = data.get("description", "").strip()
-    whatsapp_link = data.get("whatsapp_link", "").strip()
-    password = data.get("password", "").strip()
+    topic       = data.get("topic", "").strip()
+    category    = data.get("category", "").strip()
+    privacy     = data.get("privacy", "Public").strip()
+    password    = data.get("password", "").strip()
+    whatsapp    = data.get("whatsapp_link", "").strip()
     
-    if not all([name, whatsapp_link, password]):
-        return jsonify({"error": "Missing required fields"}), 400
+    if not name:
+        return jsonify({"error": "Room name is required"}), 400
     
-    if len(password) != 6 or not password.isdigit():
-        return jsonify({"error": "Password must be a 6-digit number"}), 400
-
-    # Determine creator type (this is a bit of a hack since session structure differs)
-    # If session has 'username', it's likely a local user.
-    creator_type = "local" if "username" in session else "sso"
+    if privacy == "Private" and (len(password) != 6 or not password.isdigit()):
+        return jsonify({"error": "Private rooms require a 6-digit password"}), 400
     
     try:
         new_room = Room(
             name=name,
             description=description,
-            whatsapp_link=whatsapp_link,
-            password=password,
-            creator_id=session["user_id"],
-            creator_type=creator_type
+            topic=topic,
+            category=category,
+            privacy=privacy,
+            password=password if privacy == "Private" else None,
+            whatsapp_link=whatsapp,
+            creator_id=current_user.id
         )
         db.session.add(new_room)
         db.session.commit()
@@ -294,11 +314,9 @@ def create_room():
 
 
 @app.route("/api/rooms/join", methods=["POST"])
+@login_required
 def join_room():
     """Verify password and return WhatsApp link."""
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-    
     data = request.get_json()
     room_id = data.get("room_id")
     password = data.get("password", "").strip()
@@ -307,18 +325,56 @@ def join_room():
     if not room:
         return jsonify({"error": "Room not found"}), 404
         
-    if room.password == password:
+    if room.privacy == "Public" or room.password == password:
         return jsonify({"success": True, "link": room.whatsapp_link})
     else:
         return jsonify({"error": "Incorrect password"}), 403
+
+
+@app.route("/api/chat/<int:room_id>", methods=["GET", "POST"])
+@login_required
+def chat_api(room_id):
+    """Handle message history and sending."""
+    room = Room.query.get_or_404(room_id)
+    
+    if request.method == "POST":
+        data = request.get_json()
+        content = data.get("content", "").strip()
+        if not content:
+            return jsonify({"error": "Message content is empty"}), 400
+            
+        msg = Message(
+            content=content,
+            room_id=room_id,
+            user_id=current_user.id
+        )
+        db.session.add(msg)
+        db.session.commit()
+        return jsonify({"success": True, "message": msg.to_dict()})
+
+    # GET: Return last 50 messages
+    messages = Message.query.filter_by(room_id=room_id).order_by(Message.timestamp.asc()).limit(50).all()
+    results = []
+    for m in messages:
+        author = User.query.get(m.user_id)
+        results.append({
+            "id": m.id,
+            "content": m.content,
+            "timestamp": m.timestamp.strftime("%H:%M"),
+            "author_name": author.username if author.username else author.name,
+            "author_img": author.picture or url_for('static', filename='img/default-avatar.png'),
+            "is_me": m.user_id == current_user.id
+        })
+    return jsonify(results)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # LOGOUT
 # ─────────────────────────────────────────────────────────────────────────────
 @app.route("/logout")
+@login_required
 def logout():
-    session.clear()
+    logout_user()
     flash("Logged out successfully 👋", "success")
     return redirect(url_for("login"))
 
@@ -329,5 +385,5 @@ def logout():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        print("✅ PostgreSQL tables created / verified.")
+        print("✅ Database tables verified.")
     app.run(port=5000, debug=True)

@@ -1,38 +1,70 @@
-{% include 'header.html' %}
+{% extends "base.html" %}
 
-{% block connections %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/rooms.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
-{% endblock %}
-
-{% block body %}
+{% block content %}
 <div class="dashboard-container">
-    <section class="welcome-section">
-        <h1>Pro Rooms 🎉</h1>
-        <p>Discover and join exclusive student & professional groups.</p>
+    <section class="welcome-section text-center mb-4">
+        <h1 class="animate-fade-in">Welcome back, {{ current_user.username or current_user.name or 'User' }}! 🚀</h1>
+        <p class="text-muted">Discover professional communities and student study groups.</p>
     </section>
 
-    <div class="actions-bar">
-        <div class="search-box">
-            <input type="text" id="roomSearch" placeholder="Search by room name or description..." autocomplete="off">
-            <span class="search-icon"><i class="fas fa-search"></i></span>
+    <!-- Filter / Search bar -->
+    <div class="filter-section glass-card mb-4 p-3 animate-fade-in">
+        <div class="grid grid-cols-4 gap-3 align-items-center">
+            <div class="col-span-1">
+                <div class="search-box">
+                    <input type="text" id="roomSearch" placeholder="Search rooms..." class="form-control"
+                        autocomplete="off">
+                </div>
+            </div>
+            <div class="col-span-1">
+                <select id="categoryFilter" class="form-select">
+                    <option value="">All Categories</option>
+                    <option value="Coding">Coding</option>
+                    <option value="Business">Business</option>
+                    <option value="Design">Design</option>
+                    <option value="Student">Student</option>
+                    <option value="Networking">Networking</option>
+                </select>
+            </div>
+            <div class="col-span-1">
+                <select id="privacyFilter" class="form-select">
+                    <option value="">Any Privacy</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+            </div>
+            <div class="col-span-1 text-end">
+                <button class="btn btn-primary w-full" onclick="openModal('createRoomModal')">
+                    <i class="fas fa-plus me-2"></i> Create Room
+                </button>
+            </div>
         </div>
-        <button class="btn-create" onclick="openModal('createRoomModal')">
-            <i class="fas fa-plus"></i> Create New Room
-        </button>
     </div>
 
-    <div class="rooms-grid" id="roomsGrid">
+    <!-- Room cards grid -->
+    <div class="grid grid-cols-3 gap-4" id="roomsGrid">
         {% for room in rooms %}
-        <div class="room-card" data-id="{{ room.id }}" data-name="{{ room.name|lower }}" data-desc="{{ room.description|lower }}">
-            <div class="room-name">{{ room.name }}</div>
-            <p class="room-desc">{{ room.description or 'No description provided.' }}</p>
-            <div class="room-footer">
-                <span class="room-tag"><i class="fas fa-users"></i> Member</span>
-                <button class="btn-join" onclick="prepareJoin({{ room.id }}, '{{ room.name }}')">
-                    Join Room <i class="fab fa-whatsapp"></i>
+        <div class="room-card glass-card flex flex-col animate-scale-up" data-id="{{ room.id }}">
+            <div class="room-header mb-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="room-name mb-0 text-white">{{ room.name }}</h3>
+                    <span class="badge {{ 'bg-success' if room.privacy == 'Public' else 'bg-danger' }}">
+                        {{ room.privacy }}
+                    </span>
+                </div>
+                <small class="text-primary">{{ room.category }} • {{ room.topic }}</small>
+            </div>
+            <p class="room-desc text-white-50 small mb-4">{{ room.description or 'No description provided.' }}</p>
+            <div class="room-footer mt-auto flex gap-2">
+                <a href="{{ url_for('chat_room', room_id=room.id) }}" class="btn btn-outline-primary btn-sm flex-grow">
+                    <i class="fas fa-comments me-1"></i> Global Chat
+                </a>
+                {% if room.whatsapp_link %}
+                <button class="btn btn-success btn-sm"
+                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}')">
+                    <i class="fab fa-whatsapp"></i>
                 </button>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -41,60 +73,92 @@
 
 <!-- Create Room Modal -->
 <div id="createRoomModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Create Pro Room</h2>
+    <div class="modal-content glass-card p-4">
+        <div class="modal-header flex justify-between items-center mb-4">
+            <h3 class="text-white">Create New Community</h3>
+            <!-- Pure CSS close button — no Bootstrap JS -->
+            <button class="modal-close-btn" onclick="closeModal('createRoomModal')" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <form id="createRoomForm">
-            <div class="form-group">
-                <label>Room Name</label>
-                <input type="text" name="name" placeholder="e.g. Python Developers India" required>
+        <form id="createRoomForm" class="mt-3">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2">
+                    <label class="form-label">Room Title</label>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Next.js Masters" required>
+                </div>
+                <div class="col-span-1">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="Coding">Coding</option>
+                        <option value="Business">Business</option>
+                        <option value="Design">Design</option>
+                        <option value="Student">Student</option>
+                        <option value="Networking">Networking</option>
+                    </select>
+                </div>
+                <div class="col-span-1">
+                    <label class="form-label">Topic</label>
+                    <input type="text" name="topic" class="form-control" placeholder="e.g. Frontend">
+                </div>
+                <div class="col-span-2">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-span-1">
+                    <label class="form-label">Privacy</label>
+                    <select name="privacy" id="privacySelect" class="form-select">
+                        <option value="Public">Public (Anyone can join)</option>
+                        <option value="Private">Private (Password required)</option>
+                    </select>
+                </div>
+                <!-- Hidden password field, shown when Private is selected -->
+                <div class="col-span-1 d-none" id="passField">
+                    <label class="form-label">6-Digit Password</label>
+                    <input type="text" name="password" class="form-control" placeholder="123456" maxlength="6"
+                        pattern="\d{6}">
+                </div>
+                <div class="col-span-2">
+                    <label class="form-label">WhatsApp Link (Optional)</label>
+                    <input type="url" name="whatsapp_link" class="form-control"
+                        placeholder="https://chat.whatsapp.com/...">
+                </div>
             </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" placeholder="What is this room about?" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>WhatsApp Group Link</label>
-                <input type="url" name="whatsapp_link" placeholder="https://chat.whatsapp.com/..." required>
-            </div>
-            <div class="form-group">
-                <label>Access Password (6 Digits)</label>
-                <input type="text" name="password" placeholder="e.g. 123456" maxlength="6" pattern="\d{6}" required>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeModal('createRoomModal')">Cancel</button>
-                <button type="submit" class="btn-create">Create Room</button>
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-primary px-4">Create Room</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Join Room / Password Modal -->
+<!-- Password Modal -->
 <div id="joinRoomModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="joinRoomTitle">Enter Password</h2>
-            <p style="color: var(--text-muted)">Please enter the 6-digit access code for this room.</p>
+    <div class="modal-content glass-card p-4 text-center" style="max-width: 400px;">
+        <h3 class="text-white mb-2">Private Room</h3>
+        <p class="text-white-50 small mb-4">Enter 6-digit access code for
+            <span id="joinRoomName" class="text-primary"></span>
+        </p>
+
+        <div class="flex justify-center gap-2 mb-4" id="passcodeInputs">
+            <input type="text" class="form-control passcode-input text-center" maxlength="1" style="width: 45px;">
+            <input type="text" class="form-control passcode-input text-center" maxlength="1" style="width: 45px;">
+            <input type="text" class="form-control passcode-input text-center" maxlength="1" style="width: 45px;">
+            <input type="text" class="form-control passcode-input text-center" maxlength="1" style="width: 45px;">
+            <input type="text" class="form-control passcode-input text-center" maxlength="1" style="width: 45px;">
+            <input type="text" class="form-control passcode-input text-center" maxlength="1" style="width: 45px;">
         </div>
-        <div class="passcode-container" id="passcodeContainer">
-            <input type="text" class="passcode-input" maxlength="1" oninput="moveFocus(this, 1)" onkeydown="backFocus(this, event)">
-            <input type="text" class="passcode-input" maxlength="1" oninput="moveFocus(this, 2)" onkeydown="backFocus(this, event)">
-            <input type="text" class="passcode-input" maxlength="1" oninput="moveFocus(this, 3)" onkeydown="backFocus(this, event)">
-            <input type="text" class="passcode-input" maxlength="1" oninput="moveFocus(this, 4)" onkeydown="backFocus(this, event)">
-            <input type="text" class="passcode-input" maxlength="1" oninput="moveFocus(this, 5)" onkeydown="backFocus(this, event)">
-            <input type="text" class="passcode-input" maxlength="1" oninput="moveFocus(this, 6)" onkeydown="backFocus(this, event)">
-        </div>
-        <div id="joinMsg" style="margin-top: 20px; text-align: center; color: #ff4d4d; font-size: 0.9rem;"></div>
-        <div class="modal-footer">
-            <button type="button" class="btn-cancel" onclick="closeModal('joinRoomModal')">Cancel</button>
-            <button type="button" class="btn-create" onclick="verifyAndJoin()">Verify & Join</button>
+
+        <div id="joinError" class="text-danger small mb-3"></div>
+
+        <div class="flex gap-2">
+            <button class="btn btn-dark flex-grow" onclick="closeModal('joinRoomModal')">Cancel</button>
+            <button class="btn btn-primary flex-grow" id="verifyBtn" onclick="verifyRoom()">Join</button>
         </div>
     </div>
 </div>
 
 <script>
-    let currentJoinRoomId = null;
+    let currentRoomId = null;
 
     function openModal(id) {
         document.getElementById(id).style.display = 'flex';
@@ -102,114 +166,130 @@
 
     function closeModal(id) {
         document.getElementById(id).style.display = 'none';
-        if(id === 'joinRoomModal') {
-            resetPasscode();
-        }
     }
 
-    // Search Functionality
-    document.getElementById('roomSearch').addEventListener('input', function(e) {
-        const query = e.target.value.toLowerCase();
-        const cards = document.querySelectorAll('.room-card');
-        
-        cards.forEach(card => {
-            const name = card.getAttribute('data-name');
-            const desc = card.getAttribute('data-desc');
-            if (name.includes(query) || desc.includes(query)) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
-        });
+    // Privacy toggle for Create Room form
+    document.getElementById('privacySelect').addEventListener('change', function (e) {
+        const passField = document.getElementById('passField');
+        if (e.target.value === 'Private') {
+            passField.classList.remove('d-none');
+        } else {
+            passField.classList.add('d-none');
+        }
     });
 
-    // Create Room
-    document.getElementById('createRoomForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
+    // Search and Filters
+    async function updateRooms() {
+        const q = document.getElementById('roomSearch').value;
+        const c = document.getElementById('categoryFilter').value;
+        const p = document.getElementById('privacyFilter').value;
 
-        const response = await fetch('/api/rooms', {
+        const params = new URLSearchParams({ search: q, category: c, privacy: p });
+        const res = await fetch(`/api/rooms?${params}`);
+        const rooms = await res.json();
+
+        const grid = document.getElementById('roomsGrid');
+        grid.innerHTML = rooms.map(room => `
+        <div class="room-card glass-card flex flex-col" data-id="${room.id}">
+            <div class="room-header mb-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="room-name mb-0 text-white">${room.name}</h3>
+                    <span class="badge ${room.privacy === 'Public' ? 'bg-success' : 'bg-danger'}">
+                        ${room.privacy}
+                    </span>
+                </div>
+                <small class="text-primary">${room.category || 'General'} • ${room.topic || 'Misc'}</small>
+            </div>
+            <p class="room-desc text-white-50 small mb-4">${room.description || 'No description provided.'}</p>
+            <div class="room-footer mt-auto flex gap-2">
+                <a href="/chat/${room.id}" class="btn btn-outline-primary btn-sm flex-grow">
+                    <i class="fas fa-comments me-1"></i> Global Chat
+                </a>
+                <button class="btn btn-success btn-sm" onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}')">
+                    <i class="fab fa-whatsapp"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+    }
+
+    ['roomSearch', 'categoryFilter', 'privacyFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateRooms);
+    });
+
+    // Create Room form submission
+    document.getElementById('createRoomForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target).entries());
+
+        const res = await fetch('/api/rooms', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        const result = await response.json();
-        if (result.success) {
+        if (res.ok) {
             location.reload();
         } else {
-            alert(result.error || 'Failed to create room');
+            const err = await res.json();
+            alert(err.error);
         }
-    });
+    };
 
-    // Prepare Join
-    function prepareJoin(id, name) {
-        currentJoinRoomId = id;
-        document.getElementById('joinRoomTitle').textContent = `Join ${name}`;
-        openModal('joinRoomModal');
-        document.querySelector('.passcode-input').focus();
-    }
-
-    // Passcode logic
-    function moveFocus(input, nextIndex) {
-        if (input.value.length === 1 && nextIndex < 6) {
-            document.querySelectorAll('.passcode-input')[nextIndex].focus();
+    // Password / join logic
+    function prepareJoin(id, name, privacy) {
+        currentRoomId = id;
+        if (privacy === 'Public') {
+            verifyRoom();
+        } else {
+            document.getElementById('joinRoomName').textContent = name;
+            openModal('joinRoomModal');
         }
     }
 
-    function backFocus(input, event) {
-        if (event.key === "Backspace" && input.value.length === 0) {
-            const inputs = document.querySelectorAll('.passcode-input');
-            const currentIndex = Array.from(inputs).indexOf(input);
-            if (currentIndex > 0) {
-                inputs[currentIndex - 1].focus();
-            }
-        }
-    }
-
-    function resetPasscode() {
+    async function verifyRoom() {
         const inputs = document.querySelectorAll('.passcode-input');
-        inputs.forEach(input => input.value = '');
-        document.getElementById('joinMsg').textContent = '';
-    }
+        const passcode = Array.from(inputs).map(i => i.value).join('');
 
-    async function verifyAndJoin() {
-        const inputs = document.querySelectorAll('.passcode-input');
-        let passcode = "";
-        inputs.forEach(input => passcode += input.value);
-
-        if (passcode.length < 6) {
-            document.getElementById('joinMsg').textContent = 'Please enter all 6 digits';
-            return;
-        }
-
-        const btn = document.querySelector('#joinRoomModal .btn-create');
+        const btn = document.getElementById('verifyBtn');
         btn.disabled = true;
         btn.textContent = 'Verifying...';
 
-        const response = await fetch('/api/rooms/join', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ room_id: currentJoinRoomId, password: passcode })
-        });
+        try {
+            const res = await fetch('/api/rooms/join', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_id: currentRoomId, password: passcode })
+            });
 
-        const result = await response.json();
-        if (result.success) {
-            window.open(result.link, '_blank');
-            closeModal('joinRoomModal');
-        } else {
-            document.getElementById('joinMsg').textContent = result.error || 'Incorrect password';
+            const result = await res.json();
+            if (result.success) {
+                window.open(result.link, '_blank');
+                closeModal('joinRoomModal');
+            } else {
+                document.getElementById('joinError').textContent = result.error || 'Incorrect password';
+                btn.disabled = false;
+                btn.textContent = 'Join';
+            }
+        } catch (err) {
+            document.getElementById('joinError').textContent = 'Connection error. Try again.';
             btn.disabled = false;
-            btn.textContent = 'Verify & Join';
+            btn.textContent = 'Join';
         }
     }
 
-    // Close on click outside
-    window.onclick = function(event) {
-        if (event.target.className === 'modal-overlay') {
-            event.target.style.display = 'none';
-        }
-    }
+    // Auto-focus next passcode input
+    document.querySelectorAll('.passcode-input').forEach((input, idx, inputs) => {
+        input.addEventListener('input', (e) => {
+            if (e.target.value.length === 1 && idx < 5) {
+                inputs[idx + 1].focus();
+            }
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                inputs[idx - 1].focus();
+            }
+        });
+    });
 </script>
 {% endblock %}

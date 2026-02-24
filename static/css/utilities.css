@@ -1,0 +1,1394 @@
+/*
+ * Pro-Rooms — Utility CSS
+ * Pure Vanilla CSS replacements for all Bootstrap utility classes used in this project.
+ * No Bootstrap, no Tailwind — completely framework-free.
+ * ─────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════════════════
+   1. DISPLAY UTILITIES
+   ══════════════════════════════════════════════════════════════════ */
+
+.d-none {
+    display: none !important;
+}
+
+.d-block {
+    display: block !important;
+}
+
+.d-inline {
+    display: inline !important;
+}
+
+.d-inline-block {
+    display: inline-block !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.d-inline-flex {
+    display: inline-flex !important;
+}
+
+.d-grid {
+    display: grid !important;
+}
+
+/* Responsive display — hidden/shown above md breakpoint (≥768px) */
+.d-md-none {
+    display: none !important;
+}
+
+.d-md-block {
+    display: none !important;
+}
+
+.d-md-flex {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .d-md-none {
+        display: none !important;
+    }
+
+    .d-md-block {
+        display: block !important;
+    }
+
+    .d-md-flex {
+        display: flex !important;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   2. FLEXBOX UTILITIES
+   ══════════════════════════════════════════════════════════════════ */
+
+.flex-row {
+    flex-direction: row !important;
+}
+
+.flex-column {
+    flex-direction: column !important;
+}
+
+.flex-wrap {
+    flex-wrap: wrap !important;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap !important;
+}
+
+.flex-grow-0 {
+    flex-grow: 0 !important;
+}
+
+.flex-grow-1 {
+    flex-grow: 1 !important;
+}
+
+.flex-shrink-0 {
+    flex-shrink: 0 !important;
+}
+
+.flex-shrink-1 {
+    flex-shrink: 1 !important;
+}
+
+/* Align items */
+.align-items-start {
+    align-items: flex-start !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.align-items-end {
+    align-items: flex-end !important;
+}
+
+.align-items-stretch {
+    align-items: stretch !important;
+}
+
+.align-items-baseline {
+    align-items: baseline !important;
+}
+
+/* Justify content */
+.justify-content-start {
+    justify-content: flex-start !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+.justify-content-end {
+    justify-content: flex-end !important;
+}
+
+.justify-content-between {
+    justify-content: space-between !important;
+}
+
+.justify-content-around {
+    justify-content: space-around !important;
+}
+
+.justify-content-evenly {
+    justify-content: space-evenly !important;
+}
+
+/* Align self */
+.align-self-start {
+    align-self: flex-start !important;
+}
+
+.align-self-center {
+    align-self: center !important;
+}
+
+.align-self-end {
+    align-self: flex-end !important;
+}
+
+.align-self-stretch {
+    align-self: stretch !important;
+}
+
+.align-self-auto {
+    align-self: auto !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   3. SPACING — MARGIN
+   ══════════════════════════════════════════════════════════════════ */
+
+/* All sides */
+.m-0 {
+    margin: 0 !important;
+}
+
+.m-1 {
+    margin: 0.25rem !important;
+}
+
+.m-2 {
+    margin: 0.5rem !important;
+}
+
+.m-3 {
+    margin: 1rem !important;
+}
+
+.m-4 {
+    margin: 1.5rem !important;
+}
+
+.m-5 {
+    margin: 3rem !important;
+}
+
+.m-auto {
+    margin: auto !important;
+}
+
+/* Top */
+.mt-0 {
+    margin-top: 0 !important;
+}
+
+.mt-1 {
+    margin-top: 0.25rem !important;
+}
+
+.mt-2 {
+    margin-top: 0.5rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+.mt-auto {
+    margin-top: auto !important;
+}
+
+/* Bottom */
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.mb-1 {
+    margin-bottom: 0.25rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-5 {
+    margin-bottom: 3rem !important;
+}
+
+/* Left / Start */
+.ms-0 {
+    margin-left: 0 !important;
+}
+
+.ms-1 {
+    margin-left: 0.25rem !important;
+}
+
+.ms-2 {
+    margin-left: 0.5rem !important;
+}
+
+.ms-3 {
+    margin-left: 1rem !important;
+}
+
+.ms-4 {
+    margin-left: 1.5rem !important;
+}
+
+.ms-auto {
+    margin-left: auto !important;
+}
+
+/* Right / End */
+.me-0 {
+    margin-right: 0 !important;
+}
+
+.me-1 {
+    margin-right: 0.25rem !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.me-3 {
+    margin-right: 1rem !important;
+}
+
+.me-4 {
+    margin-right: 1.5rem !important;
+}
+
+.me-auto {
+    margin-right: auto !important;
+}
+
+/* Horizontal axis */
+.mx-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.mx-1 {
+    margin-left: 0.25rem !important;
+    margin-right: 0.25rem !important;
+}
+
+.mx-2 {
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
+}
+
+.mx-3 {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+}
+
+.mx-4 {
+    margin-left: 1.5rem !important;
+    margin-right: 1.5rem !important;
+}
+
+.mx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Vertical axis */
+.my-0 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.my-1 {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.my-2 {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.my-3 {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.my-4 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.my-5 {
+    margin-top: 3rem !important;
+    margin-bottom: 3rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   4. SPACING — PADDING
+   ══════════════════════════════════════════════════════════════════ */
+
+/* All sides */
+.p-0 {
+    padding: 0 !important;
+}
+
+.p-1 {
+    padding: 0.25rem !important;
+}
+
+.p-2 {
+    padding: 0.5rem !important;
+}
+
+.p-3 {
+    padding: 1rem !important;
+}
+
+.p-4 {
+    padding: 1.5rem !important;
+}
+
+.p-5 {
+    padding: 3rem !important;
+}
+
+/* Top */
+.pt-0 {
+    padding-top: 0 !important;
+}
+
+.pt-1 {
+    padding-top: 0.25rem !important;
+}
+
+.pt-2 {
+    padding-top: 0.5rem !important;
+}
+
+.pt-3 {
+    padding-top: 1rem !important;
+}
+
+.pt-4 {
+    padding-top: 1.5rem !important;
+}
+
+/* Bottom */
+.pb-0 {
+    padding-bottom: 0 !important;
+}
+
+.pb-1 {
+    padding-bottom: 0.25rem !important;
+}
+
+.pb-2 {
+    padding-bottom: 0.5rem !important;
+}
+
+.pb-3 {
+    padding-bottom: 1rem !important;
+}
+
+.pb-4 {
+    padding-bottom: 1.5rem !important;
+}
+
+/* Left / Start */
+.ps-0 {
+    padding-left: 0 !important;
+}
+
+.ps-1 {
+    padding-left: 0.25rem !important;
+}
+
+.ps-2 {
+    padding-left: 0.5rem !important;
+}
+
+.ps-3 {
+    padding-left: 1rem !important;
+}
+
+.ps-4 {
+    padding-left: 1.5rem !important;
+}
+
+/* Right / End */
+.pe-0 {
+    padding-right: 0 !important;
+}
+
+.pe-1 {
+    padding-right: 0.25rem !important;
+}
+
+.pe-2 {
+    padding-right: 0.5rem !important;
+}
+
+.pe-3 {
+    padding-right: 1rem !important;
+}
+
+.pe-4 {
+    padding-right: 1.5rem !important;
+}
+
+/* Horizontal axis */
+.px-0 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.px-1 {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+}
+
+.px-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+}
+
+.px-3 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+.px-4 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+/* Vertical axis */
+.py-0 {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.py-1 {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.py-2 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.py-3 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.py-4 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   5. TYPOGRAPHY
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Font weight */
+.fw-light {
+    font-weight: 300 !important;
+}
+
+.fw-normal {
+    font-weight: 400 !important;
+}
+
+.fw-medium {
+    font-weight: 500 !important;
+}
+
+.fw-semibold {
+    font-weight: 600 !important;
+}
+
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+/* Font size */
+.fs-1 {
+    font-size: 2.5rem !important;
+}
+
+.fs-2 {
+    font-size: 2rem !important;
+}
+
+.fs-3 {
+    font-size: 1.75rem !important;
+}
+
+.fs-4 {
+    font-size: 1.5rem !important;
+}
+
+.fs-5 {
+    font-size: 1.25rem !important;
+}
+
+.fs-6 {
+    font-size: 1rem !important;
+}
+
+/* Contextual size */
+.small {
+    font-size: 0.875rem !important;
+}
+
+.large {
+    font-size: 1.125rem !important;
+}
+
+.x-small {
+    font-size: 0.75rem !important;
+}
+
+/* Text transform */
+.text-uppercase {
+    text-transform: uppercase !important;
+}
+
+.text-lowercase {
+    text-transform: lowercase !important;
+}
+
+.text-capitalize {
+    text-transform: capitalize !important;
+}
+
+/* Text alignment */
+.text-center {
+    text-align: center !important;
+}
+
+.text-start {
+    text-align: left !important;
+}
+
+.text-end {
+    text-align: right !important;
+}
+
+.text-justify {
+    text-align: justify !important;
+}
+
+/* Text decoration */
+.text-decoration-none {
+    text-decoration: none !important;
+}
+
+.text-decoration-underline {
+    text-decoration: underline !important;
+}
+
+/* Font style */
+.fst-italic {
+    font-style: italic !important;
+}
+
+.fst-normal {
+    font-style: normal !important;
+}
+
+/* Line height */
+.lh-1 {
+    line-height: 1 !important;
+}
+
+.lh-sm {
+    line-height: 1.25 !important;
+}
+
+.lh-base {
+    line-height: 1.5 !important;
+}
+
+.lh-lg {
+    line-height: 2 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   6. COLORS — TEXT
+   ══════════════════════════════════════════════════════════════════ */
+
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.text-primary {
+    color: #00d2ff !important;
+}
+
+.text-secondary {
+    color: #a5b4fc !important;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.text-warning {
+    color: #f59e0b !important;
+}
+
+.text-info {
+    color: #38bdf8 !important;
+}
+
+.text-muted {
+    color: #94a3b8 !important;
+}
+
+.text-dark {
+    color: #0f172a !important;
+}
+
+.text-body {
+    color: #f8fafc !important;
+}
+
+.text-reset {
+    color: inherit !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   7. COLORS — BACKGROUND
+   ══════════════════════════════════════════════════════════════════ */
+
+.bg-primary {
+    background-color: #00d2ff !important;
+    color: #0f172a !important;
+}
+
+.bg-secondary {
+    background-color: rgba(99, 102, 241, 0.2) !important;
+    color: #a5b4fc !important;
+}
+
+.bg-success {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    color: #10b981 !important;
+}
+
+.bg-danger {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    color: #ef4444 !important;
+}
+
+.bg-warning {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+    color: #f59e0b !important;
+}
+
+.bg-info {
+    background-color: rgba(56, 189, 248, 0.2) !important;
+    color: #38bdf8 !important;
+}
+
+.bg-dark {
+    background-color: #1e293b !important;
+}
+
+.bg-transparent {
+    background-color: transparent !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   8. BORDERS
+   ══════════════════════════════════════════════════════════════════ */
+
+.border {
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.border-0 {
+    border: 0 !important;
+}
+
+.border-top {
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.border-bottom {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.border-start {
+    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.border-end {
+    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.border-primary {
+    border-color: #00d2ff !important;
+}
+
+.border-secondary {
+    border-color: rgba(99, 102, 241, 0.4) !important;
+}
+
+.border-success {
+    border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+.border-danger {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+.border-warning {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Border radius */
+.rounded {
+    border-radius: 0.375rem !important;
+}
+
+.rounded-0 {
+    border-radius: 0 !important;
+}
+
+.rounded-1 {
+    border-radius: 0.25rem !important;
+}
+
+.rounded-2 {
+    border-radius: 0.5rem !important;
+}
+
+.rounded-3 {
+    border-radius: 1rem !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.rounded-pill {
+    border-radius: 9999px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   9. SIZING
+   ══════════════════════════════════════════════════════════════════ */
+
+.w-25 {
+    width: 25% !important;
+}
+
+.w-50 {
+    width: 50% !important;
+}
+
+.w-75 {
+    width: 75% !important;
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
+.w-auto {
+    width: auto !important;
+}
+
+.h-25 {
+    height: 25% !important;
+}
+
+.h-50 {
+    height: 50% !important;
+}
+
+.h-75 {
+    height: 75% !important;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+.h-auto {
+    height: auto !important;
+}
+
+.vw-100 {
+    width: 100vw !important;
+}
+
+.vh-100 {
+    height: 100vh !important;
+}
+
+.mw-100 {
+    max-width: 100% !important;
+}
+
+.mh-100 {
+    max-height: 100% !important;
+}
+
+.min-vw-100 {
+    min-width: 100vw !important;
+}
+
+.min-vh-100 {
+    min-height: 100vh !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   10. OVERFLOW
+   ══════════════════════════════════════════════════════════════════ */
+
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
+.overflow-visible {
+    overflow: visible !important;
+}
+
+.overflow-auto {
+    overflow: auto !important;
+}
+
+.overflow-scroll {
+    overflow: scroll !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   11. POSITION & Z-INDEX
+   ══════════════════════════════════════════════════════════════════ */
+
+.position-static {
+    position: static !important;
+}
+
+.position-relative {
+    position: relative !important;
+}
+
+.position-absolute {
+    position: absolute !important;
+}
+
+.position-fixed {
+    position: fixed !important;
+}
+
+.position-sticky {
+    position: sticky !important;
+}
+
+.top-0 {
+    top: 0 !important;
+}
+
+.bottom-0 {
+    bottom: 0 !important;
+}
+
+.start-0 {
+    left: 0 !important;
+}
+
+.end-0 {
+    right: 0 !important;
+}
+
+.top-50 {
+    top: 50% !important;
+}
+
+.start-50 {
+    left: 50% !important;
+}
+
+.translate-middle {
+    transform: translate(-50%, -50%) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   12. SHADOWS
+   ══════════════════════════════════════════════════════════════════ */
+
+.shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+.shadow-none {
+    box-shadow: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   13. OPACITY
+   ══════════════════════════════════════════════════════════════════ */
+
+.opacity-0 {
+    opacity: 0 !important;
+}
+
+.opacity-25 {
+    opacity: 0.25 !important;
+}
+
+.opacity-50 {
+    opacity: 0.5 !important;
+}
+
+.opacity-75 {
+    opacity: 0.75 !important;
+}
+
+.opacity-100 {
+    opacity: 1 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   14. CURSOR
+   ══════════════════════════════════════════════════════════════════ */
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.cursor-default {
+    cursor: default !important;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+.cursor-text {
+    cursor: text !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   15. USER SELECT
+   ══════════════════════════════════════════════════════════════════ */
+
+.user-select-none {
+    user-select: none !important;
+}
+
+.user-select-all {
+    user-select: all !important;
+}
+
+.user-select-auto {
+    user-select: auto !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   16. IMAGES
+   ══════════════════════════════════════════════════════════════════ */
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.object-fit-cover {
+    object-fit: cover !important;
+}
+
+.object-fit-contain {
+    object-fit: contain !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   17. VISUALLY HIDDEN (Accessibility)
+   ══════════════════════════════════════════════════════════════════ */
+
+.visually-hidden,
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   18. ALERT COMPONENT  (replaces Bootstrap alert + alert-dismissible)
+   ══════════════════════════════════════════════════════════════════ */
+
+.alert {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 1rem 3.5rem 1rem 1.25rem;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Alert types */
+.alert-primary {
+    background: rgba(0, 210, 255, 0.12);
+    border-color: rgba(0, 210, 255, 0.3);
+    color: #7ee8fc;
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #fcd34d;
+}
+
+.alert-info {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.3);
+    color: #7dd3fc;
+}
+
+/* Dismissible layout */
+.alert-dismissible {
+    padding-right: 3.5rem;
+}
+
+/* Dismiss button — pure CSS (no Bootstrap JS needed) */
+.alert-dismiss-btn {
+    position: absolute;
+    top: 50%;
+    right: 0.85rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.65;
+    font-size: 1.35rem;
+    line-height: 1;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: opacity 0.2s ease, background 0.2s ease;
+    padding: 0;
+    font-family: inherit;
+}
+
+.alert-dismiss-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Bootstrap legacy compat — .fade.show is treated as fully visible */
+.fade.show {
+    opacity: 1;
+}
+
+/* Alert fade-out (triggered via JS) */
+.alert-hiding {
+    animation: alertFadeOut 0.35s ease-out forwards;
+}
+
+@keyframes alertFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 120px;
+        margin-bottom: 0.5rem;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-width: 0;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   19. BADGE COMPONENT
+   ══════════════════════════════════════════════════════════════════ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em 0.75em;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   20. SPINNER (replaces Bootstrap spinner-border)
+   ══════════════════════════════════════════════════════════════════ */
+
+.spinner-border {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 0.22em solid rgba(255, 255, 255, 0.18);
+    border-top-color: #00d2ff;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   21. BUTTON VARIANTS (replaces Bootstrap btn-link, btn-close)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* btn-link — transparent icon / text button */
+.btn-link {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: inherit;
+    text-decoration: none;
+    padding: 0.4rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.btn-link:hover {
+    opacity: 0.75;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 8px;
+}
+
+/* btn-close — × close button */
+.btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.55;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: opacity 0.2s ease, background 0.2s ease;
+    color: currentColor;
+    font-family: sans-serif;
+}
+
+.btn-close::before {
+    content: '×';
+}
+
+.btn-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-close-white {
+    color: white;
+    opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   22. ANIMATION UTILITIES
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Used in chat.html for message rendering */
+.animate-slide-up {
+    animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   23. GAP UTILITIES
+   ══════════════════════════════════════════════════════════════════ */
+
+.gap-0 {
+    gap: 0 !important;
+}
+
+.gap-1 {
+    gap: 0.25rem !important;
+}
+
+.gap-2 {
+    gap: 0.5rem !important;
+}
+
+.gap-3 {
+    gap: 1rem !important;
+}
+
+.gap-4 {
+    gap: 1.5rem !important;
+}
+
+.gap-5 {
+    gap: 3rem !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   24. MISCELLANEOUS HELPERS
+   ══════════════════════════════════════════════════════════════════ */
+
+.text-nowrap {
+    white-space: nowrap !important;
+}
+
+.text-break {
+    word-break: break-word !important;
+}
+
+.text-truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.float-start {
+    float: left !important;
+}
+
+.float-end {
+    float: right !important;
+}
+
+.float-none {
+    float: none !important;
+}
+
+.clearfix::after {
+    display: block;
+    clear: both;
+    content: '';
+}
+
+.pe-none {
+    pointer-events: none !important;
+}
+
+.pe-auto {
+    pointer-events: auto !important;
+}

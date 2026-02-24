@@ -1,27 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Rooms</title>
-    {% block conections %}
-    <!-- Extra head content (CSS, meta, etc.) -->
-    {% endblock %}
+    <title>Pro Rooms | Exclusive Group Chats</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Core Design System -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Pure CSS Utility Classes (zero Bootstrap dependency) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
+
+    {% block head %}{% endblock %}
 </head>
+
 <body>
-    {% block header %}
-    <!-- header content goes here -->
-    {% endblock %}
 
-    {% block body%}
-    <!-- Main content goes here -->
-    {% endblock %}
+    {% if current_user.is_authenticated %}
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">PRO ROOMS</a>
 
-    <footer>
-        {% block footer %}
-        <!-- Footer content -->
-        {% endblock %}
-    </footer>
+            <button class="navbar-toggler" type="button" id="navbarToggler">
+                <i class="fas fa-bars"></i>
+            </button>
 
+            <div class="navbar-collapse" id="navbarNav">
+                <ul class="nav-links">
+                    <li>
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-th-large me-1"></i> Dashboard
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="nav-actions">
+                    <div class="dropdown">
+                        <div class="dropdown-toggle d-flex align-items-center gap-2">
+                            <img src="{{ current_user.picture if current_user.picture else url_for('static', filename='img/default-avatar.png') }}"
+                                alt="avatar" width="32" height="32" class="rounded-circle nav-avatar">
+                            <span>{{ current_user.username or current_user.name or 'Account' }}</span>
+                            <i class="fas fa-chevron-down small text-muted"></i>
+                        </div>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ url_for('profile') }}">
+                                <i class="fas fa-user-circle me-2 text-muted"></i> Profile
+                            </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2 text-muted"></i> Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2 text-muted"></i> Sign out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="container py-4">
+        {% include 'flash_massage.html' %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Navbar Toggler
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggler = document.getElementById('navbarToggler');
+            const menu = document.getElementById('navbarNav');
+
+            if (toggler && menu) {
+                toggler.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    menu.classList.toggle('show');
+                });
+            }
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (menu && menu.classList.contains('show') && !menu.contains(e.target) && e.target !== toggler) {
+                    menu.classList.remove('show');
+                }
+            });
+
+            // Handle Dropdowns on mobile
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768) {
+                        const dropMenu = toggle.nextElementSibling;
+                        dropMenu.style.display = dropMenu.style.display === 'flex' ? 'none' : 'flex';
+                    }
+                });
+            });
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
 </body>
+
 </html>

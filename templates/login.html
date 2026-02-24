@@ -1,44 +1,66 @@
-{% block conections %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-{% endblock %}
+{% extends "base.html" %}
 
-{% block body%}
-{% include 'flash_massage.html' %}
-<div class="login-container">
-    <div class="login-left">
-        <div class="welcome-invite">
-            <span class="line-1">Welcome to</span>
-            <span class="line-2">Pro Room's Application</span>
+{% block content %}
+<div class="container flex items-center justify-center" style="min-height: calc(100vh - 100px);">
+    <div class="glass-card p-4 animate-scale-up" style="max-width: 450px; width: 100%;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-white mb-2">Welcome Back</h2>
+            <p class="text-white-50">Please login to your account</p>
         </div>
-    </div>
-    <div class="login-right">
-        <p>Welcome back! <br /> Login to your account</p>
-        <span class="motivate"> Let's enter again , share the creativity's </span>
-        <form action="/login" method="post">
-            <!-- name="identifier" matches what app.py reads -->
-            <input type="text"     name="identifier" placeholder="Your username or email" required>
-            <input type="password" name="password"   placeholder="Your password" required>
 
-            <div class="form-footer">
-                <div class="remember-me">
-                    <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Remember me</label>
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label small">Username or Email</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text" name="identifier" class="form-control" placeholder="your_name@example.com"
+                        required>
                 </div>
-                <a href="#" class="forgot-password">Forgot password ?</a>
             </div>
 
-            <input type="submit" value="Login">
+            <div class="form-group">
+                <label class="form-label small">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-4 small">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="rememberMe">
+                    <label class="text-white-50" for="rememberMe">
+                        Remember me
+                    </label>
+                </div>
+                <a href="#" class="text-primary text-decoration-none">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full py-3 mb-4">
+                Login
+            </button>
         </form>
 
-        <div class="separator">
-            <hr> <span>OR</span>
-            <hr>
+        <div class="divider">
+            <span class="divider-text">OR</span>
         </div>
 
-        <div class="continue-google"><a style="text-decoration:none;" href="{{ url_for('google_login') }}" class="google-btn"> <img src="../static/images/google.png" alt="Google icon" width="25px"> Continue
-            with Google </a></div>
+        <div class="flex flex-col gap-3 mb-4">
+            <a href="{{ url_for('google_login') }}"
+                class="btn btn-outline-light flex items-center justify-center gap-2 py-3">
+                <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="20" alt="Google">
+                Continue with Google
+            </a>
+        </div>
 
-        <span class="signup-link">Don't have an account ? <a href="/signup">Sign up</a></span>
+        <div class="text-center text-white-50 small">
+            Don't have an account? <a href="{{ url_for('signup') }}"
+                class="text-primary text-decoration-none fw-bold">Sign up</a>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,46 +1,66 @@
-{% block header %}
-<!-- Flash message container -->
-<div id="flash-messages" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash-box {{ category }}">
-            {{ message }}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-messages-container">
+    {% for category, message in messages %}
+    {% set alert_class = 'primary' %}
+    {% if category == 'error' %}{% set alert_class = 'danger' %}{% endif %}
+    {% if category == 'success' %}{% set alert_class = 'success' %}{% endif %}
+    {% if category == 'info' %}{% set alert_class = 'info' %}{% endif %}
+    {% if category == 'warning' %}{% set alert_class = 'warning' %}{% endif %}
+
+    <div class="alert alert-{{ alert_class }} alert-dismissible glass-card border-0 animate-fade-in mb-2 shadow"
+        role="alert">
+        <div class="d-flex align-items-center gap-2">
+            {% if category == 'success' %}
+            <i class="fas fa-check-circle text-success"></i>
+            {% elif category == 'error' %}
+            <i class="fas fa-exclamation-circle text-danger"></i>
+            {% elif category == 'warning' %}
+            <i class="fas fa-exclamation-triangle text-warning"></i>
+            {% else %}
+            <i class="fas fa-info-circle text-info"></i>
+            {% endif %}
+            <span>{{ message }}</span>
         </div>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
+        <!-- Pure CSS/JS dismiss — no Bootstrap JS needed -->
+        <button type="button" class="alert-dismiss-btn" aria-label="Close" onclick="dismissAlert(this)">×</button>
+    </div>
+    {% endfor %}
 </div>
+{% endif %}
+{% endwith %}
 
 <style>
-    .flash-box {
-        color: white;
-        padding: 15px 25px;
-        margin-bottom: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        font-family: Arial, sans-serif;
-        text-align: center;
-        opacity: 1;
-        transition: opacity 0.5s ease-out;
-    }
-    .flash-box.error {
-        background-color: #f44336; /* Red for error */
-    }
-    .flash-box.success {
-        background-color: #4CAF50; /* Green for success */
+    .flash-messages-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        min-width: 320px;
+        max-width: 520px;
+        width: 90%;
     }
 </style>
 
 <script>
-    window.onload = function() {
-        const flashBox = document.querySelectorAll('.flash-box');
-        flashBox.forEach(function(box) {
-            setTimeout(function() {
-                box.style.opacity = '0';
-                setTimeout(() => box.remove(), 500);
-            }, 3000);
-        });
-    };
-    </script>
-{% endblock %}
+    /* Pure vanilla JS alert dismiss — no Bootstrap dependency */
+
+    function dismissAlert(btn) {
+        const alert = btn.closest('.alert');
+        if (!alert) return;
+        alert.classList.add('alert-hiding');
+        /* Remove from DOM after animation completes */
+        alert.addEventListener('animationend', () => alert.remove(), { once: true });
+    }
+
+    /* Auto-dismiss all flash alerts after 4 seconds */
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.querySelectorAll('.flash-messages-container .alert').forEach(alert => {
+                alert.classList.add('alert-hiding');
+                alert.addEventListener('animationend', () => alert.remove(), { once: true });
+            });
+        }, 4000);
+    });
+</script>
