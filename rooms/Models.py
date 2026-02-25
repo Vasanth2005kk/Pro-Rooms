@@ -57,8 +57,9 @@ class User(db.Model, UserMixin):
     github     = db.Column(db.String(255), nullable=True)
     linkedin   = db.Column(db.String(255), nullable=True)
     
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    last_login = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
+    created_at  = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    last_login  = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)
+    is_verified = db.Column(db.Boolean, default=False)
 
     # Relationships
     messages = db.relationship('Message', backref='author', lazy=True)

@@ -1,66 +1,73 @@
 {% extends "base.html" %}
 
+{% block main_class %}auth-page-main{% endblock %}
+
+{% block head %}
+<!-- Auth-specific custom CSS (split-screen layout, brand colors) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container flex items-center justify-center" style="min-height: calc(100vh - 100px);">
-    <div class="glass-card p-4 animate-scale-up" style="max-width: 450px; width: 100%;">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold text-white mb-2">Welcome Back</h2>
-            <p class="text-white-50">Please login to your account</p>
-        </div>
+<div class="auth-container">
 
-        <form action="{{ url_for('login') }}" method="POST">
-            <div class="form-group">
-                <label class="form-label small">Username or Email</label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-user"></i>
-                    </span>
-                    <input type="text" name="identifier" class="form-control" placeholder="your_name@example.com"
-                        required>
-                </div>
+    <!-- Left Panel -->
+    <div class="auth-left">
+        <div class="auth-left-content">
+            <div class="auth-welcome-text">
+                <span class="welcome-line-1">Welcome to</span>
+                <span class="welcome-line-2">Pro Room's Application</span>
             </div>
-
-            <div class="form-group">
-                <label class="form-label small">Password</label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-lock"></i>
-                    </span>
-                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-4 small">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="rememberMe">
-                    <label class="text-white-50" for="rememberMe">
-                        Remember me
-                    </label>
-                </div>
-                <a href="#" class="text-primary text-decoration-none">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-full py-3 mb-4">
-                Login
-            </button>
-        </form>
-
-        <div class="divider">
-            <span class="divider-text">OR</span>
-        </div>
-
-        <div class="flex flex-col gap-3 mb-4">
-            <a href="{{ url_for('google_login') }}"
-                class="btn btn-outline-light flex items-center justify-center gap-2 py-3">
-                <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="20" alt="Google">
-                Continue with Google
-            </a>
-        </div>
-
-        <div class="text-center text-white-50 small">
-            Don't have an account? <a href="{{ url_for('signup') }}"
-                class="text-primary text-decoration-none fw-bold">Sign up</a>
         </div>
     </div>
+
+    <!-- Right Panel -->
+    <div class="auth-right">
+        <div class="auth-form-wrapper">
+            <div class="auth-heading">
+                <h2>Welcome back!</h2>
+                <h3>Login to your account</h3>
+                <p class="auth-subtitle">Let's enter again, share the creativity's</p>
+            </div>
+
+            <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+                <div class="auth-input-group">
+                    <input type="text" name="identifier" id="login-identifier" placeholder="Username or Email" required
+                        autocomplete=" ">
+                </div>
+
+                <div class="auth-input-group">
+                    <input type="password" name="password" id="login-password" placeholder="Password" required
+                        autocomplete="current-password">
+                </div>
+
+                <div class="auth-form-footer">
+                    <div class="auth-remember">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+                    <a href="#" class="auth-forgot">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="auth-btn-primary" id="login-submit-btn">
+                    Login
+                </button>
+            </form>
+
+            <div class="auth-separator">
+                <span>OR</span>
+            </div>
+
+            <a href="{{ url_for('google_login') }}" class="auth-google-btn" id="google-login-btn">
+                <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="20" height="20"
+                    alt="Google Logo">
+                Continue with Google
+            </a>
+
+            <p class="auth-switch-link">
+                Don't have an account? <a href="{{ url_for('signup') }}" id="goto-signup">Sign up</a>
+            </p>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

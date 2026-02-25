@@ -22,8 +22,8 @@
             {% endif %}
             <span>{{ message }}</span>
         </div>
-        <!-- Pure CSS/JS dismiss — no Bootstrap JS needed -->
-        <button type="button" class="alert-dismiss-btn" aria-label="Close" onclick="dismissAlert(this)">×</button>
+        <!-- Bootstrap 5 dismiss button -->
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
 </div>
@@ -41,25 +41,39 @@
         max-width: 520px;
         width: 90%;
     }
+
+    /* Fade-out animation for Bootstrap alert dismiss */
+    .alert.alert-hiding {
+        animation: alertFadeOut 0.35s ease-out forwards;
+    }
+
+    @keyframes alertFadeOut {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 120px;
+            margin-bottom: 0.5rem;
+        }
+
+        to {
+            opacity: 0;
+            transform: translateY(-8px);
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
+            border-width: 0;
+        }
+    }
 </style>
 
 <script>
-    /* Pure vanilla JS alert dismiss — no Bootstrap dependency */
-
-    function dismissAlert(btn) {
-        const alert = btn.closest('.alert');
-        if (!alert) return;
-        alert.classList.add('alert-hiding');
-        /* Remove from DOM after animation completes */
-        alert.addEventListener('animationend', () => alert.remove(), { once: true });
-    }
-
     /* Auto-dismiss all flash alerts after 4 seconds */
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
-            document.querySelectorAll('.flash-messages-container .alert').forEach(alert => {
-                alert.classList.add('alert-hiding');
-                alert.addEventListener('animationend', () => alert.remove(), { once: true });
+            document.querySelectorAll('.flash-messages-container .alert').forEach(alertEl => {
+                const bsAlert = bootstrap.Alert.getInstance(alertEl) || new bootstrap.Alert(alertEl);
+                bsAlert.close();
             });
         }, 4000);
     });

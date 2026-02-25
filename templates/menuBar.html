@@ -1,44 +1,31 @@
-{% block connections %}
-<!-- Extra head content (CSS, meta, etc.) -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/menuBar.css') }}">
-{% endblock %}
-
-<div class="container" onclick="toggleNav(this)">
-  <div class="bar1"></div>
-  <div class="bar2"></div>
-  <div class="bar3"></div>
+<!-- Bootstrap 5 Offcanvas Sidenav -->
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mySidenav" aria-labelledby="mySidenavLabel">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <h5 class="offcanvas-title gradient-text" id="mySidenavLabel">Pro Rooms</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="nav flex-column gap-3 fs-5">
+      <a class="nav-link text-white-50 p-2 border-bottom border-dark" href="#">
+        <i class="fas fa-info-circle me-3 text-primary"></i>About
+      </a>
+      <a class="nav-link text-white-50 p-2 border-bottom border-dark" href="#">
+        <i class="fas fa-concierge-bell me-3 text-primary"></i>Services
+      </a>
+      <a class="nav-link text-white-50 p-2 border-bottom border-dark" href="#">
+        <i class="fas fa-users me-3 text-primary"></i>Clients
+      </a>
+      <a class="nav-link text-white-50 p-2 border-bottom border-dark" href="#">
+        <i class="fas fa-envelope me-3 text-primary"></i>Contact
+      </a>
+    </nav>
+  </div>
 </div>
 
-<div id="mySidenav" class="sidenav">
-  <a href="#">About</a>
-  <a href="#">Services</a>
-  <a href="#">Clients</a>
-  <a href="#">Contact</a>
-</div>
-
-<script>
-function toggleNav(x) {
-  x.classList.toggle("change");
-  const sidenav = document.getElementById("mySidenav");
-  if (sidenav.style.width === "350px") {
-    sidenav.style.width = "0";
-  } else {
-    sidenav.style.width = "350px";
+<style>
+  .nav-link:hover {
+    color: var(--primary) !important;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
   }
-}
-
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-  document.querySelector(".container").classList.remove("change");
-}
-
-// Optional: close when clicking outside
-window.addEventListener("click", function(e) {
-  const sidenav = document.getElementById("mySidenav");
-  const container = document.querySelector(".container");
-  if (!sidenav.contains(e.target) && !container.contains(e.target)) {
-    sidenav.style.width = "0";
-    container.classList.remove("change");
-  }
-});
-</script>
+</style>

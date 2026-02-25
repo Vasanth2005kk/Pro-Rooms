@@ -1,14 +1,16 @@
 /*
  * Pro-Rooms — Chat Page Styles
- * Extracted from chat.html inline <style> block.
- * Pure vanilla CSS — no Bootstrap dependency.
+ * Bootstrap 5 handles: d-flex, d-none, d-md-flex, flex-grow-1,
+ * align-items-center, justify-content-between, gap-*, btn, badge, spinner.
+ * This file keeps ONLY layout geometry, message bubbles, and
+ * styles that Bootstrap cannot provide.
  */
 
 /* ─── Outer wrapper ─────────────────────────────────────────────── */
 .chat-wrapper {
     display: flex;
     height: calc(100vh - 70px);
-    /* full viewport minus navbar height */
+    /* full viewport minus navbar */
     overflow: hidden;
     background: rgba(0, 0, 0, 0.2);
 }
@@ -19,13 +21,6 @@
     background: rgba(255, 255, 255, 0.05);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
-}
-
-/* Mobile: sidebar hidden by default (d-md-flex handles this) */
-@media (max-width: 767px) {
-    .chat-sidebar {
-        display: none;
-    }
 }
 
 /* ─── Main chat area ────────────────────────────────────────────── */
@@ -59,7 +54,7 @@
     flex-shrink: 0;
 }
 
-/* Chat text input */
+/* Chat text input override (dark background) */
 .chat-input {
     background: #2a3942 !important;
     border: none !important;
@@ -81,7 +76,6 @@
     box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
 }
 
-/* Incoming message (left-aligned) */
 .message-in {
     align-self: flex-start;
     background: #202c33;
@@ -89,7 +83,6 @@
     border-bottom-left-radius: 0;
 }
 
-/* Outgoing message (right-aligned) */
 .message-out {
     align-self: flex-end;
     background: #005c4b;
@@ -97,7 +90,14 @@
     border-bottom-right-radius: 0;
 }
 
-/* Message timestamp */
+.message-text {
+    color: #e9edef;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
 .message-meta {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
@@ -118,7 +118,7 @@
     background: #00d26a;
 }
 
-/* ─── Send button ───────────────────────────────────────────────── */
+/* ─── Send button (circular) ────────────────────────────────────── */
 .btn-send {
     border-radius: 50% !important;
     width: 45px !important;
@@ -137,4 +137,14 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+/* ─── Scrollbar for messages ────────────────────────────────────── */
+.messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: #374045;
+    border-radius: 3px;
 }

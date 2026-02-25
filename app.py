@@ -16,6 +16,7 @@ Routes:
 
 import hashlib
 import secrets
+import random
 
 import psycopg2
 import psycopg2.extras
@@ -86,6 +87,15 @@ def login():
 
         hashed_input = hashlib.sha256(password.encode()).hexdigest()
         if hashed_input == user.password:
+            if not user.is_verified:
+                flash("Please verify your email address first. 📧", "warning")
+                # Generate new OTP and redirect to verification
+                otp = str(random.randint(100000, 999999))
+                session['otp'] = otp
+                session['user_id_to_verify'] = user.id
+                print(f"DEBUG: New OTP for {user.email}: {otp}")
+                return redirect(url_for("verify_otp", email=user.email))
+            
             login_user(user)
             flash(f"Welcome back, {user.username or user.name} 👋", "success")
             return redirect(url_for("dashboard"))
@@ -127,17 +137,78 @@ def signup():
         new_user = User(
             username=username,
             email=email,
-            password=hashed
+            password=hashed,
+            is_verified=False
         )
         db.session.add(new_user)
         db.session.commit()
 
-        flash("Account created successfully ✅ Please log in.", "success")
-        return redirect(url_for("login"))
+        # Generate OTP
+        otp = str(random.randint(100000, 999999))
+        session['otp'] = otp
+        session['user_id_to_verify'] = new_user.id
+        
+        print(f"DEBUG: OTP for {email}: {otp}") # In production, send via email
+
+        flash("One-time password sent to your email! ✅", "success")
+        return redirect(url_for("verify_otp", email=email))
 
     username = request.args.get("username", "")
     email    = request.args.get("email",    "")
     return render_template("signup.html", username=username, email=email)
+
+
+@app.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp():
+    """Handle OTP verification."""
+    email = request.args.get("email")
+    user_id = session.get("user_id_to_verify")
+    
+    if not user_id:
+        flash("Session expired. Please log in or sign up again.", "error")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        # Combine OTP digits from form
+        otp_received = "".join([request.form.get(f"otp{i}", "") for i in range(1, 7)])
+        otp_stored = session.get("otp")
+
+        if otp_received == otp_stored:
+            user = User.query.get(user_id)
+            if user:
+                user.is_verified = True
+                db.session.commit()
+                login_user(user)
+                session.pop("otp", None)
+                session.pop("user_id_to_verify", None)
+                flash(f"Successfully verified! Welcome, {user.username} 🎉", "success")
+                return redirect(url_for("dashboard"))
+            else:
+                flash("User not found.", "error")
+                return redirect(url_for("signup"))
+        else:
+            flash("Invalid OTP code. Please try again. ❌", "error")
+            return redirect(url_for("verify_otp", email=email))
+
+    return render_template("otp_verify.html", email=email)
+
+
+@app.route("/resend_otp", methods=["POST"])
+def resend_otp():
+    """Handle OTP resending."""
+    email = request.args.get("email")
+    user_id = session.get("user_id_to_verify")
+
+    if not user_id:
+        flash("Session expired.", "error")
+        return redirect(url_for("login"))
+
+    otp = str(random.randint(100000, 999999))
+    session['otp'] = otp
+    print(f"DEBUG: Resent OTP for {email}: {otp}")
+    
+    flash("New OTP has been sent! 📧", "success")
+    return redirect(url_for("verify_otp", email=email))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
