@@ -37,12 +37,6 @@
    2. BASE / RESET
    ══════════════════════════════════════════════════════════════════ */
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
 html,
 body {
     margin: 0;
@@ -114,19 +108,6 @@ body {
     color: white;
 }
 
-/* Override Bootstrap input-group */
-.input-group-text {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    border-right: none;
-    color: var(--text-muted);
-    border-radius: 10px 0 0 10px;
-}
-
-.input-group .form-control {
-    border-radius: 0 10px 10px 0 !important;
-}
-
 /* ── Bootstrap Btn Overrides ──────────────────────────────────────── */
 .btn {
     border-radius: 10px;
@@ -170,7 +151,7 @@ body {
 }
 
 .btn-success:hover {
-    background: #0ca678;
+    background: var(--primary-alt);
     color: white;
 }
 
@@ -252,8 +233,8 @@ body {
 }
 
 .badge.bg-secondary {
-    background-color: rgba(99, 102, 241, 0.2) !important;
-    color: #a5b4fc !important;
+    background-color: rgba(62, 80, 91, 0.3) !important;
+    color: #9AA4AD !important;
 }
 
 /* ── Bootstrap Alert Overrides ───────────────────────────────────── */
@@ -541,35 +522,4 @@ body {
 
 .room-name {
     font-weight: 700;
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   11. DIVIDER  (Custom OR-style divider — Bootstrap uses <hr> only)
-   ══════════════════════════════════════════════════════════════════ */
-
-.divider {
-    position: relative;
-    text-align: center;
-    margin: 2rem 0;
-}
-
-.divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: var(--glass-border);
-    z-index: 1;
-}
-
-.divider-text {
-    position: relative;
-    background: #10191E;
-    padding: 0 1rem;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    z-index: 2;
-    text-transform: uppercase;
 }
