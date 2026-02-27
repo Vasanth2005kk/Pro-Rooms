@@ -292,13 +292,20 @@ def dashboard():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
-    """GitHub-style profile editing."""
     if request.method == "POST":
+        current_user.name     = request.form.get("name",     "")
         current_user.username = request.form.get("username", current_user.username)
         current_user.email    = request.form.get("email",    current_user.email)
         current_user.bio      = request.form.get("bio",      "")
-        current_user.github   = request.form.get("github",   "")
-        current_user.linkedin = request.form.get("linkedin", "")
+        current_user.link1 = request.form.get("link1", "")
+        current_user.link2 = request.form.get("link2", "")
+        current_user.link3 = request.form.get("link3", "")
+        current_user.link4 = request.form.get("link4", "")
+        
+        current_user.company         = request.form.get("company", "")
+        current_user.job_title       = request.form.get("job_title", "")
+        current_user.location        = request.form.get("location", "")
+        current_user.company_website = request.form.get("company_website", "")
         
         picture_url = request.form.get("picture_url", "")
         if picture_url:
@@ -308,7 +315,17 @@ def profile():
         flash("Profile updated successfully! ✨", "success")
         return redirect(url_for("profile"))
 
-    return render_template("profile.html")
+    # Fetch rooms created by the user for the "Repositories" equivalent section
+    user_rooms = Room.query.filter_by(creator_id=current_user.id).order_by(Room.created_at.desc()).all()
+    
+    # Mock some stats for the GitHub-style look
+    stats = {
+        "rooms_count": len(user_rooms),
+        "messages_count": Message.query.filter_by(user_id=current_user.id).count(),
+        "followers": random.randint(50, 200) # Mock data
+    }
+
+    return render_template("profile.html", rooms=user_rooms, stats=stats)
 
 
 # ─ Chat ──────────────────────────────────────────────────────────────────────

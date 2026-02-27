@@ -1,49 +1,256 @@
 /*
  * Pro-Rooms — Profile Page Styles
- * Extracted from profile.html inline <style> block.
- * Pure vanilla CSS — no Bootstrap dependency.
+ * Refined GitHub-style Layout with Glassmorphism
  */
 
-/* ─── Form container ────────────────────────────────────────────── */
-.profile-form-wrapper {
-    width: 100%;
-    max-width: 800px;
+.profile-container {
+    padding-top: 2rem;
 }
 
-/* ─── Profile image ─────────────────────────────────────────────── */
+/* ─── Sidebar ──────────────────────────────────────────────────── */
+
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    border-right: 2px solid var(--glass-border);
+    overflow: hidden;
+}
+
 .profile-img-large {
-    width: 100px;
-    height: 100px;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--glass-border);
+    background: var(--bg-card);
     display: block;
+    margin-bottom: 1.5rem;
 }
 
-/* ─── Image container with hover overlay ───────────────────────── */
 .profile-img-container {
     position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     cursor: pointer;
-    flex-shrink: 0;
+
 }
 
-.profile-img-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
+.profile-img-large:hover {
+    transition: var(--transition);
+    opacity: 0.5;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+
+}
+
+.status-indicator {
     display: flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    color: white;
-    font-size: 1.25rem;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    /* margin-top: 0.5rem; */
 }
 
-.profile-img-container:hover .profile-img-overlay {
+.status-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.stats-row {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+.stat-item {
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    color: var(--primary);
+}
+
+.stat-count {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.skill-tag {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.user-links {
+    transition: var(--transition);
+    opacity: 0.8;
+}
+
+.user-links:hover {
+    color: var(--primary) !important;
     opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ─── Main Content (Tabs/Repos) ────────────────────────────────── */
+
+.profile-nav-tabs {
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.nav-tab-item {
+    padding: 0.75rem 1rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.nav-tab-item:hover {
+    color: var(--text-main);
+}
+
+.nav-tab-item.active {
+    color: var(--text-main);
+}
+
+.nav-tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+}
+
+.tab-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+}
+
+.repo-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.repo-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.repo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.repo-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.repo-title:hover {
+    text-decoration: underline;
+}
+
+.repo-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    max-width: 80%;
+}
+
+.repo-meta {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.meta-lang-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* ─── Mode Toggling ────────────────────────────────────────────── */
+
+.view-mode .form-control,
+.view-mode .form-select,
+.view-mode textarea {
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    border-left: 0;
+    padding-left: 0;
+    pointer-events: none;
+    color: var(--text-main) !important;
+    resize: none;
+}
+
+.view-mode .form-label {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.view-mode .edit-only {
+    display: none !important;
+}
+
+.edit-mode .view-only {
+    display: none !important;
+}
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+
+@media (max-width: 991.98px) {
+
+    .profile-img-container,
+    .profile-img-large {
+        width: 120px;
+        height: 120px;
+        margin-left: 0;
+    }
+
+    .profile-sidebar {
+        margin-bottom: 2rem;
+    }
 }

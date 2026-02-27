@@ -2,89 +2,234 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<style>
+    .modal-section-title {
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 0.5rem;
+        color: var(--text-main);
+        font-weight: 600;
+    }
+
+    .input-group-text {
+        min-width: 45px;
+        justify-content: center;
+        background-color: #10191E !important;
+        color: #fff !important;
+        border: 1px solid #3E505B !important;
+        border-right: 0 !important;
+        border-radius: 10px 0 0 10px !important;
+        transition: var(--transition);
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: var(--primary) !important;
+        color: var(--primary) !important;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 10px 10px 0 !important;
+    }
+
+    /* Premium style for File Input button */
+    input[type="file"]::file-selector-button {
+        background-color: var(--primary);
+        color: black !important;
+        border: none;
+        padding: 0.2rem 0.8rem;
+        margin: 0.3rem 0.8rem 0.3rem 0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    /* Default Bio textarea size */
+    textarea[name="bio"] {
+        min-height: 120px;
+        resize: none;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-center">
-        <div class="profile-form-wrapper w-100">
-            <div class="glass-card p-4 animate-fade-in">
-                <!-- Profile Header -->
-                <div class="d-flex align-items-center mb-4">
-                    <div class="profile-img-container me-3">
-                        <img src="{{ current_user.picture if current_user.picture else url_for('static', filename='img/default-avatar.png') }}"
-                            alt="Profile" id="profile-preview" class="profile-img-large">
-                        <div class="profile-img-overlay">
-                            <i class="fas fa-camera"></i>
-                        </div>
+<div class="container-fluid profile-container px-md-5 mt-4">
+    <div class="row g-md-5 d-flex justify-content-center">
+        <!-- ─── Sidebar ────────────────────────────────────────────── -->
+        <div class="col-lg-4 col-md-4 profile-sidebar" style="margin-top: 10px; overflow: hidden;">
+            <div class="profile-img-container mb-3 ">
+                <img src="{{ current_user.picture if current_user.picture else url_for('static', filename='img/default-avatar.png') }}"
+                    alt="Profile" id="profile-preview" class="profile-img-large">
+                <div class="mb-4 d-flex flex-column">
+                    <h1 class="h3 mb-0 text-white fw-bold">{{ current_user.name or current_user.username or 'Anonymous'
+                        }}</h1>
+                    <p class="text-muted fs-5 mb-1"><span style="color: var(--primary);">@</span> {{
+                        current_user.username or 'no_username' }}</p>
+                    <p class="text-white-50 small mb-3">ID: PRO_{{ current_user.id + 1000 }}</p>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span class="text-white">Online</span>
                     </div>
-                    <div>
-                        <h2 class="mb-0">{{ current_user.username or current_user.name or 'Anonymous' }}</h2>
-                        <p class="text-white-50 mb-0">{{ current_user.email }}</p>
+                    <div class="stats-row">
+                        <a href="#" class="stat-item text-decoration-none">
+                            <i class="fas fa-users me-1"></i> <span class="stat-count text-white">{{ stats.followers
+                                }}</span>
+                            <span class="text-muted">followers</span>
+                        </a>
+                        <span class="text-muted mx-1">·</span>
+                        <a href="#" class="stat-item text-decoration-none">
+                            <span class="stat-count text-white">10</span> <span class="text-muted">following</span>
+                        </a>
                     </div>
                 </div>
+            </div>
 
-                <!-- Profile Form -->
-                <form method="POST" action="{{ url_for('profile') }}">
-                    <div class="row g-3">
-                        <!-- Basic Info -->
-                        <div class="col-md-6">
-                            <label class="form-label">Username</label>
-                            <input type="text" name="username" class="form-control"
-                                value="{{ current_user.username or '' }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" value="{{ current_user.email }}">
-                        </div>
+            {% if current_user.bio %}
+            <p class="mb-3 text-white p-3" style="font-size: 1.4rem;">{{ current_user.bio }}</p>
+            {% endif %}
 
-                        <!-- Bio -->
-                        <div class="col-12">
-                            <label class="form-label">Bio</label>
-                            <textarea name="bio" class="form-control" rows="3"
-                                placeholder="Tell us about yourself...">{{ current_user.bio }}</textarea>
-                        </div>
+            <div class="user-meta list-unstyled small mb-4 p-3" style="font-size: 1.2rem;">
+                {% if current_user.company %}
+                <div class="mb-2 text-white">
+                    <i class="fas fa-building me-2 text-muted"></i> {{ current_user.job_title if current_user.job_title
+                    else '' }} <span style="color: var(--primary);font-size: 1.5rem;">@</span> {{
+                    current_user.company }}
+                </div>
+                {% endif %}
+                {% if current_user.location %}
+                <div class="mb-2 text-white">
+                    <i class="fas fa-map-marker-alt me-2 text-muted"></i> {{ current_user.location }}
+                </div>
+                {% endif %}
+                {% if current_user.company_website %}
+                <div class="mb-2">
+                    <i class="fas fa-globe me-2 text-muted"></i> <a
+                        href="{{ current_user.company_website if 'http' in current_user.company_website else 'https://' + current_user.company_website }}"
+                        class="text-decoration-none text-white">{{ current_user.company_website }}</a>
+                </div>
+                {% endif %}
 
-                        <!-- Profile Picture URL -->
-                        <div class="col-12">
-                            <label class="form-label">Profile Picture URL</label>
-                            <input type="url" name="picture_url" class="form-control" id="picture-url-input"
-                                placeholder="https://example.com/photo.jpg" value="{{ current_user.picture }}">
-                        </div>
+                <div class="mt-3 d-flex flex-column gap-2">
+                    {% for link in [current_user.link1, current_user.link2, current_user.link3, current_user.link4] %}
+                    {% if link %}
+                    {% set l = link.lower() %}
+                    {% set display_url = link if 'http' in l else 'https://' + link %}
+                    {% set parts = link.rstrip('/').split('/') %}
+                    {% set username = parts[-1] %}
+                    <a href="{{ display_url }}"
+                        class="text-white user-links text-decoration-none d-flex align-items-center gap-2"
+                        target="_blank">
+                        {% if 'github.com' in l %}<i class="fab fa-github fa-lg"></i> <span class="small ">{{
+                            username }}</span>
+                        {% elif 'linkedin.com' in l %}<i class="fab fa-linkedin fa-lg"></i> <span class="small ">{{
+                            username }}</span>
+                        {% elif 'instagram.com' in l %}<i class="fab fa-instagram fa-lg"></i> <span class="small ">{{
+                            username }}</span>
+                        {% elif 'facebook.com' in l %}<i class="fab fa-facebook fa-lg"></i> <span class="small ">{{
+                            username }}</span>
+                        {% elif 'twitter.com' in l or 'x.com' in l %}<i class="fab fa-x-twitter fa-lg"></i> <span
+                            class="small ">{{ username }}</span>
+                        {% else %}<i class="fas fa-link fa-lg"></i> <span class="small ">{{ link
+                            }}</span>{%
+                        endif %}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
 
-                        <!-- Social Links -->
-                        <div class="col-md-6">
-                            <label class="form-label">
-                                <i class="fab fa-github me-1"></i> GitHub
-                            </label>
-                            <input type="text" name="github" class="form-control" placeholder="GitHub Username"
-                                value="{{ current_user.github }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">
-                                <i class="fab fa-linkedin me-1"></i> LinkedIn
-                            </label>
-                            <input type="text" name="linkedin" class="form-control" placeholder="LinkedIn Profile"
-                                value="{{ current_user.linkedin }}">
-                        </div>
+                <div class="mt-3 text-white-50 small">
+                    <i class="far fa-calendar-alt me-2 text-muted"></i> Joined {{ current_user.created_at.strftime('%B
+                    %Y') }}
+                </div>
+            </div>
 
-                        <!-- Submit -->
-                        <div class="col-12 mt-4 d-grid">
-                            <button type="submit" class="btn btn-primary py-3">
-                                <i class="fas fa-save me-2"></i> Save Changes
-                            </button>
+            <button class="btn btn-outline-light w-100 mb-3 py-2 fw-normal" data-bs-toggle="modal"
+                data-bs-target="#editProfileModal">
+                Edit profile
+            </button>
+        </div>
+
+        <!-- ─── Main Content ───────────────────────────────────────── -->
+        <div class="col-lg-7 col-md-8 pt-2" style="margin-top: 10px; overflow-x: hidden; position: relative;">
+            <nav class="profile-nav-tabs">
+                <a href="#" class="nav-tab-item active">
+                    <i class="fa-solid fa-unlock"></i> Public <span class="tab-badge">{{ rooms|length }}</span>
+                </a>
+                <a href="#" class="nav-tab-item">
+                    <i class="fa-solid fa-lock"></i> Private <span class="tab-badge">0</span>
+                </a>
+                <a href="#" class="nav-tab-item">
+                    <i class="fa-solid fa-plug-circle-check"></i> Joined <span class="tab-badge">0</span>
+                </a>
+                <a href="#" class="nav-tab-item">
+                    <i class="fas fa-star"></i> Stars <span class="tab-badge">0</span>
+                </a>
+
+                <div class="d-flex justify-content-end align-items-center"
+                    style="position: absolute; top: 5%; right: 0;">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal"> <i
+                            class="fas fa-plus me-1"></i>New Room</button>
+                </div>
+            </nav>
+
+            <div class="tab-content pt-3">
+                <div class="repo-list">
+                    {% if rooms %}
+                    {% for room in rooms %}
+                    <div class="repo-item animate-fade-in py-4">
+                        <div class="repo-header mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ url_for('chat_room', room_id=room.id) }}"
+                                    class="repo-title h5 mb-0 text-decoration-none">
+                                    {{ room.name }}
+                                </a>
+                                <span class="badge border border-secondary text-muted small fw-normal">{{ room.privacy
+                                    }}</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-dark border border-secondary px-3">
+                                    <i class="far fa-star me-1"></i> Star
+                                </button>
+                            </div>
+                        </div>
+                        <p class="repo-description text-muted mb-3">
+                            {{ room.description or 'No description provided for this room. This space is usually for a
+                            quick overview of what the group is about.' }}
+                        </p>
+                        <div class="repo-meta d-flex gap-3 small text-muted">
+                            <div class="meta-item d-flex align-items-center gap-1">
+                                <span class="meta-lang-dot" style="background-color: var(--primary);"></span>
+                                <span>{{ room.category or 'General' }}</span>
+                            </div>
+                            <div class="meta-item d-flex align-items-center gap-1">
+                                <i class="far fa-clock"></i> Updated {{ room.created_at.strftime('%b %d') }}
+                            </div>
+                            {% if room.topic %}
+                            <div class="meta-item d-flex align-items-center gap-1">
+                                <i class="fas fa-tag"></i> {{ room.topic }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
-                </form>
+                    {% endfor %}
+                    {% else %}
+                    <div class="glass-card p-5 text-center border border-secondary">
+                        <i class="fas fa-ghost fa-3x mb-3 text-muted"></i>
+                        <h5 class="text-white">No rooms yet</h5>
+                        <p class="text-muted">You haven't created any rooms. Why not start now?</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal"> <i
+                                class="fas fa-plus me-1"></i>New Room</button>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+<!-- ─── Create Room Modal ─────────────────────────────────────── -->
+{% include 'modals/create_room.html' %}
 
-<script>
-    document.getElementById('picture-url-input').addEventListener('input', function (e) {
-        const preview = document.getElementById('profile-preview');
-        if (e.target.value) preview.src = e.target.value;
-    });
-</script>
+<!-- ─── Edit Profile Modal ─────────────────────────────────────── -->
+{% include 'modals/edit_profile.html' %}
+
 {% endblock %}

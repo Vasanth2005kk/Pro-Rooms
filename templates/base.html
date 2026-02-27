@@ -76,7 +76,7 @@
     </nav>
     {% endif %}
 
-    <main class="{% block main_class %}container py-4{% endblock %}">
+    <main class="{% block main_class %}{% endblock %}">
         {% include 'flash_massage.html' %}
         {% block content %}{% endblock %}
     </main>

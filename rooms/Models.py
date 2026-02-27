@@ -54,8 +54,18 @@ class User(db.Model, UserMixin):
     # Common Profile Fields
     picture    = db.Column(db.String(500), nullable=True)
     bio        = db.Column(db.String(500), nullable=True)
-    github     = db.Column(db.String(255), nullable=True)
-    linkedin   = db.Column(db.String(255), nullable=True)
+    
+    # Generic Social Links
+    link1      = db.Column(db.String(500), nullable=True)
+    link2      = db.Column(db.String(500), nullable=True)
+    link3      = db.Column(db.String(500), nullable=True)
+    link4      = db.Column(db.String(500), nullable=True)
+    
+    # Corporate Profile Fields
+    company         = db.Column(db.String(255), nullable=True)
+    job_title       = db.Column(db.String(255), nullable=True)
+    location        = db.Column(db.String(255), nullable=True)
+    company_website = db.Column(db.String(255), nullable=True)
     
     created_at  = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     last_login  = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)

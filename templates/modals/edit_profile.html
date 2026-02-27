@@ -1,0 +1,130 @@
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-secondary shadow-lg">
+            <div class="modal-header border-secondary d-flex align-items-center justify-content-between">
+                <h5 class="modal-title text-white mb-0"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" form="profile-form" class="btn btn-primary btn-sm px-4">Save</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        style="margin: 0;"></button>
+                </div>
+            </div>
+            <div class="modal-body bg-dark">
+                <form id="profile-form" method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-md-5">
+                            <label class="form-label text-muted">Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-id-card"></i></span>
+                                <input type="text" name="name" class="form-control"
+                                    value="{{ current_user.name or '' }}" placeholder="Your Name">
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 mt-3">
+                            <label class="form-label text-muted">Profile Picture</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-image"></i></span>
+                                <input type="file" name="picture_url" class="form-control"
+                                    placeholder="https://example.com/photo.jpg" value="{{ current_user.picture }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 mt-3">
+                            <label class="form-label text-muted">Bio</label>
+                            <textarea name="bio" class="form-control" rows="3"
+                                placeholder="Tell us about yourself...">{{ current_user.bio }}</textarea>
+                        </div>
+
+                        <div class="col-md-10 mt-3">
+                            <h6 class="modal-section-title">Corporate Profile</h6>
+                        </div>
+
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Company</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-building"></i></span>
+                                <input type="text" name="company" class="form-control"
+                                    value="{{ current_user.company or '' }}" placeholder="Company Name">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Job Title</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-briefcase"></i></span>
+                                <input type="text" name="job_title" class="form-control"
+                                    value="{{ current_user.job_title or '' }}" placeholder="e.g. Lead Developer">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Location</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" name="location" class="form-control"
+                                    value="{{ current_user.location or '' }}" placeholder="e.g. London, UK">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Website</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-globe"></i></span>
+                                <input type="text" name="company_website" class="form-control"
+                                    value="{{ current_user.company_website or '' }}" placeholder="https://example.com">
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 mt-3">
+                            <h6 class="modal-section-title">Social Accounts </h6>
+                        </div>
+
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Link 1</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-link"></i></span>
+                                <input type="text" name="link1" class="form-control" placeholder="https://..."
+                                    value="{{ current_user.link1 or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Link 2</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-link"></i></span>
+                                <input type="text" name="link2" class="form-control" placeholder="https://..."
+                                    value="{{ current_user.link2 or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Link 3</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-link"></i></span>
+                                <input type="text" name="link3" class="form-control" placeholder="https://..."
+                                    value="{{ current_user.link3 or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Link 4</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-link"></i></span>
+                                <input type="text" name="link4" class="form-control" placeholder="https://..."
+                                    value="{{ current_user.link4 or '' }}">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

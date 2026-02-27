@@ -1,0 +1,63 @@
+<!-- Create Room Modal (Bootstrap 5) -->
+<div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content glass-card border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-white" id="createRoomModalLabel">Create New Community</h5>
+                <button type="button" class="modal-close-btn ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body pt-2">
+                <form id="createRoomForm">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Room Title</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Next.js Masters"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="Coding">Coding</option>
+                                <option value="Business">Business</option>
+                                <option value="Design">Design</option>
+                                <option value="Student">Student</option>
+                                <option value="Networking">Networking</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Topic</label>
+                            <input type="text" name="topic" class="form-control" placeholder="e.g. Frontend">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Privacy</label>
+                            <select name="privacy" id="privacySelect" class="form-select">
+                                <option value="Public">Public (Anyone can join)</option>
+                                <option value="Private">Private (Password required)</option>
+                            </select>
+                        </div>
+                        <!-- Hidden password field, shown when Private is selected -->
+                        <div class="col-md-6 d-none" id="passField">
+                            <label class="form-label">6-Digit Password</label>
+                            <input type="text" name="password" class="form-control" placeholder="123456" maxlength="6"
+                                pattern="\d{6}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">WhatsApp Link (Optional)</label>
+                            <input type="url" name="whatsapp_link" class="form-control"
+                                placeholder="https://chat.whatsapp.com/...">
+                        </div>
+                    </div>
+                    <div class="mt-4 text-end">
+                        <button type="submit" class="btn btn-primary px-4">Create Room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
