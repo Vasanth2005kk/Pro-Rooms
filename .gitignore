@@ -209,3 +209,6 @@ __marimo__/
 # files
 try.py
 checking.py
+
+!userimages/default-avatar.png
+userimages/*

@@ -17,6 +17,7 @@ Routes:
 import hashlib
 import secrets
 import random
+import os
 
 import psycopg2
 import psycopg2.extras
@@ -25,7 +26,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from flask import (
     Flask, flash, jsonify, redirect,
-    render_template, request, session, url_for
+    render_template, request, session, url_for, abort
 )
 from flask_login import (
     LoginManager, login_user, logout_user, 
@@ -290,42 +291,88 @@ def dashboard():
 
 # ─ Profile ───────────────────────────────────────────────────────────────────
 @app.route("/profile", methods=["GET", "POST"])
-@login_required
-def profile():
+@app.route("/profile/<username>", methods=["GET", "POST"])
+def profile(username=None):
+    if not username:
+        if current_user.is_authenticated and current_user.username:
+            return redirect(url_for("profile", username=current_user.username))
+        elif current_user.is_authenticated:
+            # If user has no username yet, use current_user
+            user = current_user
+        else:
+            flash("Please log in to view your profile.", "info")
+            return redirect(url_for("login"))
+    else:
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            abort(404)
+
+    is_own_profile = current_user.is_authenticated and current_user.id == user.id
+
     if request.method == "POST":
-        current_user.name     = request.form.get("name",     "")
-        current_user.username = request.form.get("username", current_user.username)
-        current_user.email    = request.form.get("email",    current_user.email)
-        current_user.bio      = request.form.get("bio",      "")
-        current_user.link1 = request.form.get("link1", "")
-        current_user.link2 = request.form.get("link2", "")
-        current_user.link3 = request.form.get("link3", "")
-        current_user.link4 = request.form.get("link4", "")
+        if not is_own_profile:
+            abort(403)
+            
+        user.name     = request.form.get("name",     "")
+        new_username = request.form.get("username", user.username).strip()
         
-        current_user.company         = request.form.get("company", "")
-        current_user.job_title       = request.form.get("job_title", "")
-        current_user.location        = request.form.get("location", "")
-        current_user.company_website = request.form.get("company_website", "")
+        # Simple check for username uniqueness if changed
+        if new_username != user.username:
+            existing = User.query.filter_by(username=new_username).first()
+            if existing:
+                flash("Username already taken! ⚠️", "error")
+                return redirect(url_for("profile", username=user.username))
+            user.username = new_username
+
+        user.email    = request.form.get("email",    user.email)
+        user.bio      = request.form.get("bio",      "")
+        user.link1 = request.form.get("link1", "")
+        user.link2 = request.form.get("link2", "")
+        user.link3 = request.form.get("link3", "")
+        user.link4 = request.form.get("link4", "")
         
-        picture_url = request.form.get("picture_url", "")
-        if picture_url:
-            current_user.picture = picture_url
+        user.company         = request.form.get("company", "")
+        user.job_title       = request.form.get("job_title", "")
+        user.location        = request.form.get("location", "")
+        user.company_website = request.form.get("company_website", "")
+        
+        # Handle Profile Picture Upload
+        print(f"request.files: {request.files}")
+        if 'picture_url' in request.files:
+            file = request.files['picture_url']
+            if file and file.filename != '':
+                ext = os.path.splitext(file.filename)[1].lower()
+                if ext in ['.jpg', '.jpeg', '.png', '.gif']:
+                    filename = f"{secrets.token_hex(8)}{ext}"
+                    upload_dir = os.path.join(app.root_path, 'static', 'images', 'userimages')
+                    os.makedirs(upload_dir, exist_ok=True)
+                    
+                    filepath = os.path.join(upload_dir, filename)
+                    file.save(filepath)
+                    user.picture = f"/static/images/userimages/{filename}"
+                else:
+                    flash("Unsupported image format! 📸", "error")
 
         db.session.commit()
         flash("Profile updated successfully! ✨", "success")
-        return redirect(url_for("profile"))
+        return redirect(url_for("profile", username=user.username))
 
-    # Fetch rooms created by the user for the "Repositories" equivalent section
-    user_rooms = Room.query.filter_by(creator_id=current_user.id).order_by(Room.created_at.desc()).all()
+    # Fetch rooms created by the user
+    user_rooms = Room.query.filter_by(creator_id=user.id).order_by(Room.created_at.desc()).all()
     
-    # Mock some stats for the GitHub-style look
+    # Mock some stats
     stats = {
         "rooms_count": len(user_rooms),
-        "messages_count": Message.query.filter_by(user_id=current_user.id).count(),
+        "messages_count": Message.query.filter_by(user_id=user.id).count(),
         "followers": random.randint(50, 200) # Mock data
     }
 
-    return render_template("profile.html", rooms=user_rooms, stats=stats)
+    return render_template("profile.html", user=user, rooms=user_rooms, stats=stats, is_own_profile=is_own_profile)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 
 # ─ Chat ──────────────────────────────────────────────────────────────────────
@@ -450,7 +497,7 @@ def chat_api(room_id):
             "content": m.content,
             "timestamp": m.timestamp.strftime("%H:%M"),
             "author_name": author.username if author.username else author.name,
-            "author_img": author.picture or url_for('static', filename='img/default-avatar.png'),
+            "author_img": author.picture or url_for('static', filename='images/userimages/default-avatar.png'),
             "is_me": m.user_id == current_user.id
         })
     return jsonify(results)

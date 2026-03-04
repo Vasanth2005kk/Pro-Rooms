@@ -11,7 +11,8 @@
                 </div>
             </div>
             <div class="modal-body bg-dark">
-                <form id="profile-form" method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data">
+                <form id="profile-form" method="POST" action="{{ url_for('profile', username=current_user.username) }}"
+                    enctype="multipart/form-data">
                     <div class="row g-4 justify-content-center">
                         <div class="col-md-5">
                             <label class="form-label text-muted">Name</label>
@@ -23,13 +24,24 @@
                             </div>
                         </div>
 
+                        <div class="col-md-5">
+                            <label class="form-label text-muted">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-at"></i></span>
+                                <input type="text" name="username" class="form-control"
+                                    value="{{ current_user.username or '' }}" placeholder="username" disabled>
+                            </div>
+                        </div>
+
                         <div class="col-md-10 mt-3">
                             <label class="form-label text-muted">Profile Picture</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-dark border-secondary text-muted"><i
                                         class="fas fa-image"></i></span>
                                 <input type="file" name="picture_url" class="form-control"
-                                    placeholder="https://example.com/photo.jpg" value="{{ current_user.picture }}">
+                                    placeholder="https://example.com/photo.jpg"
+                                    value="{{ current_user.picture or '' }}">
                             </div>
                         </div>
 
