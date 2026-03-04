@@ -286,6 +286,9 @@ def google_callback():
 def dashboard():
     """Main dashboard page."""
     rooms = Room.query.order_by(Room.created_at.desc()).all()
+    for room in rooms:
+        print(f"Room: {room.__dict__}")
+        print()
     return render_template("index.html", rooms=rooms)
 
 

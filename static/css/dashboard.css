@@ -1,0 +1,311 @@
+/* ─────────────────────────────────────────────────
+   dashboard.css  —  Pro-Rooms Dashboard Styles
+───────────────────────────────────────────────── */
+
+/* ─── Sidebar ─────────────────────────────────── */
+
+.main-dash {
+    min-height: 85vh;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.sidebar-brand .brand-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(var(--bs-primary-rgb), 0.15);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.sidebar-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 6px;
+}
+
+.sidebar-input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    font-size: 0.88rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sidebar-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.18) !important;
+    outline: none;
+}
+
+.sidebar-input option {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+.btn-create {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 10px;
+    letter-spacing: 0.03em;
+    transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-create:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(var(--bs-primary-rgb), 0.35);
+}
+
+/* ─── Room Row (flat, no box) ──────────────────── */
+.rooms-list {
+    padding-bottom: 2rem;
+}
+
+.room-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-radius: 50px 20px 20px 50px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: background 0.2s, border-color 0.2s, transform 0.18s;
+    cursor: default;
+}
+
+.room-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: green;
+    transform: translateX(4px);
+}
+
+.room-avatar {
+    width: 70px;
+    height: 70px;
+    min-width: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.room-row-name {
+    display: flex;
+    align-items: center;
+    /* font-size: 1.1rem; */
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* max-width: 200px; */
+}
+
+.room-row-desc {
+    max-width: 100%;
+    margin-bottom: 0.2rem;
+}
+
+/* ─── Copy ID Button ───────────────────────────── */
+.copy-id-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 2px 5px;
+    border-radius: 5px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s, transform 0.15s;
+    line-height: 1;
+}
+
+.copy-id-btn:hover {
+    color: var(--primary);
+    background: rgba(var(--primary), 0.12);
+    transform: scale(1.15);
+}
+
+.copy-id-btn.copied {
+    color: #19be6b;
+    background: rgba(25, 190, 107, 0.12);
+    border-radius: 50%;
+}
+
+/* ─── Badges ───────────────────────────────────── */
+.badge-public {
+    background: rgba(25, 190, 107, 0.18);
+    color: #19be6b;
+    border: 1px solid rgba(25, 190, 107, 0.3);
+    border-radius: 20px;
+    /* padding: 4px 10px; */
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-private {
+    background: rgba(220, 53, 69, 0.18);
+    color: #ff6b6b;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 20px;
+    /* padding: 4px 10px; */
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ─── Action Buttons ───────────────────────────── */
+.btn-row-chat {
+    background: rgba(var(--bs-primary-rgb), 0.12);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.3);
+    color: var(--bs-primary);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-row-chat:hover {
+    background: var(--bs-primary);
+    color: #fff;
+}
+
+.badge-action {
+    display: flex;
+    padding-right: 1.5em;
+    align-items: end;
+    justify-content: end;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Star-count {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+/* ─── Member Count ─────────────────────────────── */
+.room-member-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    padding-bottom: 2px;
+}
+
+.room-member-count .member-inner {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.room-member-count .member-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-row-whatsapp {
+    background: rgba(37, 211, 102, 0.12);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    color: #25d366;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    transition: background 0.2s, color 0.2s;
+}
+
+
+.btn-row-whatsapp:hover {
+    background: #25d366;
+    color: #fff;
+}
+
+/* ─── Empty State ──────────────────────────────── */
+.empty-state {
+    padding: 60px 20px;
+}
+
+/* ─── Slide-in Animation ───────────────────────── */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.35s ease both;
+}
+
+.rooms-list .room-row:nth-child(1) {
+    animation-delay: 0.03s;
+}
+
+.rooms-list .room-row:nth-child(2) {
+    animation-delay: 0.07s;
+}
+
+.rooms-list .room-row:nth-child(3) {
+    animation-delay: 0.11s;
+}
+
+.rooms-list .room-row:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+.rooms-list .room-row:nth-child(5) {
+    animation-delay: 0.19s;
+}
+
+.rooms-list .room-row:nth-child(6) {
+    animation-delay: 0.23s;
+}
+
+.rooms-list .room-row:nth-child(7) {
+    animation-delay: 0.27s;
+}
+
+.rooms-list .room-row:nth-child(8) {
+    animation-delay: 0.31s;
+}
+
+/* ─── Responsive ───────────────────────────────── */
+@media (max-width: 768px) {
+    .sidebar-panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 1rem;
+    }
+
+    .room-row {
+        flex-wrap: wrap;
+    }
+}

@@ -210,5 +210,7 @@ __marimo__/
 try.py
 checking.py
 
-!userimages/default-avatar.png
-userimages/*
+# User uploaded images
+static/images/userimages/*
+!static/images/userimages/default-avatar.png
+testing.*

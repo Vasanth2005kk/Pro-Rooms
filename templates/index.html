@@ -1,81 +1,195 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="dashboard-container">
-    <!-- Welcome Section -->
-    <section class="text-center mb-4 animate-fade-in">
-        <h1>Welcome back, {{ current_user.username or current_user.name or 'User' }}! 🚀</h1>
-        <p class="text-muted">Discover professional communities and student study groups.</p>
-    </section>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
 
-    <!-- Filter / Search bar -->
-    <div class="glass-card mb-4 p-3 animate-fade-in">
-        <div class="row g-3 align-items-center">
-            <div class="col-12 col-md-4">
-                <input type="text" id="roomSearch" placeholder="Search rooms..." class="form-control"
-                    autocomplete="off">
-            </div>
-            <div class="col-6 col-md-3">
-                <select id="categoryFilter" class="form-select">
-                    <option value="">All Categories</option>
-                    <option value="Coding">Coding</option>
-                    <option value="Business">Business</option>
-                    <option value="Design">Design</option>
-                    <option value="Student">Student</option>
-                    <option value="Networking">Networking</option>
-                </select>
-            </div>
-            <div class="col-6 col-md-3">
-                <select id="privacyFilter" class="form-select">
-                    <option value="">Any Privacy</option>
-                    <option value="Public">Public</option>
-                    <option value="Private">Private</option>
-                </select>
-            </div>
-            <div class="col-12 col-md-2 d-grid">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal">
+{% block content %}
+<div class="dashboard-container animate-fade-in">
+
+    <!-- Full 12-col Bootstrap Row -->
+    <div class="row g-0 main-dash">
+
+        <!-- ========================
+             LEFT SIDEBAR — col-3
+        ========================= -->
+        <div class="col-12 col-md-3 sidebar-panel pe-md-3 mb-4 mb-md-0">
+            <div class="glass-card p-4 h-100 d-flex flex-column gap-3">
+
+                <!-- Brand / Title -->
+                <div class="sidebar-brand text-center mb-2">
+                    <div class="brand-icon mb-2">
+                        <i class="fas fa-layer-group fa-2x text-primary"></i>
+                    </div>
+                    <h5 class="text-white fw-bold mb-0">Explore Rooms</h5>
+                    <small class="text-white-50">Find your community</small>
+                </div>
+
+                <hr class="border-secondary">
+
+                <!-- Search -->
+                <div class="sidebar-field">
+                    <label class="sidebar-label">
+                        <i class="fas fa-search me-1 text-primary"></i> Search
+                    </label>
+                    <input type="text" id="roomSearch" placeholder="Search rooms..." class="form-control sidebar-input"
+                        autocomplete="off">
+                </div>
+
+                <!-- Category Filter -->
+                <div class="sidebar-field">
+                    <label class="sidebar-label">
+                        <i class="fas fa-tags me-1 text-primary"></i> Category
+                    </label>
+                    <select id="categoryFilter" class="form-select sidebar-input">
+                        <option value="">All Categories</option>
+                        <option value="Coding">💻 Coding</option>
+                        <option value="Business">💼 Business</option>
+                        <option value="Design">🎨 Design</option>
+                        <option value="Student">🎓 Student</option>
+                        <option value="Networking">🌐 Networking</option>
+                    </select>
+                </div>
+
+                <!-- Privacy Filter -->
+                <div class="sidebar-field">
+                    <label class="sidebar-label">
+                        <i class="fas fa-lock me-1 text-primary"></i> Privacy
+                    </label>
+                    <select id="privacyFilter" class="form-select sidebar-input">
+                        <option value="">Any Privacy</option>
+                        <option value="Public">🔓 Public</option>
+                        <option value="Private">🔒 Private</option>
+                    </select>
+                </div>
+
+                <hr class="border-secondary">
+
+                <!-- Create Room Button -->
+                <button class="btn btn-primary btn-create w-100 mt-auto" data-bs-toggle="modal"
+                    data-bs-target="#createRoomModal">
                     <i class="fas fa-plus me-2"></i> Create Room
                 </button>
+
+                <!-- Stats -->
+                <div class="sidebar-stats text-center mt-2">
+                    <small class="text-white-50">
+                        <i class="fas fa-door-open me-1 text-primary"></i>
+                        <span id="roomCount">{{ rooms|length }}</span> rooms available
+                    </small>
+                </div>
+
             </div>
         </div>
-    </div>
 
-    <!-- Room cards grid -->
-    <div class="row g-4" id="roomsGrid">
-        {% for room in rooms %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="room-card glass-card d-flex flex-column h-100 animate-scale-up" data-id="{{ room.id }}">
-                <div class="room-header mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="room-name mb-0 text-white fs-5">{{ room.name }}</h3>
-                        <span class="badge {{ 'bg-success' if room.privacy == 'Public' else 'bg-danger' }}">
-                            {{ room.privacy }}
-                        </span>
+        <!-- ========================
+             RIGHT CONTENT — col-9
+        ========================= -->
+        <div class="col-12 col-md-8">
+
+            <!-- Inner centered wrapper col-11 -->
+            <div class="col-11 mx-auto">
+
+                <!-- Section Header -->
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h4 class="text-white fw-bold mb-1">
+                            <i class="fas fa-fire me-2 text-primary"></i>Active Rooms
+                        </h4>
+                        <small class="text-white-50">Browse and join live rooms</small>
                     </div>
-                    <small class="text-primary">{{ room.category }} • {{ room.topic }}</small>
+                    <!-- <span class="badge btn-primary px-3 py-2 fs-6" id="roomCountBadge">
+                        {{ rooms|length }} Rooms
+                    </span> -->
                 </div>
-                <p class="room-desc text-white-50 small mb-4">{{ room.description or 'No description provided.' }}</p>
-                <div class="room-footer mt-auto d-flex gap-2">
-                    <a href="{{ url_for('chat_room', room_id=room.id) }}"
-                        class="btn btn-outline-primary btn-sm flex-grow-1">
-                        <i class="fas fa-comments me-1"></i> Global Chat
-                    </a>
-                    {% if room.whatsapp_link %}
-                    <button class="btn btn-success btn-sm"
-                        onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}')">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
+
+                <!-- Rooms List — Full Row Style (No box model) -->
+                <div id="roomsGrid" class="rooms-list d-flex flex-column gap-3">
+                    {% for room in rooms %}
+                    <div class="room-row animate-slide-in" data-id="{{ room.id }}">
+                        <div class="row align-items-center g-0 w-100">
+
+                            <!-- Left: Icon + Name + Meta -->
+                            <div class="col-12 col-sm-5 d-flex align-items-center gap-3">
+                                <div class="room-avatar">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div>
+                                    <h3 class="room-row-name">{{ room.name | title() }}<span
+                                            class="badge ms-2 {{ 'badge-public' if room.privacy == 'Public' else 'badge-private' }}">
+                                            <i
+                                                class="fas {{ 'fa-lock-open' if room.privacy == 'Public' else 'fa-lock' }} me-1"></i>
+                                            {{ room.privacy }}
+                                        </span> </h3>
+                                    <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                                        ID : <span class="text-primary fw-bold"
+                                            style="font-size: 1rem;">20264315233{{room.id}}</span>
+                                        <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
+                                            title="Copy Room ID">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </small>
+                                    <p class="room-row-desc mb-0 text-white-50 small text-truncate">
+                                        {{ room.description or 'No description provided.' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Right: Badge + Actions -->
+                            <div class="badge-action col-12 col-sm-6 mt-2 mt-sm-0">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-dark border border-secondary px-3">
+                                        <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
+                                    </button>
+                                </div>
+                                <a href="{{ url_for('chat_room', room_id=room.id) }}"
+                                    class="btn border border-secondary px-3 fw-bold btn-primary"
+                                    style="width: 120px;padding: 7px;">
+                                    <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
+                                </a>
+                                {% if room.whatsapp_link %}
+                                <button class="btn btn-row-whatsapp btn-sm"
+                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}')">
+                                    <i class="fab fa-whatsapp"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+
+                            <!-- Member Count -->
+                            <div class="room-member-count ms-auto col-sm-1">
+                                <span class="member-label">Members</span>
+                                <div class="member-inner">
+                                    <i class="fa-solid fa-users text-primary"></i>
+                                    <span class="text-white-50">
+                                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> 456
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Empty State -->
+                    {% if not rooms %}
+                    <div class="empty-state text-center py-5">
+                        <i class="fas fa-search fa-3x text-white-50 mb-3"></i>
+                        <h5 class="text-white-50">No rooms found</h5>
+                        <p class="text-white-50 small">Try changing filters or create a new room.</p>
+                    </div>
                     {% endif %}
                 </div>
+
             </div>
         </div>
-        {% endfor %}
+        <!-- END right col-9 -->
+
     </div>
 </div>
 
 {% include 'modals/create_room.html' %}
 
-<!-- Password / Join Room Modal (Bootstrap 5) -->
+<!-- Join Room / Password Modal -->
 <div class="modal fade" id="joinRoomModal" tabindex="-1" aria-labelledby="joinRoomModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
         <div class="modal-content glass-card border-0 text-center p-2">
@@ -84,7 +198,6 @@
                 <p class="text-white-50 small mb-4">Enter 6-digit access code for
                     <span id="joinRoomName" class="text-primary"></span>
                 </p>
-
                 <div class="d-flex justify-content-center gap-2 mb-4" id="passcodeInputs">
                     <input type="text" class="form-control passcode-input text-center" maxlength="1"
                         style="width: 45px;">
@@ -99,9 +212,7 @@
                     <input type="text" class="form-control passcode-input text-center" maxlength="1"
                         style="width: 45px;">
                 </div>
-
                 <div id="joinError" class="text-danger small mb-3"></div>
-
                 <div class="d-flex gap-2">
                     <button class="btn btn-dark flex-grow-1" data-bs-dismiss="modal">Cancel</button>
                     <button class="btn btn-primary flex-grow-1" id="verifyBtn" onclick="verifyRoom()">Join</button>
@@ -111,134 +222,7 @@
     </div>
 </div>
 
-<script>
-    let currentRoomId = null;
 
-    // Privacy toggle for Create Room form
-    document.getElementById('privacySelect').addEventListener('change', function (e) {
-        const passField = document.getElementById('passField');
-        if (e.target.value === 'Private') {
-            passField.classList.remove('d-none');
-        } else {
-            passField.classList.add('d-none');
-        }
-    });
 
-    // Search and Filters
-    async function updateRooms() {
-        const q = document.getElementById('roomSearch').value;
-        const c = document.getElementById('categoryFilter').value;
-        const p = document.getElementById('privacyFilter').value;
-
-        const params = new URLSearchParams({ search: q, category: c, privacy: p });
-        const res = await fetch(`/api/rooms?${params}`);
-        const rooms = await res.json();
-
-        const grid = document.getElementById('roomsGrid');
-        grid.innerHTML = rooms.map(room => `
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="room-card glass-card d-flex flex-column h-100" data-id="${room.id}">
-                <div class="room-header mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="room-name mb-0 text-white fs-5">${room.name}</h3>
-                        <span class="badge ${room.privacy === 'Public' ? 'bg-success' : 'bg-danger'}">
-                            ${room.privacy}
-                        </span>
-                    </div>
-                    <small class="text-primary">${room.category || 'General'} • ${room.topic || 'Misc'}</small>
-                </div>
-                <p class="room-desc text-white-50 small mb-4">${room.description || 'No description provided.'}</p>
-                <div class="room-footer mt-auto d-flex gap-2">
-                    <a href="/chat/${room.id}" class="btn btn-outline-primary btn-sm flex-grow-1">
-                        <i class="fas fa-comments me-1"></i> Global Chat
-                    </a>
-                    <button class="btn btn-success btn-sm" onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}')">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    }
-
-    ['roomSearch', 'categoryFilter', 'privacyFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updateRooms);
-    });
-
-    // Create Room form submission
-    document.getElementById('createRoomForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target).entries());
-
-        const res = await fetch('/api/rooms', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        if (res.ok) {
-            location.reload();
-        } else {
-            const err = await res.json();
-            alert(err.error);
-        }
-    };
-
-    // Password / join logic
-    function prepareJoin(id, name, privacy) {
-        currentRoomId = id;
-        if (privacy === 'Public') {
-            verifyRoom();
-        } else {
-            document.getElementById('joinRoomName').textContent = name;
-            const modal = new bootstrap.Modal(document.getElementById('joinRoomModal'));
-            modal.show();
-        }
-    }
-
-    async function verifyRoom() {
-        const inputs = document.querySelectorAll('.passcode-input');
-        const passcode = Array.from(inputs).map(i => i.value).join('');
-
-        const btn = document.getElementById('verifyBtn');
-        btn.disabled = true;
-        btn.textContent = 'Verifying...';
-
-        try {
-            const res = await fetch('/api/rooms/join', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ room_id: currentRoomId, password: passcode })
-            });
-
-            const result = await res.json();
-            if (result.success) {
-                window.open(result.link, '_blank');
-                bootstrap.Modal.getInstance(document.getElementById('joinRoomModal'))?.hide();
-            } else {
-                document.getElementById('joinError').textContent = result.error || 'Incorrect password';
-                btn.disabled = false;
-                btn.textContent = 'Join';
-            }
-        } catch (err) {
-            document.getElementById('joinError').textContent = 'Connection error. Try again.';
-            btn.disabled = false;
-            btn.textContent = 'Join';
-        }
-    }
-
-    // Auto-focus next passcode input
-    document.querySelectorAll('.passcode-input').forEach((input, idx, inputs) => {
-        input.addEventListener('input', (e) => {
-            if (e.target.value.length === 1 && idx < 5) {
-                inputs[idx + 1].focus();
-            }
-        });
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
-                inputs[idx - 1].focus();
-            }
-        });
-    });
-</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

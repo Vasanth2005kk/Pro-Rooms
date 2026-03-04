@@ -356,7 +356,7 @@ body {
 /* Navbar avatar */
 .nav-avatar {
     border-radius: 50%;
-    border: 2px solid var(--primary);
+    /* border: 2px solid var(--primary); */
     object-fit: cover;
 }
 

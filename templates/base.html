@@ -40,8 +40,8 @@
                 {% if current_user.is_authenticated %}
                 <div class="nav-actions d-flex align-items-center">
                     <div class="dropdown">
-                        <div class="dropdown-toggle d-flex align-items-center gap-2" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="d-flex align-items-center gap-2" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             <img src="{{ current_user.picture if current_user.picture else url_for('static', filename='images/userimages/default-avatar.png') }}"
                                 alt="avatar" width="32" height="32" class="rounded-circle nav-avatar">
                             <span>{{ current_user.username or current_user.name or 'Account' }}</span>
