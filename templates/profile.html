@@ -229,14 +229,15 @@
                                         <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
                                     </button>
                                 </div>
-                                <a href="{{ url_for('chat_room', room_id=room.id) }}"
+                                <button
+                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
                                     class="btn border border-secondary px-3 fw-bold btn-primary"
                                     style="width: 120px;padding: 7px;">
                                     <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
-                                </a>
+                                </button>
                                 {% if room.whatsapp_link %}
                                 <button class="btn btn-row-whatsapp btn-sm"
-                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}')">
+                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'whatsapp')">
                                     <i class="fab fa-whatsapp"></i>
                                 </button>
                                 {% endif %}

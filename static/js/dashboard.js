@@ -4,6 +4,7 @@
 ================================================= */
 
 let currentRoomId = null;
+let joinTarget = 'whatsapp'; // 'chat' or 'whatsapp'
 
 /* ─── Copy Room ID to clipboard ─────────────────── */
 function copyRoomId(btn, id) {
@@ -63,7 +64,7 @@ function buildRoomRow(room) {
     const titleName = room.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
     const whatsappBtn = room.whatsapp_link
-        ? `<button class="btn btn-row-whatsapp btn-sm" onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}')">
+        ? `<button class="btn btn-row-whatsapp btn-sm" onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}', 'whatsapp')">
                 <i class="fab fa-whatsapp"></i>
            </button>`
         : '';
@@ -104,11 +105,11 @@ function buildRoomRow(room) {
                         <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
                     </button>
                 </div>
-                <a href="/chat/${room.id}"
+                <button onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}', 'chat')"
                     class="btn border border-secondary px-3 fw-bold btn-primary"
                     style="width: 120px;padding: 7px;">
                     <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
-                </a>
+                </button>
                 ${whatsappBtn}
             </div>
 
@@ -186,10 +187,21 @@ if (createRoomForm) {
 }
 
 /* ─── Password / Join logic ─────────────────────── */
-function prepareJoin(id, name, privacy) {
+function prepareJoin(id, name, privacy, target = 'whatsapp') {
     currentRoomId = id;
+    joinTarget = target;
+
+    // Clear previous inputs
+    document.querySelectorAll('.passcode-input').forEach(i => i.value = '');
+    document.getElementById('joinError').textContent = '';
+
     if (privacy === 'Public') {
-        verifyRoom();
+        if (target === 'chat') {
+            window.location.href = `/chat/${id}`;
+        } else {
+            // For WhatsApp public links, we still call verifyRoom to get the link
+            verifyRoom();
+        }
     } else {
         document.getElementById('joinRoomName').textContent = name;
         const modal = new bootstrap.Modal(document.getElementById('joinRoomModal'));
@@ -214,17 +226,25 @@ async function verifyRoom() {
 
         const result = await res.json();
         if (result.success) {
-            window.open(result.link, '_blank');
+            if (joinTarget === 'chat') {
+                window.location.href = `/chat/${currentRoomId}`;
+            } else {
+                if (result.link) {
+                    window.open(result.link, '_blank');
+                } else {
+                    alert('No WhatsApp link provided for this room.');
+                }
+            }
             bootstrap.Modal.getInstance(document.getElementById('joinRoomModal'))?.hide();
         } else {
             document.getElementById('joinError').textContent = result.error || 'Incorrect password';
             btn.disabled = false;
-            btn.textContent = 'Join';
+            btn.textContent = 'Unlock Room';
         }
     } catch (err) {
         document.getElementById('joinError').textContent = 'Connection error. Try again.';
         btn.disabled = false;
-        btn.textContent = 'Join';
+        btn.textContent = 'Unlock Room';
     }
 }
 

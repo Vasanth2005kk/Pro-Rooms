@@ -1,62 +1,134 @@
-<!-- Create Room Modal (Bootstrap 5) -->
+<!-- Create Room Modal -->
 <div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content glass-card border-0">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title text-white" id="createRoomModalLabel">Create New Community</h5>
-                <button type="button" class="modal-close-btn ms-auto" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fas fa-times"></i>
-                </button>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-secondary shadow-lg">
+            <div class="modal-header border-secondary d-flex align-items-center justify-content-between">
+                <h5 class="modal-title text-white mb-0"><i class="fas fa-plus-circle me-2"></i>Create New Community</h5>
+                <div class="d-flex align-items-center gap-3">
+                    <button type="submit" form="createRoomForm" class="btn btn-primary btn-sm px-4">Create Room</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        style="margin: 0;"></button>
+                </div>
             </div>
-            <div class="modal-body pt-2">
-                <form id="createRoomForm">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label">Room Title</label>
-                            <input type="text" name="name" class="form-control" placeholder="e.g. Next.js Masters"
-                                required>
+            <div class="modal-body bg-dark">
+                <form id="createRoomForm" enctype="multipart/form-data">
+                    <div class="row g-4 justify-content-center">
+
+                        <div class="col-md-10 mt-3">
+                            <h6 class="modal-section-title">Basic Information</h6>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Category</label>
-                            <select name="category" class="form-select">
-                                <option value="Coding">Coding</option>
-                                <option value="Business">Business</option>
-                                <option value="Design">Design</option>
-                                <option value="Student">Student</option>
-                                <option value="Networking">Networking</option>
-                            </select>
+                        <div class="col-md-5 d-flex flex-column align-items-center justify-content-center">
+                            <div id="roomIconPreview" class="room-avatar"
+                                style="width: 120px; height: 120px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--glass-border); border-radius: 50%; overflow: hidden; background: rgba(255,255,255,0.05); transition: all 0.3s ease;"
+                                onclick="document.getElementById('roomIconInput').click()">
+                                <i class="fas fa-camera text-muted" style="font-size: 1.2rem;"></i>
+                            </div>
+                            <input type="file" name="room_icon" id="roomIconInput" class="d-none" accept="image/*">
+                            <label class="form-label text-muted mt-2">Group Icon</label>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Topic</label>
-                            <input type="text" name="topic" class="form-control" placeholder="e.g. Frontend">
+                        <div class="col-md-5">
+                            <label class="form-label text-muted">Group Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-heading"></i></span>
+                                <input type="text" name="name" class="form-control" placeholder="e.g. Next.js Masters"
+                                    required>
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2"></textarea>
+
+                        <script>
+                            document.getElementById('roomIconInput').addEventListener('change', function (e) {
+                                const preview = document.getElementById('roomIconPreview');
+                                const file = e.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function (event) {
+                                        preview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                                        preview.style.borderStyle = 'solid';
+                                        preview.style.borderColor = 'var(--primary)';
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
+
+                        <div class="col-md-10 mt-3">
+                            <label class="form-label text-muted">Group Description</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-align-left"></i></span>
+                                <textarea name="description" class="form-control" rows="4"
+                                    placeholder="Describe your community..." style="min-height: 100px;"></textarea>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Privacy</label>
-                            <select name="privacy" id="privacySelect" class="form-select">
-                                <option value="Public">Public (Anyone can join)</option>
-                                <option value="Private">Private (Password required)</option>
-                            </select>
+
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Category</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-tag"></i></span>
+                                <select name="category" class="form-select bg-dark text-white border-secondary">
+                                    <option value="Coding">Coding</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Networking">Networking</option>
+                                </select>
+                            </div>
                         </div>
+
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Tags</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-hashtag"></i></span>
+                                <input type="text" name="topic" class="form-control"
+                                    placeholder="e.g. Nextjs, React, Web">
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 mt-4">
+                            <h6 class="modal-section-title">Privacy & Access</h6>
+                        </div>
+
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Visibility (Privacy Type)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-user-shield"></i></span>
+                                <select name="privacy" id="privacySelect"
+                                    class="form-select bg-dark text-white border-secondary">
+                                    <option value="Public">Public (Anyone can join)</option>
+                                    <option value="Private">Private (Password required)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5 mt-3">
+                            <label class="form-label text-muted">Members Capacity</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-users"></i></span>
+                                <input type="number" name="members_limit" class="form-control" placeholder="e.g. 500"
+                                    value="500">
+                            </div>
+                        </div>
+
                         <!-- Hidden password field, shown when Private is selected -->
-                        <div class="col-md-6 d-none" id="passField">
-                            <label class="form-label">6-Digit Password</label>
-                            <input type="text" name="password" class="form-control" placeholder="123456" maxlength="6"
-                                pattern="\d{6}">
+                        <div class="col-md-10 mt-3 d-none" id="passField">
+                            <label class="form-label text-muted">6-Digit Access Code</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                        class="fas fa-key"></i></span>
+                                <input type="text" name="password" class="form-control" placeholder="123456"
+                                    maxlength="6" pattern="\d{6}">
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">WhatsApp Link (Optional)</label>
-                            <input type="url" name="whatsapp_link" class="form-control"
-                                placeholder="https://chat.whatsapp.com/...">
-                        </div>
-                    </div>
-                    <div class="mt-4 text-end">
-                        <button type="submit" class="btn btn-primary px-4">Create Room</button>
+
                     </div>
                 </form>
+            </div>
+            <div class="modal-footer border-0">
             </div>
         </div>
     </div>
