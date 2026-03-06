@@ -42,20 +42,25 @@ function copyRoomId(btn, id) {
 }
 
 /* ─── Privacy toggle for Create Room form ──────── */
-document.getElementById('privacySelect').addEventListener('change', function (e) {
-    const passField = document.getElementById('passField');
-    if (e.target.value === 'Private') {
-        passField.classList.remove('d-none');
-    } else {
-        passField.classList.add('d-none');
-    }
-});
+const privacySelect = document.getElementById('privacySelect');
+if (privacySelect) {
+    privacySelect.addEventListener('change', function (e) {
+        const passField = document.getElementById('passField');
+        if (e.target.value === 'Private') {
+            passField.classList.remove('d-none');
+        } else {
+            passField.classList.add('d-none');
+        }
+    });
+}
 
 /* ─── Build a single room row HTML ─────────────── */
 function buildRoomRow(room) {
-    const privacyBadge = room.privacy === 'Public'
-        ? `<span class="badge-public"><i class="fas fa-lock-open me-1"></i>Public</span>`
-        : `<span class="badge-private"><i class="fas fa-lock me-1"></i>Private</span>`;
+    const privacyBadgeClass = room.privacy === 'Public' ? 'badge-public' : 'badge-private';
+    const privacyIcon = room.privacy === 'Public' ? 'fa-lock-open' : 'fa-lock';
+
+    // Title case for name
+    const titleName = room.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
     const whatsappBtn = room.whatsapp_link
         ? `<button class="btn btn-row-whatsapp btn-sm" onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}')">
@@ -66,32 +71,58 @@ function buildRoomRow(room) {
     return `
     <div class="room-row animate-slide-in" data-id="${room.id}">
         <div class="row align-items-center g-0 w-100">
-            <div class="col-12 col-sm-5 d-flex align-items-center gap-3">
+
+            <!-- Left: Icon + Name + Meta -->
+            <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
                 <div class="room-avatar">
                     <i class="fas fa-comments"></i>
                 </div>
                 <div>
-                    <h6 class="room-row-name mb-0">${room.name}</h6>
-                    <small class="text-white-50 d-flex align-items-center gap-1">
-                        ID : <span class="text-primary fw-bold">${room.id}</span>
-                        <button class="copy-id-btn" onclick="copyRoomId(this, '${room.id}')" title="Copy Room ID">
+                    <h3 class="room-row-name">${titleName}<span
+                            class="badge ms-2 ${privacyBadgeClass}">
+                            <i class="fas ${privacyIcon} me-1"></i>
+                            ${room.privacy}
+                        </span> </h3>
+                    <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                        ID : <span class="text-primary fw-bold"
+                            style="font-size: 1rem;">20264315233${room.id}</span>
+                        <button class="copy-id-btn" onclick="copyRoomId(this, '${room.id}')"
+                            title="Copy Room ID">
                             <i class="fas fa-copy"></i>
                         </button>
                     </small>
+                    <p class="room-row-desc mb-0 text-white-50 small">
+                        ${room.description || 'No description provided.'}
+                    </p>
                 </div>
             </div>
-            <div class="col-12 col-sm-4 px-2">
-                <p class="room-row-desc mb-0 text-white-50 small text-truncate">
-                    ${room.description || 'No description provided.'}
-                </p>
-            </div>
-            <div class="col-12 col-sm-3 d-flex align-items-center justify-content-end gap-2 mt-2 mt-sm-0">
-                ${privacyBadge}
-                <a href="/chat/${room.id}" class="btn btn-row-chat btn-sm">
-                    <i class="fas fa-comments me-1"></i> Chat
+
+            <!-- Right: Badge + Actions -->
+            <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-dark border border-secondary px-3">
+                        <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
+                    </button>
+                </div>
+                <a href="/chat/${room.id}"
+                    class="btn border border-secondary px-3 fw-bold btn-primary"
+                    style="width: 120px;padding: 7px;">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
                 </a>
                 ${whatsappBtn}
             </div>
+
+            <!-- Member Count -->
+            <div class="room-member-count ms-auto col-sm-1">
+                <span class="member-label">Members</span>
+                <div class="member-inner">
+                    <i class="fa-solid fa-users text-primary"></i>
+                    <span class="text-white-50">
+                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> 456
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>`;
 }
@@ -120,32 +151,39 @@ async function updateRooms() {
     }
 
     // Update counters
-    document.getElementById('roomCount').textContent = rooms.length;
-    document.getElementById('roomCountBadge').textContent = `${rooms.length} Rooms`;
+    const roomCount = document.getElementById('roomCount');
+    if (roomCount) roomCount.textContent = rooms.length;
+
+    const roomCountBadge = document.getElementById('roomCountBadge');
+    if (roomCountBadge) roomCountBadge.textContent = `${rooms.length} Rooms`;
 }
 
 ['roomSearch', 'categoryFilter', 'privacyFilter'].forEach(id => {
-    document.getElementById(id).addEventListener('input', updateRooms);
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateRooms);
 });
 
 /* ─── Create Room form submission ───────────────── */
-document.getElementById('createRoomForm').onsubmit = async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target).entries());
+const createRoomForm = document.getElementById('createRoomForm');
+if (createRoomForm) {
+    createRoomForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target).entries());
 
-    const res = await fetch('/api/rooms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
+        const res = await fetch('/api/rooms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
 
-    if (res.ok) {
-        location.reload();
-    } else {
-        const err = await res.json();
-        alert(err.error);
-    }
-};
+        if (res.ok) {
+            location.reload();
+        } else {
+            const err = await res.json();
+            alert(err.error);
+        }
+    };
+}
 
 /* ─── Password / Join logic ─────────────────────── */
 function prepareJoin(id, name, privacy) {

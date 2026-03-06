@@ -2,6 +2,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <style>
     .modal-section-title {
         border-bottom: 1px solid var(--glass-border);
@@ -189,41 +190,69 @@
             </nav>
 
             <div class="tab-content pt-3">
-                <div class="repo-list">
+                <div id="roomsGrid" class="rooms-list d-flex flex-column gap-3">
                     {% if rooms %}
                     {% for room in rooms %}
-                    <div class="repo-item animate-fade-in py-4">
-                        <div class="repo-header mb-2">
-                            <div class="d-flex align-items-center gap-2">
+                    <div class="room-row animate-slide-in" data-id="{{ room.id }}">
+                        <div class="row align-items-center g-0 w-100">
+
+                            <!-- Left: Icon + Name + Meta -->
+                            <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
+                                <div class="room-avatar">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                                <div>
+                                    <h3 class="room-row-name">{{ room.name | title() }}<span
+                                            class="badge ms-2 {{ 'badge-public' if room.privacy == 'Public' else 'badge-private' }}">
+                                            <i
+                                                class="fas {{ 'fa-lock-open' if room.privacy == 'Public' else 'fa-lock' }} me-1"></i>
+                                            {{ room.privacy }}
+                                        </span> </h3>
+                                    <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                                        ID : <span class="text-primary fw-bold"
+                                            style="font-size: 1rem;">20264315233{{room.id}}</span>
+                                        <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
+                                            title="Copy Room ID">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </small>
+                                    <p class="room-row-desc mb-0 text-white-50 small">
+                                        {{ room.description or 'No description provided.' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Right: Badge + Actions -->
+                            <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-dark border border-secondary px-3">
+                                        <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
+                                    </button>
+                                </div>
                                 <a href="{{ url_for('chat_room', room_id=room.id) }}"
-                                    class="repo-title h5 mb-0 text-decoration-none">
-                                    {{ room.name }}
+                                    class="btn border border-secondary px-3 fw-bold btn-primary"
+                                    style="width: 120px;padding: 7px;">
+                                    <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
                                 </a>
-                                <span class="badge border border-secondary text-muted small fw-normal">{{ room.privacy
-                                    }}</span>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-dark border border-secondary px-3">
-                                    <i class="far fa-star me-1"></i> Star
+                                {% if room.whatsapp_link %}
+                                <button class="btn btn-row-whatsapp btn-sm"
+                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}')">
+                                    <i class="fab fa-whatsapp"></i>
                                 </button>
+                                {% endif %}
                             </div>
-                        </div>
-                        <p class="repo-description text-muted mb-3">
-                            {{ room.description or 'No description provided for this room.' }}
-                        </p>
-                        <div class="repo-meta d-flex gap-3 small text-muted">
-                            <div class="meta-item d-flex align-items-center gap-1">
-                                <span class="meta-lang-dot" style="background-color: var(--primary);"></span>
-                                <span>{{ room.category or 'General' }}</span>
+
+                            <!-- Member Count -->
+                            <div class="room-member-count ms-auto col-sm-1">
+                                <span class="member-label">Members</span>
+                                <div class="member-inner">
+                                    <i class="fa-solid fa-users text-primary"></i>
+                                    <span class="text-white-50">
+                                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> 456
+                                    </span>
+                                </div>
                             </div>
-                            <div class="meta-item d-flex align-items-center gap-1">
-                                <i class="far fa-clock"></i> Updated {{ room.created_at.strftime('%b %d') }}
-                            </div>
-                            {% if room.topic %}
-                            <div class="meta-item d-flex align-items-center gap-1">
-                                <i class="fas fa-tag"></i> {{ room.topic }}
-                            </div>
-                            {% endif %}
+
                         </div>
                     </div>
                     {% endfor %}
@@ -250,5 +279,10 @@
 <!-- ─── Edit Profile Modal ─────────────────────────────────────── -->
 {% include 'modals/edit_profile.html' %}
 {% endif %}
+{% include 'modals/join_room.html' %}
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

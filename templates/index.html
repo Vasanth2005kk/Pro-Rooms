@@ -110,7 +110,7 @@
                         <div class="row align-items-center g-0 w-100">
 
                             <!-- Left: Icon + Name + Meta -->
-                            <div class="col-12 col-sm-5 d-flex align-items-center gap-3">
+                            <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
                                 <div class="room-avatar">
                                     <i class="fas fa-comments"></i>
                                 </div>
@@ -129,14 +129,14 @@
                                             <i class="fas fa-copy"></i>
                                         </button>
                                     </small>
-                                    <p class="room-row-desc mb-0 text-white-50 small text-truncate">
+                                    <p class="room-row-desc mb-0 text-white-50 small">
                                         {{ room.description or 'No description provided.' }}
                                     </p>
                                 </div>
                             </div>
 
                             <!-- Right: Badge + Actions -->
-                            <div class="badge-action col-12 col-sm-6 mt-2 mt-sm-0">
+                            <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-dark border border-secondary px-3">
                                         <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
@@ -189,38 +189,7 @@
 
 {% include 'modals/create_room.html' %}
 
-<!-- Join Room / Password Modal -->
-<div class="modal fade" id="joinRoomModal" tabindex="-1" aria-labelledby="joinRoomModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
-        <div class="modal-content glass-card border-0 text-center p-2">
-            <div class="modal-body">
-                <h3 class="text-white mb-2">Private Room</h3>
-                <p class="text-white-50 small mb-4">Enter 6-digit access code for
-                    <span id="joinRoomName" class="text-primary"></span>
-                </p>
-                <div class="d-flex justify-content-center gap-2 mb-4" id="passcodeInputs">
-                    <input type="text" class="form-control passcode-input text-center" maxlength="1"
-                        style="width: 45px;">
-                    <input type="text" class="form-control passcode-input text-center" maxlength="1"
-                        style="width: 45px;">
-                    <input type="text" class="form-control passcode-input text-center" maxlength="1"
-                        style="width: 45px;">
-                    <input type="text" class="form-control passcode-input text-center" maxlength="1"
-                        style="width: 45px;">
-                    <input type="text" class="form-control passcode-input text-center" maxlength="1"
-                        style="width: 45px;">
-                    <input type="text" class="form-control passcode-input text-center" maxlength="1"
-                        style="width: 45px;">
-                </div>
-                <div id="joinError" class="text-danger small mb-3"></div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-dark flex-grow-1" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary flex-grow-1" id="verifyBtn" onclick="verifyRoom()">Join</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'modals/join_room.html' %}
 
 
 
