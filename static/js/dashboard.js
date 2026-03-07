@@ -4,7 +4,6 @@
 ================================================= */
 
 let currentRoomId = null;
-let joinTarget = 'whatsapp'; // 'chat' or 'whatsapp'
 
 /* ─── Copy Room ID to clipboard ─────────────────── */
 function copyRoomId(btn, id) {
@@ -63,12 +62,6 @@ function buildRoomRow(room) {
     // Title case for name
     const titleName = room.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
-    const whatsappBtn = room.whatsapp_link
-        ? `<button class="btn btn-row-whatsapp btn-sm" onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}', 'whatsapp')">
-                <i class="fab fa-whatsapp"></i>
-           </button>`
-        : '';
-
     return `
     <div class="room-row animate-slide-in" data-id="${room.id}">
         <div class="row align-items-center g-0 w-100">
@@ -86,7 +79,7 @@ function buildRoomRow(room) {
                         </span> </h3>
                     <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
                         ID : <span class="text-primary fw-bold"
-                            style="font-size: 1rem;">20264315233${room.id}</span>
+                            style="font-size: 1rem;">${room.id}</span>
                         <button class="copy-id-btn" onclick="copyRoomId(this, '${room.id}')"
                             title="Copy Room ID">
                             <i class="fas fa-copy"></i>
@@ -110,7 +103,6 @@ function buildRoomRow(room) {
                     style="width: 120px;padding: 7px;">
                     <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
                 </button>
-                ${whatsappBtn}
             </div>
 
             <!-- Member Count -->
@@ -119,7 +111,7 @@ function buildRoomRow(room) {
                 <div class="member-inner">
                     <i class="fa-solid fa-users text-primary"></i>
                     <span class="text-white-50">
-                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> 456
+                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> ${room.usercount}
                     </span>
                 </div>
             </div>
@@ -173,8 +165,7 @@ if (createRoomForm) {
 
         const res = await fetch('/api/rooms', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: new FormData(e.target)
         });
 
         if (res.ok) {
@@ -187,7 +178,7 @@ if (createRoomForm) {
 }
 
 /* ─── Password / Join logic ─────────────────────── */
-function prepareJoin(id, name, privacy, target = 'whatsapp') {
+function prepareJoin(id, name, privacy, target = 'chat') {
     currentRoomId = id;
     joinTarget = target;
 
@@ -196,12 +187,7 @@ function prepareJoin(id, name, privacy, target = 'whatsapp') {
     document.getElementById('joinError').textContent = '';
 
     if (privacy === 'Public') {
-        if (target === 'chat') {
-            window.location.href = `/chat/${id}`;
-        } else {
-            // For WhatsApp public links, we still call verifyRoom to get the link
-            verifyRoom();
-        }
+        verifyRoom();
     } else {
         document.getElementById('joinRoomName').textContent = name;
         const modal = new bootstrap.Modal(document.getElementById('joinRoomModal'));
@@ -229,13 +215,8 @@ async function verifyRoom() {
             if (joinTarget === 'chat') {
                 window.location.href = `/chat/${currentRoomId}`;
             } else {
-                if (result.link) {
-                    window.open(result.link, '_blank');
-                } else {
-                    alert('No WhatsApp link provided for this room.');
-                }
+                bootstrap.Modal.getInstance(document.getElementById('joinRoomModal'))?.hide();
             }
-            bootstrap.Modal.getInstance(document.getElementById('joinRoomModal'))?.hide();
         } else {
             document.getElementById('joinError').textContent = result.error || 'Incorrect password';
             btn.disabled = false;

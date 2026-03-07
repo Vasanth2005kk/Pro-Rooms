@@ -35,7 +35,9 @@ from flask_login import (
 
 from rooms.Config import Config, init_oauth
 from rooms.Models import db, get_db_connection, User, Room, Message
+from flask_migrate import Migrate  
 
+from rooms.helper import roomidGen
 # ── App Initialisation ────────────────────────────────────────────────────────
 load_dotenv()
 
@@ -47,6 +49,9 @@ app.secret_key = Config.SECRET_KEY
 
 # Initialise SQLAlchemy
 db.init_app(app)
+
+## 2. Initialize Flask-Migrate
+migrate = Migrate(app, db)
 
 # Initialise Flask-Login
 login_manager = LoginManager()
@@ -382,7 +387,6 @@ def page_not_found(e):
 @app.route("/chat/<int:room_id>")
 @login_required
 def chat_room(room_id):
-    """WhatsApp-style chat interface."""
     room = Room.query.get_or_404(room_id)
     return render_template("chat.html", room=room)
 
@@ -414,17 +418,14 @@ def get_rooms():
 @login_required
 def create_room():
     """Create a new room."""
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Invalid data"}), 400
-    
-    name        = data.get("name", "").strip()
-    description = data.get("description", "").strip()
-    topic       = data.get("topic", "").strip()
-    category    = data.get("category", "").strip()
-    privacy     = data.get("privacy", "Public").strip()
-    password    = data.get("password", "").strip()
-    whatsapp    = data.get("whatsapp_link", "").strip()
+    # Data is sent as FormData because of file uploads
+    name        = request.form.get("name", "").strip()
+    description = request.form.get("description", "").strip()
+    topic       = request.form.get("topic", "").strip()
+    category    = request.form.get("category", "").strip()
+    privacy     = request.form.get("privacy", "Public").strip()
+    password    = request.form.get("password", "").strip()
+    usercount   = request.form.get("members_limit", "").strip()
     
     if not name:
         return jsonify({"error": "Room name is required"}), 400
@@ -432,15 +433,33 @@ def create_room():
     if privacy == "Private" and (len(password) != 6 or not password.isdigit()):
         return jsonify({"error": "Private rooms require a 6-digit password"}), 400
     
+    # Handle Room Icon Upload
+    icon_path = '/static/images/roomicons/default_roomicon.png'
+    if 'room_icon' in request.files:
+        file = request.files['room_icon']
+        if file and file.filename != '':
+            ext = os.path.splitext(file.filename)[1].lower()
+            if ext in ['.jpg', '.jpeg', '.png', '.gif']:
+                filename = f"room_{secrets.token_hex(8)}{ext}"
+                upload_dir = os.path.join(app.root_path, 'static', 'images', 'roomicons')
+                os.makedirs(upload_dir, exist_ok=True)
+                
+                filepath = os.path.join(upload_dir, filename)
+                file.save(filepath)
+                icon_path = f"/static/images/roomicons/{filename}"
+
     try:
+        roomid = roomidGen()
         new_room = Room(
+            id=roomid,
             name=name,
             description=description,
             topic=topic,
             category=category,
             privacy=privacy,
             password=password if privacy == "Private" else None,
-            whatsapp_link=whatsapp,
+            icon=icon_path,
+            usercount = int(usercount) if usercount > 1 else 1,
             creator_id=current_user.id
         )
         db.session.add(new_room)
@@ -454,7 +473,6 @@ def create_room():
 @app.route("/api/rooms/join", methods=["POST"])
 @login_required
 def join_room():
-    """Verify password and return WhatsApp link."""
     data = request.get_json()
     room_id = data.get("room_id")
     password = data.get("password", "").strip()
@@ -464,7 +482,7 @@ def join_room():
         return jsonify({"error": "Room not found"}), 404
         
     if room.privacy == "Public" or room.password == password:
-        return jsonify({"success": True, "link": room.whatsapp_link})
+        return jsonify({"success": True, "room_id": room.id})
     else:
         return jsonify({"error": "Incorrect password"}), 403
 

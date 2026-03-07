@@ -27,9 +27,9 @@
         color: var(--primary) !important;
     }
 
-    .input-group .form-control {
+    /* .input-group .form-control {
         border-radius: 0 10px 10px 0 !important;
-    }
+    } */
 
     /* Premium style for File Input button */
     input[type="file"]::file-selector-button {
@@ -199,7 +199,13 @@
                             <!-- Left: Icon + Name + Meta -->
                             <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
                                 <div class="room-avatar">
-                                    <i class="fas fa-comments"></i>
+                                    {% if room.icon %}
+                                    <img src="{{ room.icon }}" alt="{{ room.name }}"
+                                        class="w-100 h-100 rounded-circle object-fit-cover">
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='images/roomicons/default_roomicon.png') }}"
+                                        alt="{{ room.name }}" class="w-100 h-100 rounded-circle object-fit-cover">
+                                    {% endif %}
                                 </div>
                                 <div>
                                     <h3 class="room-row-name">{{ room.name | title() }}<span
@@ -210,7 +216,7 @@
                                         </span> </h3>
                                     <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
                                         ID : <span class="text-primary fw-bold"
-                                            style="font-size: 1rem;">20264315233{{room.id}}</span>
+                                            style="font-size: 1rem;">{{room.id}}</span>
                                         <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
                                             title="Copy Room ID">
                                             <i class="fas fa-copy"></i>
@@ -235,12 +241,6 @@
                                     style="width: 120px;padding: 7px;">
                                     <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
                                 </button>
-                                {% if room.whatsapp_link %}
-                                <button class="btn btn-row-whatsapp btn-sm"
-                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'whatsapp')">
-                                    <i class="fab fa-whatsapp"></i>
-                                </button>
-                                {% endif %}
                             </div>
 
                             <!-- Member Count -->
@@ -249,7 +249,8 @@
                                 <div class="member-inner">
                                     <i class="fa-solid fa-users text-primary"></i>
                                     <span class="text-white-50">
-                                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> 456
+                                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
+                                        room.usercount }}
                                     </span>
                                 </div>
                             </div>

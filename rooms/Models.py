@@ -50,7 +50,6 @@ class User(db.Model, UserMixin):
     # SSO Profile Fields
     google_id  = db.Column(db.String(255), unique=True, nullable=True, index=True)
     name       = db.Column(db.String(255), nullable=True) # Full name from Google
-    
     # Common Profile Fields
     picture    = db.Column(db.String(500), nullable=True)
     bio        = db.Column(db.String(500), nullable=True)
@@ -92,18 +91,17 @@ class User(db.Model, UserMixin):
 
 
 class Room(db.Model):
-    """Stores information about student/pro rooms (Internal Chat or WhatsApp)."""
-
     __tablename__ = "rooms"
 
-    id            = db.Column(db.Integer, primary_key=True)
+    id            = db.Column(db.BigInteger, primary_key=True)
     name          = db.Column(db.String(100), nullable=False)
     description   = db.Column(db.Text, nullable=True)
     topic         = db.Column(db.String(100), nullable=True)
     category      = db.Column(db.String(50), nullable=True)
     privacy       = db.Column(db.String(20), default='Public') # 'Public' or 'Private'
-    whatsapp_link = db.Column(db.String(500), nullable=True)   # Optional if internal chat used
     password      = db.Column(db.String(6), nullable=True)    # 6-digit password for private
+    icon          = db.Column(db.String(255), nullable=True, default='/static/images/roomicons/default_roomicon.png')
+    usercount     = db.Column(db.Integer, default=1)
     creator_id    = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at    = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
@@ -118,6 +116,7 @@ class Room(db.Model):
             "topic":       self.topic,
             "category":    self.category,
             "privacy":     self.privacy,
+            "icon":        self.icon,
             "created_at":  self.created_at.isoformat(),
             "creator_id":  self.creator_id
         }

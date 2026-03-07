@@ -228,21 +228,6 @@
     color: rgba(255, 255, 255, 0.3);
 }
 
-.btn-row-whatsapp {
-    background: rgba(37, 211, 102, 0.12);
-    border: 1px solid rgba(37, 211, 102, 0.3);
-    color: #25d366;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    transition: background 0.2s, color 0.2s;
-}
-
-
-.btn-row-whatsapp:hover {
-    background: #25d366;
-    color: #fff;
-}
-
 /* ─── Empty State ──────────────────────────────── */
 .empty-state {
     padding: 60px 20px;

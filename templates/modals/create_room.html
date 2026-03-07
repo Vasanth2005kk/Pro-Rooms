@@ -109,8 +109,26 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-dark border-secondary text-muted"><i
                                         class="fas fa-users"></i></span>
-                                <input type="number" name="members_limit" class="form-control" placeholder="e.g. 500"
-                                    value="500">
+                                <button type="button" class="btn btn-dark border-secondary text-muted"
+                                    onclick="this.parentNode.querySelector('input[type=number]').stepDown()"
+                                    style="border-top: 1px solid #3E505B !important;border-bottom: 1px solid #3E505B !important;">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" name="members_limit" class="form-control text-center"
+                                    placeholder="e.g. 20" value="20" min="2" max="5000"
+                                    style="-moz-appearance: textfield; appearance: textfield;">
+                                <style>
+                                    input[name="members_limit"]::-webkit-outer-spin-button,
+                                    input[name="members_limit"]::-webkit-inner-spin-button {
+                                        -webkit-appearance: none;
+                                        margin: 0;
+                                    }
+                                </style>
+                                <button type="button" class="btn btn-dark border-secondary text-muted"
+                                    onclick="this.parentNode.querySelector('input[type=number]').stepUp()"
+                                    style="border:1px solid #3E505B !important; border-left:none !important;">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
                         </div>
 
