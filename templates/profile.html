@@ -50,6 +50,13 @@
         min-height: 120px;
         resize: none;
     }
+    /* Star Button Style */
+    .btn-star.starred i {
+        color: #ffc107 !important;
+    }
+    .btn-star:hover i {
+        color: #ffc107;
+    }
 </style>
 {% endblock %}
 
@@ -164,20 +171,23 @@
 
         <!-- ─── Main Content ───────────────────────────────────────── -->
         <div class="col-lg-7 col-md-8 pt-2" style="margin-top: 10px; overflow-x: hidden; position: relative;">
+            {% set public_rooms = rooms|selectattr('privacy', 'equalto', 'Public')|list %}
+            {% set private_rooms = rooms|selectattr('privacy', 'equalto', 'Private')|list %}
+            
             <nav class="profile-nav-tabs">
-                <a href="#" class="nav-tab-item active">
-                    <i class="fa-solid fa-unlock"></i> Public <span class="tab-badge">{{ rooms|length }}</span>
+                <a href="javascript:void(0)" class="nav-tab-item active" data-tab="public">
+                    <i class="fa-solid fa-unlock"></i> Public <span class="tab-badge">{{ public_rooms|length }}</span>
                 </a>
                 {% if is_own_profile %}
-                <a href="#" class="nav-tab-item">
-                    <i class="fa-solid fa-lock"></i> Private <span class="tab-badge">0</span>
+                <a href="javascript:void(0)" class="nav-tab-item" data-tab="private">
+                    <i class="fa-solid fa-lock"></i> Private <span class="tab-badge">{{ private_rooms|length }}</span>
                 </a>
                 {% endif %}
-                <a href="#" class="nav-tab-item">
-                    <i class="fa-solid fa-plug-circle-check"></i> Joined <span class="tab-badge">0</span>
+                <a href="javascript:void(0)" class="nav-tab-item" data-tab="joined">
+                    <i class="fa-solid fa-plug-circle-check"></i> Joined <span class="tab-badge">{{ joined_rooms|length }}</span>
                 </a>
-                <a href="#" class="nav-tab-item">
-                    <i class="fas fa-star"></i> Stars <span class="tab-badge">0</span>
+                <a href="javascript:void(0)" class="nav-tab-item" data-tab="stars">
+                    <i class="fas fa-star"></i> Stars <span class="tab-badge">{{ starred_rooms|length }}</span>
                 </a>
 
                 {% if is_own_profile %}
@@ -190,86 +200,302 @@
             </nav>
 
             <div class="tab-content pt-3">
-                <div id="roomsGrid" class="rooms-list d-flex flex-column gap-3">
-                    {% if rooms %}
-                    {% for room in rooms %}
-                    <div class="room-row animate-slide-in" data-id="{{ room.id }}">
-                        <div class="row align-items-center g-0 w-100">
-
-                            <!-- Left: Icon + Name + Meta -->
-                            <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
-                                <div class="room-avatar">
-                                    {% if room.icon %}
-                                    <img src="{{ room.icon }}" alt="{{ room.name }}"
-                                        class="w-100 h-100 rounded-circle object-fit-cover">
-                                    {% else %}
-                                    <img src="{{ url_for('static', filename='images/roomicons/default_roomicon.png') }}"
-                                        alt="{{ room.name }}" class="w-100 h-100 rounded-circle object-fit-cover">
-                                    {% endif %}
+                <!-- Public Rooms Tab -->
+                <div id="public" class="tab-pane active">
+                    <div class="rooms-list d-flex flex-column gap-3">
+                        {% if public_rooms %}
+                        {% for room in public_rooms %}
+                        <div class="room-row animate-slide-in" data-id="{{ room.id }}" onclick="showRoomInfo('{{ room.id }}')">
+                            <div class="row align-items-center g-0 w-100">
+                                <!-- Left: Icon + Name + Meta -->
+                                <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
+                                    <div class="room-avatar">
+                                        {% if room.icon %}
+                                        <img src="{{ room.icon }}" alt="{{ room.name }}"
+                                            class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% else %}
+                                        <img src="{{ url_for('static', filename='images/roomicons/default_roomicon.png') }}"
+                                            alt="{{ room.name }}" class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h3 class="room-row-name">{{ room.name | title() }}<span
+                                                class="badge ms-2 badge-public">
+                                                <i class="fas fa-lock-open me-1"></i>
+                                                {{ room.privacy }}
+                                            </span> </h3>
+                                        <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                                            ID : <span class="text-primary fw-bold"
+                                                style="font-size: 1rem;">{{room.id}}</span>
+                                            <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
+                                                title="Copy Room ID">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </small>
+                                        <p class="room-row-desc mb-0 text-white-50 small">
+                                            {{ room.description or 'No description provided.' }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="room-row-name">{{ room.name | title() }}<span
-                                            class="badge ms-2 {{ 'badge-public' if room.privacy == 'Public' else 'badge-private' }}">
-                                            <i
-                                                class="fas {{ 'fa-lock-open' if room.privacy == 'Public' else 'fa-lock' }} me-1"></i>
-                                            {{ room.privacy }}
-                                        </span> </h3>
-                                    <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
-                                        ID : <span class="text-primary fw-bold"
-                                            style="font-size: 1rem;">{{room.id}}</span>
-                                        <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
-                                            title="Copy Room ID">
-                                            <i class="fas fa-copy"></i>
+                                <!-- Right: Badge + Actions -->
+                                <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-dark border border-secondary px-3 btn-star {{ 'starred' if room.is_starred_by_me else '' }}" 
+                                                onclick="event.stopPropagation(); toggleStar(this, '{{ room.id }}')">
+                                            <i class="{{ 'fas' if room.is_starred_by_me else 'far' }} fa-star me-1"></i> Star <span class="Star-count">{{ room.star_count }}</span>
                                         </button>
-                                    </small>
-                                    <p class="room-row-desc mb-0 text-white-50 small">
-                                        {{ room.description or 'No description provided.' }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Right: Badge + Actions -->
-                            <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-dark border border-secondary px-3">
-                                        <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
+                                    </div>
+                                    <button
+                                        onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
+                                        class="btn border border-secondary px-3 fw-bold btn-primary"
+                                        style="width: 120px;padding: 7px;">
+                                        <i class="fa-solid {{ 'fa-door-open' if room.is_member else 'fa-arrow-right-to-bracket' }}"></i>&nbsp;&nbsp;&nbsp;{{ 'Enter' if room.is_member else 'Join' }}
                                     </button>
                                 </div>
-                                <button
-                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
-                                    class="btn border border-secondary px-3 fw-bold btn-primary"
-                                    style="width: 120px;padding: 7px;">
-                                    <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
-                                </button>
-                            </div>
-
-                            <!-- Member Count -->
-                            <div class="room-member-count ms-auto col-sm-1">
-                                <span class="member-label">Members</span>
-                                <div class="member-inner">
-                                    <i class="fa-solid fa-users text-primary"></i>
-                                    <span class="text-white-50">
-                                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
-                                        room.usercount }}
-                                    </span>
+                                <!-- Member Count -->
+                                <div class="room-member-count ms-auto col-sm-1">
+                                    <span class="member-label">Members</span>
+                                    <div class="member-inner">
+                                        <i class="fa-solid fa-users text-primary"></i>
+                                        <span class="text-white-50">
+                                            1 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
+                                            room.usercount }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="glass-card p-5 text-center border border-secondary">
-                        <i class="fas fa-ghost fa-3x mb-3 text-muted"></i>
-                        <h5 class="text-white">No rooms yet</h5>
-                        <p class="text-muted">{{ 'You haven' if is_own_profile else user.name + ' hasn' }}'t created any
-                            rooms yet.</p>
-                        {% if is_own_profile %}
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal"> <i
-                                class="fas fa-plus me-1"></i>New Room</button>
+                        {% endfor %}
+                        {% else %}
+                        <div class="glass-card p-5 text-center border border-secondary">
+                            <i class="fas fa-ghost fa-3x mb-3 text-muted"></i>
+                            <h5 class="text-white">No public rooms</h5>
+                            <p class="text-muted">{{ 'You haven' if is_own_profile else user.name + ' hasn' }}'t created any
+                                public rooms yet.</p>
+                        </div>
                         {% endif %}
                     </div>
-                    {% endif %}
+                </div>
+
+                {% if is_own_profile %}
+                <!-- Private Rooms Tab -->
+                <div id="private" class="tab-pane d-none">
+                    <div class="rooms-list d-flex flex-column gap-3">
+                        {% if private_rooms %}
+                        {% for room in private_rooms %}
+                        <div class="room-row animate-slide-in" data-id="{{ room.id }}" onclick="showRoomInfo('{{ room.id }}')">
+                            <div class="row align-items-center g-0 w-100">
+                                <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
+                                    <div class="room-avatar">
+                                        {% if room.icon %}
+                                        <img src="{{ room.icon }}" alt="{{ room.name }}"
+                                            class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% else %}
+                                        <img src="{{ url_for('static', filename='images/roomicons/default_roomicon.png') }}"
+                                            alt="{{ room.name }}" class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h3 class="room-row-name">{{ room.name | title() }}<span
+                                                class="badge ms-2 badge-private">
+                                                <i class="fas fa-lock me-1"></i>
+                                                {{ room.privacy }}
+                                            </span> </h3>
+                                        <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                                            ID : <span class="text-primary fw-bold"
+                                                style="font-size: 1rem;">{{room.id}}</span>
+                                            <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
+                                                title="Copy Room ID">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </small>
+                                        <p class="room-row-desc mb-0 text-white-50 small">
+                                            {{ room.description or 'No description provided.' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <button class="btn btn-sm btn-dark border border-secondary px-3 btn-star {{ 'starred' if room.is_starred_by_me else '' }}" 
+                                                onclick="event.stopPropagation(); toggleStar(this, '{{ room.id }}')">
+                                            <i class="{{ 'fas' if room.is_starred_by_me else 'far' }} fa-star me-1"></i> Star <span class="Star-count">{{ room.star_count }}</span>
+                                        </button>
+                                    </div>
+                                    <button
+                                        onclick="event.stopPropagation(); prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
+                                        class="btn border border-secondary px-3 fw-bold btn-primary"
+                                        style="width: 120px;padding: 7px;">
+                                        <i class="fa-solid {{ 'fa-door-open' if room.is_member else 'fa-arrow-right-to-bracket' }}"></i>&nbsp;&nbsp;&nbsp;{{ 'Enter' if room.is_member else 'Join' }}
+                                    </button>
+                                </div>
+                                <div class="room-member-count ms-auto col-sm-1">
+                                    <span class="member-label">Members</span>
+                                    <div class="member-inner">
+                                        <i class="fa-solid fa-users text-primary"></i>
+                                        <span class="text-white-50">
+                                            1 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
+                                            room.usercount }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="glass-card p-5 text-center border border-secondary">
+                            <i class="fas fa-lock fa-3x mb-3 text-muted"></i>
+                            <h5 class="text-white">No private rooms</h5>
+                            <p class="text-muted">Private rooms are only visible to you.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Joined Tab -->
+                <div id="joined" class="tab-pane d-none">
+                    <div class="rooms-list d-flex flex-column gap-3">
+                        {% if joined_rooms %}
+                        {% for room in joined_rooms %}
+                        <div class="room-row animate-slide-in" data-id="{{ room.id }}" onclick="showRoomInfo('{{ room.id }}')">
+                            <div class="row align-items-center g-0 w-100">
+                                <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
+                                    <div class="room-avatar">
+                                        {% if room.icon %}
+                                        <img src="{{ room.icon }}" alt="{{ room.name }}"
+                                            class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% else %}
+                                        <img src="{{ url_for('static', filename='images/roomicons/default_roomicon.png') }}"
+                                            alt="{{ room.name }}" class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h3 class="room-row-name">{{ room.name | title() }}<span
+                                                class="badge ms-2 {{ 'badge-public' if room.privacy == 'Public' else 'badge-private' }}">
+                                                <i class="fas {{ 'fa-lock-open' if room.privacy == 'Public' else 'fa-lock' }} me-1"></i>
+                                                {{ room.privacy }}
+                                            </span> </h3>
+                                        <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                                            ID : <span class="text-primary fw-bold"
+                                                style="font-size: 1rem;">{{room.id}}</span>
+                                            <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
+                                                title="Copy Room ID">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </small>
+                                        <p class="room-row-desc mb-0 text-white-50 small">
+                                            {{ room.description or 'No description provided.' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <button class="btn btn-sm btn-dark border border-secondary px-3 btn-star {{ 'starred' if room.is_starred_by_me else '' }}" 
+                                                onclick="event.stopPropagation(); toggleStar(this, '{{ room.id }}')">
+                                            <i class="{{ 'fas' if room.is_starred_by_me else 'far' }} fa-star me-1"></i> Star <span class="Star-count">{{ room.star_count }}</span>
+                                        </button>
+                                    </div>
+                                    <button
+                                        onclick="event.stopPropagation(); prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
+                                        class="btn border border-secondary px-3 fw-bold btn-primary"
+                                        style="width: 120px;padding: 7px;">
+                                        <i class="fa-solid {{ 'fa-door-open' if room.is_member else 'fa-arrow-right-to-bracket' }}"></i>&nbsp;&nbsp;&nbsp;{{ 'Enter' if room.is_member else 'Join' }}
+                                    </button>
+                                </div>
+                                <div class="room-member-count ms-auto col-sm-1">
+                                    <span class="member-label">Members</span>
+                                    <div class="member-inner">
+                                        <i class="fa-solid fa-users text-primary"></i>
+                                        <span class="text-white-50">
+                                            1 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
+                                            room.usercount }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="glass-card p-5 text-center border border-secondary">
+                            <i class="fas fa-door-open fa-3x mb-3 text-muted"></i>
+                            <h5 class="text-white">No joined rooms</h5>
+                            <p class="text-muted">Rooms you join will appear here for easy access.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Stars Tab -->
+                <div id="stars" class="tab-pane d-none">
+                    <div class="rooms-list d-flex flex-column gap-3">
+                        {% if starred_rooms %}
+                        {% for room in starred_rooms %}
+                        <div class="room-row animate-slide-in" data-id="{{ room.id }}" onclick="showRoomInfo('{{ room.id }}')">
+                            <div class="row align-items-center g-0 w-100">
+                                <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
+                                    <div class="room-avatar">
+                                        {% if room.icon %}
+                                        <img src="{{ room.icon }}" alt="{{ room.name }}"
+                                            class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% else %}
+                                        <img src="{{ url_for('static', filename='images/roomicons/default_roomicon.png') }}"
+                                            alt="{{ room.name }}" class="w-100 h-100 rounded-circle object-fit-cover">
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h3 class="room-row-name">{{ room.name | title() }}<span
+                                                class="badge ms-2 {{ 'badge-public' if room.privacy == 'Public' else 'badge-private' }}">
+                                                <i class="fas {{ 'fa-lock-open' if room.privacy == 'Public' else 'fa-lock' }} me-1"></i>
+                                                {{ room.privacy }}
+                                            </span> </h3>
+                                        <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
+                                            ID : <span class="text-primary fw-bold"
+                                                style="font-size: 1rem;">{{room.id}}</span>
+                                            <button class="copy-id-btn" onclick="copyRoomId(this, '{{ room.id }}')"
+                                                title="Copy Room ID">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </small>
+                                        <p class="room-row-desc mb-0 text-white-50 small">
+                                            {{ room.description or 'No description provided.' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <button class="btn btn-sm btn-dark border border-secondary px-3 btn-star {{ 'starred' if room.is_starred_by_me else '' }}" 
+                                                onclick="event.stopPropagation(); toggleStar(this, '{{ room.id }}')">
+                                            <i class="{{ 'fas' if room.is_starred_by_me else 'far' }} fa-star me-1"></i> Star <span class="Star-count">{{ room.star_count }}</span>
+                                        </button>
+                                    </div>
+                                    <button
+                                        onclick="event.stopPropagation(); prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
+                                        class="btn border border-secondary px-3 fw-bold btn-primary"
+                                        style="width: 120px;padding: 7px;">
+                                        <i class="fa-solid {{ 'fa-door-open' if room.is_member else 'fa-arrow-right-to-bracket' }}"></i>&nbsp;&nbsp;&nbsp;{{ 'Enter' if room.is_member else 'Join' }}
+                                    </button>
+                                </div>
+                                <div class="room-member-count ms-auto col-sm-1">
+                                    <span class="member-label">Members</span>
+                                    <div class="member-inner">
+                                        <i class="fa-solid fa-users text-primary"></i>
+                                        <span class="text-white-50">
+                                            1 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
+                                            room.usercount }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="glass-card p-5 text-center border border-secondary">
+                            <i class="fas fa-star fa-3x mb-3 text-muted"></i>
+                            <h5 class="text-white">No starred rooms</h5>
+                            <p class="text-muted">Rooms you star will appear here for quick access.</p>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -282,9 +508,140 @@
 {% include 'modals/edit_profile.html' %}
 {% endif %}
 {% include 'modals/join_room.html' %}
+{% include 'modals/room_info.html' %}
 
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.nav-tab-item');
+        const panes = document.querySelectorAll('.tab-pane');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const target = this.getAttribute('data-tab');
+                if (!target) return;
+
+                // Update active tab styling
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Toggle panes
+                panes.forEach(pane => {
+                    if (pane.id === target) {
+                        pane.classList.remove('d-none');
+                        pane.classList.add('active');
+                    } else {
+                        pane.classList.add('d-none');
+                        pane.classList.remove('active');
+                    }
+                });
+            });
+        });
+    });
+
+    async function toggleStar(btn, roomId) {
+        try {
+            const response = await fetch('/api/rooms/star', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ room_id: roomId })
+            });
+            const data = await response.json();
+            if (data.success) {
+                const icon = btn.querySelector('i');
+                const countSpan = btn.querySelector('.Star-count');
+                
+                if (data.starred) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    btn.classList.add('starred');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    btn.classList.remove('starred');
+                }
+                countSpan.textContent = data.star_count;
+                
+                // Optionally update the Stars tab badge count if on own profile
+                const starsBadge = document.querySelector('[data-tab="stars"] .tab-badge');
+                if (starsBadge) {
+                    // This is a bit tricky as we'd need to fetch the full list or refresh
+                    // For now, let's just update the count locally if it's our own profile view
+                    // But simpler to just let the user refresh or ignore for now.
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling star:', error);
+        }
+    }
+    async function showRoomInfo(roomId) {
+        try {
+            const response = await fetch(`/api/rooms/${roomId}`);
+            const room = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('infoRoomId').textContent = room.id;
+                document.getElementById('infoRoomName').textContent = room.name;
+                document.getElementById('infoRoomIcon').src = room.icon || '/static/images/roomicons/default_roomicon.png';
+                document.getElementById('infoRoomDescription').textContent = room.description || 'No description provided.';
+                document.getElementById('infoRoomTopic').textContent = room.topic || 'General';
+                document.getElementById('infoRoomCategory').textContent = room.category || 'Uncategorized';
+                document.getElementById('infoRoomCreator').textContent = room.creator_name;
+                document.getElementById('infoMemberCount').textContent = room.member_count;
+                document.getElementById('infoStarCount').textContent = room.star_count;
+                
+                const date = new Date(room.created_at);
+                document.getElementById('infoRoomDate').textContent = date.toLocaleDateString('en-US', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+
+                const badge = document.getElementById('infoRoomPrivacyBadge');
+                badge.className = room.privacy === 'Public' ? 'badge badge-public' : 'badge badge-private';
+                badge.innerHTML = `<i class="fas ${room.privacy === 'Public' ? 'fa-lock-open' : 'fa-lock'} me-1"></i> ${room.privacy}`;
+
+                // Set Join button action
+                const joinBtn = document.getElementById('infoJoinBtn');
+                joinBtn.onclick = () => {
+                    bootstrap.Modal.getInstance(document.getElementById('roomInfoModal')).hide();
+                    prepareJoin(room.id, room.name, room.privacy, 'chat');
+                };
+
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('roomInfoModal'));
+                modal.show();
+            }
+        } catch (error) {
+            console.error('Error fetching room info:', error);
+        }
+    }
+
+    function copyInfoRoomId() {
+        const id = document.getElementById('infoRoomId').textContent;
+        navigator.clipboard.writeText(id).then(() => {
+            alert('Room ID copied to clipboard!');
+        });
+    }
+
+    function copyRoomId(btn, id) {
+        navigator.clipboard.writeText(id).then(() => {
+            const icon = btn.querySelector('i');
+            icon.classList.remove('fa-copy');
+            icon.classList.add('fa-check');
+            btn.style.color = 'var(--primary)';
+            
+            setTimeout(() => {
+                icon.classList.remove('fa-check');
+                icon.classList.add('fa-copy');
+                btn.style.color = '';
+            }, 2000);
+        });
+    }
+</script>
 {% endblock %}

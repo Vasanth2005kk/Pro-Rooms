@@ -34,7 +34,7 @@ from flask_login import (
 )
 
 from rooms.Config import Config, init_oauth
-from rooms.Models import db, get_db_connection, User, Room, Message
+from rooms.Models import db, get_db_connection, User, Room, Message, Star, Member
 from flask_migrate import Migrate  
 
 from rooms.helper import roomidGen
@@ -291,9 +291,9 @@ def google_callback():
 def dashboard():
     """Main dashboard page."""
     rooms = Room.query.order_by(Room.created_at.desc()).all()
-    for room in rooms:
-        print(f"Room: {room.__dict__}")
-        print()
+    for r in rooms:
+        r.star_count = Star.query.filter_by(room_id=r.id).count()
+        r.is_starred_by_me = current_user.is_authenticated and Star.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
     return render_template("index.html", rooms=rooms)
 
 
@@ -368,14 +368,38 @@ def profile(username=None):
     # Fetch rooms created by the user
     user_rooms = Room.query.filter_by(creator_id=user.id).order_by(Room.created_at.desc()).all()
     
+    # Enrich user_rooms with star data
+    for r in user_rooms:
+        r.star_count = Star.query.filter_by(room_id=r.id).count()
+        r.is_starred_by_me = current_user.is_authenticated and Star.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+        r.is_member = current_user.is_authenticated and Member.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+
+    # Fetch joined rooms (excluding rooms created by the user)
+    joined_room_ids = [m.room_id for m in Member.query.filter_by(user_id=user.id).all()]
+    joined_rooms = Room.query.filter(Room.id.in_(joined_room_ids), Room.creator_id != user.id).all() if joined_room_ids else []
+    for r in joined_rooms:
+        r.star_count = Star.query.filter_by(room_id=r.id).count()
+        r.is_starred_by_me = current_user.is_authenticated and Star.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+        r.is_member = current_user.is_authenticated and Member.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+
+    # Fetch starred rooms (excluding rooms created by the user)
+    starred_room_ids = [s.room_id for s in Star.query.filter_by(user_id=user.id).all()]
+    starred_rooms = Room.query.filter(Room.id.in_(starred_room_ids), Room.creator_id != user.id).all() if starred_room_ids else []
+    for r in starred_rooms:
+        r.star_count = Star.query.filter_by(room_id=r.id).count()
+        r.is_starred_by_me = current_user.is_authenticated and Star.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+        r.is_member = current_user.is_authenticated and Member.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+
     # Mock some stats
     stats = {
         "rooms_count": len(user_rooms),
+        "joined_count": len(joined_rooms),
         "messages_count": Message.query.filter_by(user_id=user.id).count(),
-        "followers": random.randint(50, 200) # Mock data
+        "followers": random.randint(50, 200), # Mock data
+        "stars_count": len(starred_rooms)
     }
 
-    return render_template("profile.html", user=user, rooms=user_rooms, stats=stats, is_own_profile=is_own_profile)
+    return render_template("profile.html", user=user, rooms=user_rooms, joined_rooms=joined_rooms, starred_rooms=starred_rooms, stats=stats, is_own_profile=is_own_profile)
 
 
 @app.errorhandler(404)
@@ -411,7 +435,16 @@ def get_rooms():
         query = query.filter(Room.privacy == privacy)
 
     rooms = query.order_by(Room.created_at.desc()).all()
-    return jsonify([room.to_dict() for room in rooms])
+    
+    rooms_data = []
+    for r in rooms:
+        d = r.to_dict()
+        d['star_count'] = Star.query.filter_by(room_id=r.id).count()
+        d['is_starred_by_me'] = current_user.is_authenticated and Star.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+        d['is_member'] = current_user.is_authenticated and Member.query.filter_by(user_id=current_user.id, room_id=r.id).first() is not None
+        rooms_data.append(d)
+        
+    return jsonify(rooms_data)
 
 
 @app.route("/api/rooms", methods=["POST"])
@@ -450,6 +483,15 @@ def create_room():
 
     try:
         roomid = roomidGen()
+        
+        # Convert usercount to int safely
+        try:
+            capacity = int(usercount) if (usercount and usercount.isdigit()) else 1
+            if capacity < 1: 
+                capacity = 1
+        except:
+            capacity = 1
+
         new_room = Room(
             id=roomid,
             name=name,
@@ -459,15 +501,36 @@ def create_room():
             privacy=privacy,
             password=password if privacy == "Private" else None,
             icon=icon_path,
-            usercount = int(usercount) if usercount > 1 else 1,
+            usercount=capacity,
             creator_id=current_user.id
         )
         db.session.add(new_room)
         db.session.commit()
+
+        # Automatically add creator as a member
+        new_member = Member(user_id=current_user.id, room_id=new_room.id)
+        db.session.add(new_member)
+        db.session.commit()
+
         return jsonify({"success": True, "room": new_room.to_dict()})
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/rooms/<int:room_id>", methods=["GET"])
+@login_required
+def get_room_details(room_id):
+    """Fetch all details for a specific room."""
+    room = Room.query.get_or_404(room_id)
+    # Include creator name and star count
+    data = room.to_dict()
+    creator = User.query.get(room.creator_id)
+    data['creator_name'] = creator.username or creator.name or "Unknown"
+    data['star_count'] = Star.query.filter_by(room_id=room.id).count()
+    data['is_starred_by_me'] = Star.query.filter_by(user_id=current_user.id, room_id=room.id).first() is not None
+    data['member_count'] = Member.query.filter_by(room_id=room.id).count()
+    return jsonify(data)
 
 
 @app.route("/api/rooms/join", methods=["POST"])
@@ -482,9 +545,47 @@ def join_room():
         return jsonify({"error": "Room not found"}), 404
         
     if room.privacy == "Public" or room.password == password:
+        # Record membership if not already a member
+        existing_member = Member.query.filter_by(user_id=current_user.id, room_id=room.id).first()
+        if not existing_member:
+            new_member = Member(user_id=current_user.id, room_id=room.id)
+            db.session.add(new_member)
+            db.session.commit()
+            
         return jsonify({"success": True, "room_id": room.id})
     else:
         return jsonify({"error": "Incorrect password"}), 403
+
+
+@app.route("/api/rooms/star", methods=["POST"])
+@login_required
+def toggle_star():
+    """Toggle star status for a room."""
+    data = request.get_json()
+    room_id = data.get("room_id")
+    
+    if not room_id:
+        return jsonify({"error": "Room ID is required"}), 400
+        
+    star = Star.query.filter_by(user_id=current_user.id, room_id=room_id).first()
+    
+    if star:
+        db.session.delete(star)
+        db.session.commit()
+        starred = False
+    else:
+        new_star = Star(user_id=current_user.id, room_id=room_id)
+        db.session.add(new_star)
+        db.session.commit()
+        starred = True
+        
+    star_count = Star.query.filter_by(room_id=room_id).count()
+    
+    return jsonify({
+        "success": True, 
+        "starred": starred, 
+        "star_count": star_count
+    })
 
 
 @app.route("/api/chat/<int:room_id>", methods=["GET", "POST"])

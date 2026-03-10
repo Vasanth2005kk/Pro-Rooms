@@ -63,13 +63,13 @@ function buildRoomRow(room) {
     const titleName = room.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
     return `
-    <div class="room-row animate-slide-in" data-id="${room.id}">
+    <div class="room-row animate-slide-in" data-id="${room.id}" onclick="showRoomInfo('${room.id}')">
         <div class="row align-items-center g-0 w-100">
 
             <!-- Left: Icon + Name + Meta -->
             <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
                 <div class="room-avatar">
-                    <i class="fas fa-comments"></i>
+                   ${room.icon ? `<img src="${room.icon}" alt="${room.name}" class="w-100 h-100 rounded-circle object-fit-cover">` : `<i class="fas fa-comments"></i>`}
                 </div>
                 <div>
                     <h3 class="room-row-name">${titleName}<span
@@ -80,7 +80,7 @@ function buildRoomRow(room) {
                     <small class="text-white-50 fw-bold d-flex align-items-center gap-1">
                         ID : <span class="text-primary fw-bold"
                             style="font-size: 1rem;">${room.id}</span>
-                        <button class="copy-id-btn" onclick="copyRoomId(this, '${room.id}')"
+                        <button class="copy-id-btn" onclick="event.stopPropagation(); copyRoomId(this, '${room.id}')"
                             title="Copy Room ID">
                             <i class="fas fa-copy"></i>
                         </button>
@@ -93,15 +93,16 @@ function buildRoomRow(room) {
 
             <!-- Right: Badge + Actions -->
             <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-dark border border-secondary px-3">
-                        <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
+                <div class="d-flex gap-2 mb-2">
+                    <button class="btn btn-sm btn-dark border border-secondary px-3 btn-star ${room.is_starred_by_me ? 'starred' : ''}" 
+                            onclick="event.stopPropagation(); toggleStar(this, '${room.id}')">
+                        <i class="${room.is_starred_by_me ? 'fas' : 'far'} fa-star me-1"></i> Star <span class="Star-count">${room.star_count || 0}</span>
                     </button>
                 </div>
-                <button onclick="prepareJoin('${room.id}', '${room.name}', '${room.privacy}', 'chat')"
+                <button onclick="event.stopPropagation(); prepareJoin('${room.id}', '${room.name}', '${room.privacy}', 'chat')"
                     class="btn border border-secondary px-3 fw-bold btn-primary"
                     style="width: 120px;padding: 7px;">
-                    <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
+                    <i class="fa-solid ${room.is_member ? 'fa-door-open' : 'fa-arrow-right-to-bracket'}"></i>&nbsp;&nbsp;&nbsp;${room.is_member ? 'Enter' : 'Join'}
                 </button>
             </div>
 
@@ -111,7 +112,7 @@ function buildRoomRow(room) {
                 <div class="member-inner">
                     <i class="fa-solid fa-users text-primary"></i>
                     <span class="text-white-50">
-                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> ${room.usercount}
+                        1 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> ${room.usercount}
                     </span>
                 </div>
             </div>
@@ -163,16 +164,21 @@ if (createRoomForm) {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.target).entries());
 
-        const res = await fetch('/api/rooms', {
-            method: 'POST',
-            body: new FormData(e.target)
-        });
+        try {
+            const res = await fetch('/api/rooms', {
+                method: 'POST',
+                body: new FormData(e.target)
+            });
 
-        if (res.ok) {
-            location.reload();
-        } else {
-            const err = await res.json();
-            alert(err.error);
+            if (res.ok) {
+                location.reload();
+            } else {
+                const err = await res.json();
+                alert('Error creating room: ' + (err.error || 'Unknown error occurred'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to connect to the server. Please try again.');
         }
     };
 }
@@ -242,3 +248,83 @@ document.querySelectorAll('.passcode-input').forEach((input, idx, inputs) => {
         }
     });
 });
+
+/* ─── Room Information Modal ───────────────────── */
+async function showRoomInfo(roomId) {
+    try {
+        const response = await fetch(`/api/rooms/${roomId}`);
+        const room = await response.json();
+        
+        if (response.ok) {
+            document.getElementById('infoRoomId').textContent = room.id;
+            document.getElementById('infoRoomName').textContent = room.name;
+            document.getElementById('infoRoomIcon').src = room.icon || '/static/images/roomicons/default_roomicon.png';
+            document.getElementById('infoRoomDescription').textContent = room.description || 'No description provided.';
+            document.getElementById('infoRoomTopic').textContent = room.topic || 'General';
+            document.getElementById('infoRoomCategory').textContent = room.category || 'Uncategorized';
+            document.getElementById('infoRoomCreator').textContent = room.creator_name;
+            document.getElementById('infoMemberCount').textContent = room.member_count;
+            document.getElementById('infoStarCount').textContent = room.star_count;
+            
+            const date = new Date(room.created_at);
+            document.getElementById('infoRoomDate').textContent = date.toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+
+            const badge = document.getElementById('infoRoomPrivacyBadge');
+            badge.className = room.privacy === 'Public' ? 'badge badge-public' : 'badge badge-private';
+            badge.innerHTML = `<i class="fas ${room.privacy === 'Public' ? 'fa-lock-open' : 'fa-lock'} me-1"></i> ${room.privacy}`;
+
+            // Set Join button action
+            const joinBtn = document.getElementById('infoJoinBtn');
+            joinBtn.onclick = () => {
+                bootstrap.Modal.getInstance(document.getElementById('roomInfoModal')).hide();
+                prepareJoin(room.id, room.name, room.privacy, 'chat');
+            };
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('roomInfoModal'));
+            modal.show();
+        }
+    } catch (error) {
+        console.error('Error fetching room info:', error);
+    }
+}
+
+function copyInfoRoomId() {
+    const id = document.getElementById('infoRoomId').textContent;
+    navigator.clipboard.writeText(id).then(() => {
+        alert('Room ID copied to clipboard!');
+    });
+}
+
+/* ─── Star Toggle Logic ────────────────────────── */
+async function toggleStar(btn, roomId) {
+    try {
+        const response = await fetch('/api/rooms/star', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ room_id: roomId })
+        });
+        const data = await response.json();
+        if (data.success) {
+            const icon = btn.querySelector('i');
+            const countSpan = btn.querySelector('.Star-count');
+            
+            if (data.starred) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                btn.classList.add('starred');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                btn.classList.remove('starred');
+            }
+            countSpan.textContent = data.star_count;
+        }
+    } catch (error) {
+        console.error('Error toggling star:', error);
+    }
+}

@@ -106,7 +106,7 @@
                 <!-- Rooms List — Full Row Style (No box model) -->
                 <div id="roomsGrid" class="rooms-list d-flex flex-column gap-3">
                     {% for room in rooms %}
-                    <div class="room-row animate-slide-in" data-id="{{ room.id }}">
+                    <div class="room-row animate-slide-in" data-id="{{ room.id }}" onclick="showRoomInfo('{{ room.id }}')">
                         <div class="row align-items-center g-0 w-100">
 
                             <!-- Left: Icon + Name + Meta -->
@@ -141,28 +141,27 @@
                                 </div>
                             </div>
 
-                            <!-- Right: Badge + Actions -->
-                            <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-dark border border-secondary px-3">
-                                        <i class="far fa-star me-1"></i> Star <span class="Star-count">5</span>
+                                <div class="badge-action col-12 col-sm-3 mt-2 mt-sm-0">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <button class="btn btn-sm btn-dark border border-secondary px-3 btn-star {{ 'starred' if room.is_starred_by_me else '' }}" 
+                                                onclick="event.stopPropagation(); toggleStar(this, '{{ room.id }}')">
+                                            <i class="{{ 'fas' if room.is_starred_by_me else 'far' }} fa-star me-1"></i> Star <span class="Star-count">{{ room.star_count }}</span>
+                                        </button>
+                                    </div>
+                                    <button
+                                        onclick="event.stopPropagation(); prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
+                                        class="btn border border-secondary px-3 fw-bold btn-primary"
+                                        style="width: 120px;padding: 7px;">
+                                        <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
                                     </button>
                                 </div>
-                                <button
-                                    onclick="prepareJoin('{{ room.id }}', '{{ room.name }}', '{{ room.privacy }}', 'chat')"
-                                    class="btn border border-secondary px-3 fw-bold btn-primary"
-                                    style="width: 120px;padding: 7px;">
-                                    <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp;&nbsp;Join
-                                </button>
-                            </div>
 
-                            <!-- Member Count -->
                             <div class="room-member-count ms-auto col-sm-1">
                                 <span class="member-label">Members</span>
                                 <div class="member-inner">
                                     <i class="fa-solid fa-users text-primary"></i>
                                     <span class="text-white-50">
-                                        125 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
+                                        1 <span class="text-primary fw-bold" style="font-size: 1.1rem;">/</span> {{
                                         room.usercount }}
                                     </span>
                                 </div>
@@ -192,6 +191,7 @@
 {% include 'modals/create_room.html' %}
 
 {% include 'modals/join_room.html' %}
+{% include 'modals/room_info.html' %}
 
 
 

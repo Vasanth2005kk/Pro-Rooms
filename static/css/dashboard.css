@@ -201,6 +201,14 @@
     margin-left: 0.5rem;
 }
 
+/* Star Button Style */
+.btn-star.starred i {
+    color: #ffc107 !important;
+}
+.btn-star:hover i {
+    color: #ffc107;
+}
+
 /* ─── Member Count ─────────────────────────────── */
 .room-member-count {
     display: flex;
