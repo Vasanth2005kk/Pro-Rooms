@@ -72,6 +72,10 @@ def get_profile(username):
         if starred_ids else []
     )
 
+    # Sort user rooms into public and private
+    public_rooms  = [r for r in user_rooms if r.privacy == "Public"]
+    private_rooms = [r for r in user_rooms if r.privacy == "Private"]
+
     stats = {
         "rooms_count":    len(user_rooms),
         "joined_count":   len(joined_rooms),
@@ -82,9 +86,12 @@ def get_profile(username):
 
     return jsonify({
         "user":          user.to_dict(),
-        "rooms":         [_enrich_room(r, me_id) for r in user_rooms],
-        "joined_rooms":  [_enrich_room(r, me_id) for r in joined_rooms],
-        "starred_rooms": [_enrich_room(r, me_id) for r in starred_rooms],
+        "rooms": {
+            "public":  [_enrich_room(r, me_id) for r in public_rooms],
+            "private": [_enrich_room(r, me_id) for r in private_rooms],
+            "joined":  [_enrich_room(r, me_id) for r in joined_rooms],
+            "starred": [_enrich_room(r, me_id) for r in starred_rooms],
+        },
         "stats":         stats,
         "is_own_profile": is_own_profile,
     }), 200

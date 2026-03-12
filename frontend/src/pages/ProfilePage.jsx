@@ -196,7 +196,7 @@ export default function ProfilePage() {
                       : l.includes("linkedin") ? "fa-linkedin"
                       : l.includes("instagram") ? "fa-instagram"
                       : l.includes("facebook") ? "fa-facebook"
-                      : ("twitter" in l || "x.com" in l) ? "fa-x-twitter" : "fa-link";
+                      : (l.includes("twitter") || l.includes("x.com")) ? "fa-x-twitter" : "fa-link";
 
                     return (
                       <a key={i} href={url} className="text-white user-links text-decoration-none d-flex align-items-center gap-2" target="_blank" rel="noreferrer">
