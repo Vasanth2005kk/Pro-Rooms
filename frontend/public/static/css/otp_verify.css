@@ -73,35 +73,6 @@ html {
     pointer-events: none;
     overflow: hidden;
 }
-
-[class^="glow-"],
-body::before,
-body::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.3;
-}
-
-body::before {
-    width: 50vw;
-    height: 50vw;
-    background: #28a745;
-    top: -15vh;
-    right: -10vw;
-    animation: float-slow 20s infinite alternate;
-}
-
-body::after {
-    width: 40vw;
-    height: 40vw;
-    background: #218838;
-    bottom: -10vh;
-    left: -5vw;
-    animation: float-slow 25s infinite alternate-reverse;
-}
-
 .glow-1 {
     width: 35vw;
     height: 35vw;
@@ -388,21 +359,5 @@ h2.gradient-text {
 
     .otp-container {
         gap: 6px;
-    }
-}
-
-/* Accessibility: reduced motion */
-@media (prefers-reduced-motion: reduce) {
-
-    [class^="glow-"],
-    body::before,
-    body::after {
-        animation: none !important;
-        transform: none !important;
-    }
-
-    .btn-gradient,
-    .otp-input {
-        transition: none !important;
     }
 }

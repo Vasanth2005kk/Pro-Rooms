@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "../services/api";
+import { TypeAnimation } from 'react-type-animation';
+
 
 export default function SignupPage() {
-  const { user }                  = useAuth();
-  const navigate                  = useNavigate();
-  const [form, setForm]           = useState({ username: "", email: "", password: "", ConfirmPassword: "" });
-  const [error, setError]         = useState(null);
-  const [loading, setLoading]     = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ username: "", email: "", password: "", ConfirmPassword: "" });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) navigate("/dashboard", { replace: true });
@@ -48,7 +50,17 @@ export default function SignupPage() {
           <div className="auth-left-content">
             <div className="auth-welcome-text">
               <span className="welcome-line-1">Join the</span>
-              <span className="welcome-line-2">Pro Room's Application</span>
+              <span className="welcome-line-2">
+                <TypeAnimation
+                  sequence={[
+                    "Pro Room's Application",
+                    5000,
+                  ]}
+                  wrapper="span"
+                  cursor={false}
+                  repeat={Infinity}
+                />
+              </span>
             </div>
           </div>
         </div>
