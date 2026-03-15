@@ -86,8 +86,7 @@ The project is split into two directories: `backend/` and `frontend/`. You must 
 
 ---
 
-## Old Monolith Note
-The files at the root of the repository (e.g., the old `app.py`, `templates/`, `static/`, etc.) belong to the legacy monolithic architecture. All new active development occurs inside `/backend` and `/frontend`.
+##
 
 ---
 Built with ❤️ by [Vasanth](https://github.com/Vasanth2005kk)
