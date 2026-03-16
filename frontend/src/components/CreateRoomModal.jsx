@@ -55,15 +55,101 @@ export default function CreateRoomModal({ onClose, onCreated }) {
 
   return (
     <>
+      <style>{`
+        .create-room-modal .modal-content {
+          background-color: #1A1D21 !important;
+          border: 1px solid #2D3238 !important;
+          border-radius: 20px !important;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+          overflow: hidden;
+        }
+        .create-room-modal .modal-header {
+          border-bottom: 1px solid #2D3238 !important;
+          padding: 1.25rem 1.5rem !important;
+          background: #1A1D21 !important;
+        }
+        .create-room-modal .modal-body {
+          padding: 1.5rem !important;
+          background-color: #1A1D21 !important;
+        }
+        .create-room-modal .form-label {
+          color: #8E96A0 !important;
+          font-size: 0.85rem;
+          font-weight: 500;
+          margin-bottom: 0.5rem;
+        }
+        .create-room-modal .input-group-text {
+          background-color: #10191E !important;
+          color: #fff !important;
+          border: 1px solid #3E505B !important;
+          border-right: 0 !important;
+          border-radius: 10px 0 0 10px !important;
+          min-width: 45px;
+          justify-content: center;
+        }
+        .create-room-modal .form-control, 
+        .create-room-modal .form-select {
+          background-color: #10191E !important;
+          border: 1px solid #3E505B !important;
+          color: #fff !important;
+          border-radius: 0 10px 10px 0 !important;
+          padding: 0.6rem 0.75rem;
+          transition: all 0.2s ease;
+        }
+        .create-room-modal .form-control:focus,
+        .create-room-modal .form-select:focus {
+          border-color: var(--primary) !important;
+          box-shadow: none !important;
+        }
+        .create-room-modal .input-group:focus-within .input-group-text {
+          border-color: var(--primary) !important;
+          color: var(--primary) !important;
+        }
+        .create-room-modal .modal-section-title {
+          font-size: 1rem;
+          color: #fff;
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 0.5rem;
+        }
+        .create-room-modal .room-avatar {
+          transition: all 0.3s ease;
+        }
+        .create-room-modal .room-avatar:hover {
+          background: rgba(255, 255, 255, 0.08) !important;
+          border-color: var(--primary) !important;
+        }
+        .create-room-modal .btn-create-submit {
+          background-color: var(--primary) !important;
+          border: none !important;
+          font-weight: 600 !important;
+          border-radius: 8px !important;
+        }
+        .create-room-modal .members-adjust-btn {
+          background: #10191E !important;
+          border: 1px solid #3E505B !important;
+          color: #8E96A0 !important;
+          transition: all 0.2s ease;
+        }
+        .create-room-modal .members-adjust-btn:hover {
+          color: #fff !important;
+          background: #1a252b !important;
+        }
+      `}</style>
+
       <div className="modal-backdrop fade show" style={{ backdropFilter: "blur(8px)" }}></div>
-      <div className="modal fade show d-block" tabIndex="-1" aria-labelledby="createRoomModalLabel" aria-hidden="true">
+      <div className="modal fade show d-block create-room-modal" tabIndex="-1">
         <div className="modal-dialog modal-lg modal-dialog-centered">
-          <div className="modal-content border-secondary shadow-lg" style={{ background: "#10191E", borderRadius: "20px" }}>
-            <div className="modal-header border-secondary d-flex align-items-center justify-content-between">
-              <h5 className="modal-title text-white mb-0"><i className="fas fa-plus-circle me-2"></i>Create New Community</h5>
+          <div className="modal-content">
+            <div className="modal-header d-flex align-items-center justify-content-between">
+              <h5 className="modal-title text-white mb-0">
+                <i className="fas fa-plus-circle me-2"></i> Create New Community
+              </h5>
               <div className="d-flex align-items-center gap-3">
                 {!successData && (
-                  <button type="submit" form="createRoomForm" className="btn btn-primary btn-sm px-4" disabled={loading}>
+                  <button type="submit" form="createRoomForm" className="btn btn-primary btn-sm px-4 btn-create-submit" disabled={loading}>
                     {loading ? "Creating..." : "Create Room"}
                   </button>
                 )}
@@ -71,24 +157,24 @@ export default function CreateRoomModal({ onClose, onCreated }) {
               </div>
             </div>
 
-            <div className="modal-body bg-dark" style={{ background: "#10191E" }}>
+            <div className="modal-body custom-scrollbar" style={{ maxHeight: "85vh", overflowY: "auto" }}>
               {error && <div className="alert alert-danger mx-3">{error}</div>}
 
               {!successData ? (
                 <form id="createRoomForm" onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="row g-4 justify-content-center">
-                    <div className="col-md-10 mt-3">
-                      <h6 className="modal-section-title" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "0.5rem", color: "#f8fafc", fontWeight: 600 }}>Basic Information</h6>
+                    <div className="col-md-11">
+                      <h6 className="modal-section-title">Basic Information</h6>
                     </div>
 
-                    <div className="col-md-5 d-flex flex-column align-items-center justify-content-center">
+                    <div className="col-md-4 d-flex flex-column align-items-center justify-content-center">
                       <div
                         id="roomIconPreview"
                         className="room-avatar"
                         style={{
                           width: "120px", height: "120px", cursor: "pointer", display: "flex", alignItems: "center",
                           justifyContent: "center", border: `2px ${previewUrl ? "solid var(--primary)" : "dashed rgba(255,255,255,0.08)"}`, borderRadius: "50%",
-                          overflow: "hidden", background: "rgba(255,255,255,0.05)", transition: "all 0.3s ease"
+                          overflow: "hidden", background: "rgba(255,255,255,0.05)"
                         }}
                         onClick={() => fileRef.current?.click()}
                       >
@@ -102,110 +188,109 @@ export default function CreateRoomModal({ onClose, onCreated }) {
                       <label className="form-label text-muted mt-2">Group Icon</label>
                     </div>
 
-                    <div className="col-md-5">
-                      <label className="form-label text-muted">Group Name</label>
-                      <div className="input-group">
-                        <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
-                          <i className="fas fa-heading"></i>
-                        </span>
-                        <input type="text" name="name" className="form-control" placeholder="e.g. Next.js Masters" required value={form.name} onChange={handleChange} />
+                    <div className="col-md-7">
+                      <div className="mb-3">
+                        <label className="form-label">Group Name</label>
+                        <div className="input-group">
+                          <span className="input-group-text">
+                            <i className="fas fa-heading"></i>
+                          </span>
+                          <input type="text" name="name" className="form-control" placeholder="e.g. Next.js Masters" required value={form.name} onChange={handleChange} />
+                        </div>
+                      </div>
+                      
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <label className="form-label">Category</label>
+                          <div className="input-group">
+                            <span className="input-group-text">
+                              <i className="fas fa-tag"></i>
+                            </span>
+                            <select name="category" className="form-select" value={form.category} onChange={handleChange}>
+                              <option value="Coding">Coding</option>
+                              <option value="Business">Business</option>
+                              <option value="Design">Design</option>
+                              <option value="Student">Student</option>
+                              <option value="Networking">Networking</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Tags</label>
+                          <div className="input-group">
+                            <span className="input-group-text">
+                              <i className="fas fa-hashtag"></i>
+                            </span>
+                            <input type="text" name="topic" className="form-control" placeholder="Nextjs, React" value={form.topic} onChange={handleChange} />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="col-md-10 mt-3">
-                      <label className="form-label text-muted">Group Description</label>
+                    <div className="col-md-11">
+                      <label className="form-label">Group Description</label>
                       <div className="input-group">
-                        <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
+                        <span className="input-group-text" style={{ borderRadius: "10px 0 0 10px" }}>
                           <i className="fas fa-align-left"></i>
                         </span>
-                        <textarea name="description" className="form-control" rows="4" placeholder="Describe your community..." style={{ minHeight: "100px" }} value={form.description} onChange={handleChange}></textarea>
+                        <textarea name="description" className="form-control" rows="3" placeholder="Describe your community..." style={{ minHeight: "80px" }} value={form.description} onChange={handleChange}></textarea>
                       </div>
                     </div>
 
-                    <div className="col-md-5 mt-3">
-                      <label className="form-label text-muted">Category</label>
-                      <div className="input-group">
-                        <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
-                          <i className="fas fa-tag"></i>
-                        </span>
-                        <select name="category" className="form-select bg-dark text-white border-secondary" value={form.category} onChange={handleChange}>
-                          <option value="Coding">Coding</option>
-                          <option value="Business">Business</option>
-                          <option value="Design">Design</option>
-                          <option value="Student">Student</option>
-                          <option value="Networking">Networking</option>
-                        </select>
-                      </div>
+                    <div className="col-md-11">
+                      <h6 className="modal-section-title">Privacy & Access</h6>
                     </div>
 
-                    <div className="col-md-5 mt-3">
-                      <label className="form-label text-muted">Tags</label>
+                    <div className="col-md-6">
+                      <label className="form-label">Visibility (Privacy Type)</label>
                       <div className="input-group">
-                        <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
-                          <i className="fas fa-hashtag"></i>
-                        </span>
-                        <input type="text" name="topic" className="form-control" placeholder="e.g. Nextjs, React, Web" value={form.topic} onChange={handleChange} />
-                      </div>
-                    </div>
-
-                    <div className="col-md-10 mt-4">
-                      <h6 className="modal-section-title" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "0.5rem", color: "#f8fafc", fontWeight: 600 }}>Privacy & Access</h6>
-                    </div>
-
-                    <div className="col-md-5 mt-3">
-                      <label className="form-label text-muted">Visibility (Privacy Type)</label>
-                      <div className="input-group">
-                        <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
+                        <span className="input-group-text">
                           <i className="fas fa-user-shield"></i>
                         </span>
-                        <select name="privacy" id="privacySelect" className="form-select bg-dark text-white border-secondary" value={form.privacy} onChange={handleChange}>
+                        <select name="privacy" className="form-select" value={form.privacy} onChange={handleChange}>
                           <option value="Public">Public (Anyone can join)</option>
                           <option value="Private">Private (Password required)</option>
                         </select>
                       </div>
                     </div>
 
-                    <div className="col-md-5 mt-3">
-                      <label className="form-label text-muted">Members Capacity</label>
+                    <div className="col-md-5">
+                      <label className="form-label">Members Capacity</label>
                       <div className="input-group">
-                        <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
-                          <i className="fas fa-users"></i>
-                        </span>
-                        <button type="button" className="btn btn-dark border-secondary text-muted" onClick={() => setForm(p => ({ ...p, members_limit: Math.max(2, parseInt(p.members_limit || 0) - 1).toString() }))} style={{ borderTop: "1px solid #3E505B", borderBottom: "1px solid #3E505B", borderRadius: 0 }}>
+                        <button type="button" className="btn members-adjust-btn" onClick={() => setForm(p => ({ ...p, members_limit: Math.max(2, parseInt(p.members_limit || 0) - 1).toString() }))} style={{ borderRadius: "10px 0 0 10px" }}>
                           <i className="fas fa-minus"></i>
                         </button>
-                        <input type="number" name="members_limit" className="form-control text-center" placeholder="e.g. 20" min="2" max="5000" value={form.members_limit} onChange={handleChange} style={{ MozAppearance: "textfield" }} />
-                        <button type="button" className="btn btn-dark border-secondary text-muted" onClick={() => setForm(p => ({ ...p, members_limit: Math.min(5000, parseInt(p.members_limit || 0) + 1).toString() }))} style={{ border: "1px solid #3E505B", borderLeft: "none", borderRadius: "0 10px 10px 0" }}>
+                        <input type="number" name="members_limit" className="form-control text-center bg-dark" value={form.members_limit} onChange={handleChange} style={{ borderRadius: 0, borderLeft: 0, borderRight: 0 }} />
+                        <button type="button" className="btn members-adjust-btn" onClick={() => setForm(p => ({ ...p, members_limit: Math.min(5000, parseInt(p.members_limit || 0) + 1).toString() }))} style={{ borderRadius: "0 10px 10px 0" }}>
                           <i className="fas fa-plus"></i>
                         </button>
                       </div>
                     </div>
 
                     {form.privacy === "Private" && (
-                      <div className="col-md-10 mt-3" id="passField">
-                        <label className="form-label text-muted">6-Digit Access Code</label>
+                      <div className="col-md-11">
+                        <label className="form-label">6-Digit Access Code</label>
                         <div className="input-group">
-                          <span className="input-group-text bg-dark border-secondary text-muted" style={{ background: "#10191E", borderColor: "#3E505B" }}>
+                          <span className="input-group-text">
                             <i className="fas fa-key"></i>
                           </span>
-                          <input type="text" name="password" className="form-control" placeholder="123456" maxLength="6" pattern="\d{6}" required value={form.password} onChange={handleChange} />
+                          <input type="text" name="password" className="form-control" placeholder="123456" maxLength="6" pattern="\\d{6}" required value={form.password} onChange={handleChange} />
                         </div>
                       </div>
                     )}
-
                   </div>
                 </form>
               ) : (
                 <div id="createSuccessContent" className="text-center py-5 animate-fade-in">
-                  <div className="success-icon-container mb-4" style={{ animation: "scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)" }}>
+                  <div className="success-icon-container mb-4">
                     <i className="fas fa-check-circle text-success fa-5x"></i>
                   </div>
                   <h3 className="text-white fw-bold mb-2">Room Created Successfully!</h3>
                   <p className="text-white-50 mb-4">Your new community is ready for members.</p>
 
                   <div className="row justify-content-center">
-                    <div className="col-md-8">
-                      <div className="bg-dark rounded-3 p-4 border border-secondary mb-4" style={{ background: "#10191E", borderColor: "#3E505B" }}>
+                    <div className="col-md-10">
+                      <div className="rounded-3 p-4 border border-secondary mb-4" style={{ background: "#10191E" }}>
                         <div className="mb-3">
                           <label className="text-muted small text-uppercase fw-bold d-block mb-2">Room Share Link</label>
                           <div className="input-group">
@@ -226,7 +311,7 @@ export default function CreateRoomModal({ onClose, onCreated }) {
                         </div>
                       </div>
 
-                      <button className="btn btn-primary w-100 py-3 fw-bold" onClick={onClose}>
+                      <button className="btn btn-primary w-100 py-3 fw-bold btn-create-submit" onClick={onClose}>
                         Go to Dashboard
                       </button>
                     </div>
