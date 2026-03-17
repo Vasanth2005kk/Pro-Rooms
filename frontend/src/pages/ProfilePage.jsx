@@ -90,7 +90,7 @@ export default function ProfilePage() {
           <div className="row g-md-5 d-flex justify-content-center">
 
             {/* Sidebar */}
-            <div className="col-lg-4 col-md-4">
+            <div className="col-lg-4 col-md-4" style={{ borderRight: "2px solid var(--glass-border)" }}>
               <div className="profile-sidebar">
                 <div className="profile-img-container mb-3 text-center text-md-start">
                   <img
@@ -108,19 +108,6 @@ export default function ProfilePage() {
                     <div className="status-indicator">
                       <div className="status-dot"></div>
                       <span className="text-white">Online</span>
-                    </div>
-
-                    <div className="stats-row mt-3">
-                      <a href="#" className="stat-item text-decoration-none">
-                        <i className="fas fa-users me-1 text-muted"></i>
-                        <span className="stat-count text-white fw-bold">{stats.followers || 0}</span>
-                        <span className="text-muted ms-1">followers</span>
-                      </a>
-                      <span className="text-muted mx-1">·</span>
-                      <a href="#" className="stat-item text-decoration-none">
-                        <span className="stat-count text-white fw-bold">10</span>
-                        <span className="text-muted ms-1">following</span>
-                      </a>
                     </div>
                   </div>
                 </div>
@@ -153,7 +140,7 @@ export default function ProfilePage() {
                   )}
 
                   {/* Links section */}
-                  <div className="mt-2 d-flex flex-column gap-2">
+                  <div className="mt-3 d-flex flex-column gap-2">
                     {[user.link1, user.link2, user.link3, user.link4].map((link, i) => {
                       if (!link) return null;
                       const l = link.toLowerCase();
@@ -174,7 +161,7 @@ export default function ProfilePage() {
                   </div>
 
                   {isOwnProfile && user.created_at && (
-                    <div className="joined-date">
+                    <div className="joined-date text-white-50">
                       <i className="far fa-calendar-alt me-2 text-muted"></i>
                       Joined {new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                     </div>
@@ -271,9 +258,10 @@ export default function ProfilePage() {
 
           </div>
         </div>
-      </main>
+      </main >
 
-      {showCreate && <CreateRoomModal onClose={() => setShowCreate(false)} onCreated={handleRoomCreated} />}
+      {showCreate && <CreateRoomModal onClose={() => setShowCreate(false)} onCreated={handleRoomCreated} />
+      }
       {showEdit && <EditProfileModal user={user} onClose={() => setShowEdit(false)} onUpdated={handleProfileUpdated} />}
     </>
   );

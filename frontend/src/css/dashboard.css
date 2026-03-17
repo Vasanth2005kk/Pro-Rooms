@@ -186,7 +186,7 @@
 
 .badge-action {
     display: flex;
-    padding-right: 1.5em;
+    padding-right: 1rem;
     align-items: end;
     justify-content: end;
     flex-direction: column;
@@ -205,6 +205,7 @@
 .btn-star.starred i {
     color: #ffc107 !important;
 }
+
 .btn-star:hover i {
     color: #ffc107;
 }

@@ -57,7 +57,7 @@ export default function RoomRow({ room, onStar, onJoin }) {
               className={`btn btn-sm btn-dark border border-secondary px-3 btn-star ${room.is_starred_by_me ? "starred" : ""}`}
               onClick={(e) => { e.stopPropagation(); onStar(); }}
             >
-              <i className={`${room.is_starred_by_me ? 'fas' : 'far'} fa-star me-1`}></i> Star{" "}
+              <i className={`${room.is_starred_by_me ? 'fas' : 'far'} fa-star me-1`}></i>
               <span className="Star-count">{room.star_count}</span>
             </button>
             <button
@@ -65,7 +65,7 @@ export default function RoomRow({ room, onStar, onJoin }) {
               onClick={share}
               title="Share Room"
             >
-              <i className="fas fa-share-nodes me-1 text-primary"></i> Share
+              <i className="fas fa-share-nodes me-1 text-primary"></i>
             </button>
           </div>
           <button
