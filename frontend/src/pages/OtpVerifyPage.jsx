@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { authAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import "../css/otp_verify.css";
 
 export default function OtpVerifyPage() {
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ export default function OtpVerifyPage() {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await authAPI.verifyOtp(email, code);
+      const { data } = await authAPI.verifyOtp({ email, otp: code });
       login(data.access_token, data.user);
       navigate("/dashboard");
     } catch (err) {
@@ -106,14 +107,6 @@ export default function OtpVerifyPage() {
 
   return (
     <main className="p-0">
-      {/* Animated Background Glows */}
-      <div className="bg-glows" aria-hidden="true">
-        <div className="glow-1"></div>
-        <div className="glow-2"></div>
-        <div className="glow-3"></div>
-        <div className="glow-4"></div>
-      </div>
-
       <div className="otp-page-wrapper d-flex align-items-center justify-content-center min-vh-100 p-3">
         <div className="otp-container-wrapper w-100">
           <div className="card otp-card">

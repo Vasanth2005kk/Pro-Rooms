@@ -9,10 +9,13 @@ required for the React frontend decoupling.
 import os
 import secrets
 from dotenv import load_dotenv
+from urllib.parse import quote_plus
 
-load_dotenv()
+env_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+load_dotenv(dotenv_path=os.path.join(env_path, ".env"))
+ 
 class Config:
     """Flask application configuration."""
 
@@ -30,10 +33,10 @@ class Config:
     _db_host     = os.getenv("DB_HOST",     "localhost")
     _db_port     = os.getenv("DB_PORT",     "5432")
     _db_name     = os.getenv("DB_NAME",     "rooms_db")
-
+    
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        f"postgresql+psycopg2://{_db_user}:{_db_password}@{_db_host}:{_db_port}/{_db_name}"
+        f"postgresql+psycopg2://{_db_user}:{quote_plus(_db_password)}@{_db_host}:{_db_port}/{_db_name}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

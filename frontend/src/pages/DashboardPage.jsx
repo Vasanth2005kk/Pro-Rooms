@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { roomsAPI } from "../services/api";
-import Navbar           from "../components/Navbar";
-import RoomRow          from "../components/RoomRow";
-import LoadingSpinner   from "../components/LoadingSpinner";
-import CreateRoomModal  from "../components/CreateRoomModal";
+import Navbar from "../components/Navbar";
+import RoomRow from "../components/RoomRow";
+import LoadingSpinner from "../components/LoadingSpinner";
+import CreateRoomModal from "../components/CreateRoomModal";
+import "../css/dashboard.css";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
 
-  const [rooms,       setRooms]       = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [error,       setError]       = useState(null);
-  const [showCreate,  setShowCreate]  = useState(false);
-  const [filters,     setFilters]     = useState({ search: "", category: "", privacy: "" });
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [filters, setFilters] = useState({ search: "", category: "", privacy: "" });
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
@@ -54,7 +55,7 @@ export default function DashboardPage() {
   const handleJoin = async (room) => {
     if (room.is_member || room.privacy === "Public") {
       if (!room.is_member) {
-        try { await roomsAPI.join({ room_id: room.id }); } catch {}
+        try { await roomsAPI.join({ room_id: room.id }); } catch { }
       }
       navigate(`/chat/${room.id}`);
       return;
@@ -167,7 +168,7 @@ export default function DashboardPage() {
 
                 <div id="roomsGrid" className="rooms-list d-flex flex-column gap-3">
                   {loading && <LoadingSpinner message="Loading rooms..." />}
-                  
+
                   {!loading && error && (
                     <div className="alert alert-danger p-3">{error}</div>
                   )}

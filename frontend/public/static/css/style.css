@@ -1,11 +1,3 @@
-/*
-  Pro-Rooms Core Design System
-  Bootstrap 5 handles all utility classes (spacing, flex, grid, display, text).
-  This file contains ONLY: design tokens, theme overrides, glassmorphism,
-  custom navbar, animations, modals, dropdowns, scrollbar and component styles
-  that Bootstrap does not provide.
-*/
-
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 /* ══════════════════════════════════════════════════════════════════

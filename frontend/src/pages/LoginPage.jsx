@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "../services/api";
 import { TypeAnimation } from 'react-type-animation';
-
+import "../css/auth.css";
 
 export default function LoginPage() {
   const { login, user } = useAuth();
@@ -30,13 +30,13 @@ export default function LoginPage() {
 
     try {
       const { data } = await authAPI.login(form);
-      if (data.requires_verification) {
-        navigate(`/verify-otp?email=${encodeURIComponent(data.email)}`);
-        return;
-      }
       login(data.access_token, data.user);
       navigate("/dashboard");
     } catch (err) {
+      if (err.response?.status === 403 && err.response?.data?.requires_verification) {
+        navigate(`/verify-otp?email=${encodeURIComponent(err.response.data.email)}`);
+        return;
+      }
       setError(err.response?.data?.error || "Login failed. Please try again.");
     } finally {
       setLoading(false);

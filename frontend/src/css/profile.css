@@ -1,13 +1,10 @@
-/*
- * Pro-Rooms — Profile Page Styles
- * Refined GitHub-style Layout with Glassmorphism
- */
+:root {
+    --primary: #28a745;
+}
 
 .profile-container {
     padding-top: 2rem;
 }
-
-/* ─── Sidebar ──────────────────────────────────────────────────── */
 
 .profile-sidebar {
     display: flex;

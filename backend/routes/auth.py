@@ -136,6 +136,7 @@ def verify_otp():
     Returns a JWT on success.
     """
     data         = request.get_json()
+    print(data)
     otp_received = data.get("otp", "").strip()
     otp_stored   = session.get("otp")
     user_id      = session.get("user_id_to_verify")

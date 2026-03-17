@@ -2,19 +2,20 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { profileAPI } from "../services/api";
-import Navbar           from "../components/Navbar";
-import RoomRow          from "../components/RoomRow";
-import LoadingSpinner   from "../components/LoadingSpinner";
-import CreateRoomModal  from "../components/CreateRoomModal";
-import EditProfileModal  from "../components/EditProfileModal";
+import Navbar from "../components/Navbar";
+import RoomRow from "../components/RoomRow";
+import LoadingSpinner from "../components/LoadingSpinner";
+import CreateRoomModal from "../components/CreateRoomModal";
+import EditProfileModal from "../components/EditProfileModal";
+import "../css/profile.css";
 
 export default function ProfilePage() {
   const { username } = useParams();
   const { user: currentUser } = useAuth();
-  
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("public");
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -87,7 +88,7 @@ export default function ProfilePage() {
       <main className="pb-5">
         <div className="container-fluid profile-container px-md-5">
           <div className="row g-md-5 d-flex justify-content-center">
-            
+
             {/* Sidebar */}
             <div className="col-lg-4 col-md-4">
               <div className="profile-sidebar">
@@ -100,15 +101,15 @@ export default function ProfilePage() {
                   <div className="mb-4 d-flex flex-column">
                     <h1 className="h3 mb-0 text-white fw-bold">{user.name || user.username || "Anonymous"}</h1>
                     <p className="text-muted fs-5 mb-1">
-                      <span style={{ color: "var(--primary)" }}>@</span> {user.username || "no_username"}
+                      <span style={{ color: "#28a745" }}>@</span> {user.username || "no_username"}
                     </p>
                     {isOwnProfile && <p className="text-white-50 small mb-3">ID: PRO_{user.id + 1000}</p>}
-                    
+
                     <div className="status-indicator">
                       <div className="status-dot"></div>
                       <span className="text-white">Online</span>
                     </div>
-                    
+
                     <div className="stats-row mt-3">
                       <a href="#" className="stat-item text-decoration-none">
                         <i className="fas fa-users me-1 text-muted"></i>
@@ -135,13 +136,13 @@ export default function ProfilePage() {
                       </span>
                     </div>
                   )}
-                  
+
                   {user.location && (
                     <div className="meta-item">
                       <i className="fas fa-map-marker-alt"></i> <span>{user.location}</span>
                     </div>
                   )}
-                  
+
                   {user.company_website && (
                     <div className="meta-item">
                       <i className="fas fa-globe"></i>
@@ -159,9 +160,9 @@ export default function ProfilePage() {
                       const url = l.includes("http") ? link : `https://${link}`;
                       const iconClass = l.includes("github") ? "fa-github"
                         : l.includes("linkedin") ? "fa-linkedin"
-                        : l.includes("instagram") ? "fa-instagram"
-                        : l.includes("facebook") ? "fa-facebook"
-                        : (l.includes("twitter") || l.includes("x.com")) ? "fa-x-twitter" : "fa-link";
+                          : l.includes("instagram") ? "fa-instagram"
+                            : l.includes("facebook") ? "fa-facebook"
+                              : (l.includes("twitter") || l.includes("x.com")) ? "fa-x-twitter" : "fa-link";
 
                       return (
                         <a key={i} href={url} className="text-white user-links text-decoration-none d-flex align-items-center gap-2" target="_blank" rel="noreferrer">
@@ -174,7 +175,7 @@ export default function ProfilePage() {
 
                   {isOwnProfile && user.created_at && (
                     <div className="joined-date">
-                      <i className="far fa-calendar-alt me-2 text-muted"></i> 
+                      <i className="far fa-calendar-alt me-2 text-muted"></i>
                       Joined {new Date(user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                     </div>
                   )}
@@ -201,7 +202,7 @@ export default function ProfilePage() {
                 <button className={`nav-tab-item ${activeTab === "public" ? "active" : ""} bg-transparent border-0`} onClick={() => setActiveTab("public")}>
                   <i className="fa-solid fa-unlock"></i> Public <span className="tab-badge">{publicRooms.length}</span>
                 </button>
-                
+
                 {isOwnProfile && (
                   <button className={`nav-tab-item ${activeTab === "private" ? "active" : ""} bg-transparent border-0`} onClick={() => setActiveTab("private")}>
                     <i className="fa-solid fa-lock"></i> Private <span className="tab-badge">{privateRooms.length}</span>
@@ -211,7 +212,7 @@ export default function ProfilePage() {
                 <button className={`nav-tab-item ${activeTab === "joined" ? "active" : ""} bg-transparent border-0`} onClick={() => setActiveTab("joined")}>
                   <i className="fa-solid fa-plug-circle-check"></i> Joined <span className="tab-badge">{joinedRooms.length}</span>
                 </button>
-                
+
                 <button className={`nav-tab-item ${activeTab === "stars" ? "active" : ""} bg-transparent border-0`} onClick={() => setActiveTab("stars")}>
                   <i className="fas fa-star"></i> Stars <span className="tab-badge">{starredRooms.length}</span>
                 </button>
@@ -229,7 +230,7 @@ export default function ProfilePage() {
                 {activeTab === "public" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {publicRooms.length > 0 ? (
-                      publicRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => {}} onStar={() => {}} />)
+                      publicRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
                     ) : (
                       <EmptyState icon="fa-ghost" title="No public rooms" desc={`${isOwnProfile ? "You haven't" : `${user.name} hasn't`} created any public rooms yet.`} />
                     )}
@@ -239,7 +240,7 @@ export default function ProfilePage() {
                 {activeTab === "private" && isOwnProfile && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {privateRooms.length > 0 ? (
-                      privateRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => {}} onStar={() => {}} />)
+                      privateRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
                     ) : (
                       <EmptyState icon="fa-lock" title="No private rooms" desc="Private rooms are only visible to you." />
                     )}
@@ -249,7 +250,7 @@ export default function ProfilePage() {
                 {activeTab === "joined" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {joinedRooms.length > 0 ? (
-                      joinedRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => {}} onStar={() => {}} />)
+                      joinedRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
                     ) : (
                       <EmptyState icon="fa-door-open" title="No joined rooms" desc="Rooms you join will appear here for easy access." />
                     )}
@@ -259,7 +260,7 @@ export default function ProfilePage() {
                 {activeTab === "stars" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {starredRooms.length > 0 ? (
-                      starredRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => {}} onStar={() => {}} />)
+                      starredRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
                     ) : (
                       <EmptyState icon="fa-star" title="No starred rooms" desc="Rooms you star will appear here for quick access." />
                     )}
@@ -271,7 +272,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
-      
+
       {showCreate && <CreateRoomModal onClose={() => setShowCreate(false)} onCreated={handleRoomCreated} />}
       {showEdit && <EditProfileModal user={user} onClose={() => setShowEdit(false)} onUpdated={handleProfileUpdated} />}
     </>

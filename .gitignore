@@ -218,3 +218,4 @@ testing.*
 # rooms uploaded images
 static/images/roomicons/*
 !static/images/roomicons/default_roomicon.png
+chacking.*
