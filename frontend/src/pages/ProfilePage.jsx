@@ -132,8 +132,8 @@ export default function ProfilePage() {
 
                   {user.company_website && (
                     <div className="meta-item">
-                      <i className="fas fa-globe"></i>
-                      <a href={user.company_website.includes("http") ? user.company_website : `https://${user.company_website}`} className="text-decoration-none text-white hover-primary" target="_blank" rel="noreferrer">
+                      <a href={user.company_website.includes("http") ? user.company_website : `https://${user.company_website}`} className="text-white user-links text-decoration-none d-flex align-items-center gap-2" target="_blank" rel="noreferrer">
+                        <i className="fas fa-globe"></i>
                         {user.company_website}
                       </a>
                     </div>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
 
                       return (
                         <a key={i} href={url} className="text-white user-links text-decoration-none d-flex align-items-center gap-2" target="_blank" rel="noreferrer">
-                          <i className={`fab ${iconClass} fa-lg`}></i>
+                          {iconClass === "fa-link" ? <i className="fas fa-link"></i> : <i className={`fab ${iconClass} fa-lg`}></i>}
                           <span className="small text-truncate">{link.split("/").pop() || link}</span>
                         </a>
                       );
@@ -184,7 +184,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Main Content */}
-            <div className="col-lg-7 col-md-8 profile-main-content">
+            <div className="col-lg-8 col-md-8 profile-main-content">
               <nav className="profile-nav-tabs">
                 <button className={`nav-tab-item ${activeTab === "public" ? "active" : ""} bg-transparent border-0`} onClick={() => setActiveTab("public")}>
                   <i className="fa-solid fa-unlock"></i> Public <span className="tab-badge">{publicRooms.length}</span>

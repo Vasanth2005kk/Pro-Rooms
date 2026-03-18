@@ -32,11 +32,11 @@ export default function Navbar() {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link className="nav-link" to="/dashboard">
                 <i className="fas fa-th-large me-1"></i> Dashboard
               </Link>
-            </li>
+            </li> */}
           </ul>
 
           {user && (

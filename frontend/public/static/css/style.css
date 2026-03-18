@@ -44,7 +44,7 @@ body {
     background-image: radial-gradient(circle at top right, #202C33, #10191E);
     color: var(--text-main);
     line-height: 1.5;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* ══════════════════════════════════════════════════════════════════

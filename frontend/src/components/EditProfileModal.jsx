@@ -192,7 +192,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
               <form id="editProfileForm" onSubmit={handleSubmit}>
                 <div className="row g-4">
                   {/* Name */}
-                  <div className="col-md-6">
+                  <div className="col-md-6" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Name</label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -203,7 +203,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   </div>
 
                   {/* Username */}
-                  <div className="col-md-6">
+                  <div className="col-md-6" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Username</label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -214,7 +214,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   </div>
 
                   {/* Profile Picture */}
-                  <div className="col-12">
+                  <div className="col-12" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Profile Picture</label>
                     <div className="file-input-container">
                       <div className="file-icon-box">
@@ -231,7 +231,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   </div>
 
                   {/* Bio */}
-                  <div className="col-12">
+                  <div className="col-12" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Bio</label>
                     <div className="textarea-container">
                       <i className="fas fa-laptop textarea-icon"></i>
@@ -246,13 +246,13 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                     </div>
                   </div>
 
-                  <div className="col-12">
+                  <div className="col-12" style={{ marginTop: "0px" }}>
                     <h6 className="modal-section-title">Corporate Profile</h6>
                     <hr className="border-secondary opacity-25" />
                   </div>
 
                   {/* Company */}
-                  <div className="col-md-6">
+                  <div className="col-md-6" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Company</label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -263,7 +263,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   </div>
 
                   {/* Job Title */}
-                  <div className="col-md-6">
+                  <div className="col-md-6" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Job Title</label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -274,7 +274,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   </div>
 
                   {/* Location */}
-                  <div className="col-md-6">
+                  <div className="col-md-6" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Location</label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -285,7 +285,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   </div>
 
                   {/* Website */}
-                  <div className="col-md-6">
+                  <div className="col-md-6" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Website</label>
                     <div className="input-group">
                       <span className="input-group-text">
@@ -295,14 +295,14 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                     </div>
                   </div>
 
-                  <div className="col-12">
+                  <div className="col-12" style={{ marginTop: "0px" }}>
                     <h6 className="modal-section-title">Social Accounts</h6>
                     <hr className="border-secondary opacity-25" />
                   </div>
 
                   {/* Social Links */}
                   {[1, 2, 3, 4].map((num) => (
-                    <div className="col-md-6" key={num}>
+                    <div className="col-md-6" key={num} style={{ marginTop: "0.5rem" }}>
                       <label className="form-label">Link {num}</label>
                       <div className="input-group">
                         <span className="input-group-text">

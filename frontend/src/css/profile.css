@@ -11,7 +11,7 @@
 .profile-sidebar {
     display: flex;
     flex-direction: column;
-    height: 90vh;
+    /* height: 90vh; */
     overflow: hidden;
     gap: 10px;
 }
@@ -116,10 +116,9 @@
 .new-room-btn-container {
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    margin-top: 0.5rem;
+    justify-content: flex-end;
+    margin: 0.3rem;
+    padding-right: 3rem;
 }
 
 .profile-bio {
@@ -137,6 +136,13 @@
 }
 
 /* ─── Main Content (Tabs/Repos) ────────────────────────────────── */
+.profile-main-content {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    overflow-y: auto;
+}
+
 
 .profile-nav-tabs {
     border-bottom: 1px solid var(--glass-border);
@@ -228,7 +234,9 @@
 .meta-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.7rem;
+    padding-bottom: 7px;
+    color: #ffff;
 }
 
 .meta-lang-dot {
