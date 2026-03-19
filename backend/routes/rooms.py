@@ -65,6 +65,7 @@ def get_rooms():
         d["star_count"]       = Star.query.filter_by(room_id=r.id).count()
         d["is_starred_by_me"] = Star.query.filter_by(user_id=me.id, room_id=r.id).first() is not None
         d["is_member"]        = Member.query.filter_by(user_id=me.id, room_id=r.id).first() is not None
+        d["is_owner"]         = me.id == r.creator_id
         rooms_data.append(d)
 
     return jsonify(rooms_data), 200
@@ -104,7 +105,7 @@ def create_room():
             ext = os.path.splitext(file.filename)[1].lower()
             if ext in [".jpg", ".jpeg", ".png", ".gif"]:
                 filename   = f"room_{secrets.token_hex(8)}{ext}"
-                upload_dir = os.path.join(current_app.root_path, "static", "images", "roomicons")
+                upload_dir = "/home/vasanth/Desktop/Projects/Pro-Rooms/frontend/public/static/images/roomicons"
                 os.makedirs(upload_dir, exist_ok=True)
                 file.save(os.path.join(upload_dir, filename))
                 icon_path = f"/static/images/roomicons/{filename}"
@@ -149,13 +150,92 @@ def get_room(room_id):
     data = room.to_dict()
 
     creator = User.query.get(room.creator_id)
-    data["creator_name"]    = creator.username or creator.name or "Unknown"
-    data["star_count"]      = Star.query.filter_by(room_id=room.id).count()
+    data["creator_name"]     = creator.username or creator.name or "Unknown"
+    data["star_count"]       = Star.query.filter_by(room_id=room.id).count()
     data["is_starred_by_me"] = Star.query.filter_by(user_id=me.id, room_id=room.id).first() is not None
-    data["member_count"]    = Member.query.filter_by(room_id=room.id).count()
-    data["is_member"]       = Member.query.filter_by(user_id=me.id, room_id=room.id).first() is not None
+    data["member_count"]     = Member.query.filter_by(room_id=room.id).count()
+    data["is_member"]        = Member.query.filter_by(user_id=me.id, room_id=room.id).first() is not None
+    data["is_owner"]         = me.id == room.creator_id
 
     return jsonify(data), 200
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PUT /api/rooms/<room_id>   ← Edit room (creator only)
+# ─────────────────────────────────────────────────────────────────────────────
+@rooms_bp.route("/<int:room_id>", methods=["PUT"])
+@jwt_required()
+def update_room(room_id):
+    """Update a room's details. Only the creator can do this."""
+    me   = _current_user()
+    room = Room.query.get_or_404(room_id)
+
+    if me.id != room.creator_id:
+        return jsonify({"error": "Forbidden: only the room creator can edit this room"}), 403
+
+    is_multipart = request.content_type and request.content_type.startswith("multipart")
+    data         = request.form if is_multipart else (request.get_json() or {})
+
+    room.name        = data.get("name",        room.name)
+    room.description = data.get("description", room.description)
+    room.topic       = data.get("topic",       room.topic)
+    room.category    = data.get("category",    room.category)
+
+    new_privacy = data.get("privacy", room.privacy)
+    if new_privacy == "Private":
+        new_pass = data.get("password", "").strip()
+        if new_pass and (len(new_pass) != 6 or not new_pass.isdigit()):
+            return jsonify({"error": "Private rooms require a 6-digit numeric password"}), 400
+        room.password = new_pass or room.password
+    else:
+        room.password = None
+    room.privacy = new_privacy
+
+    members_limit = data.get("members_limit", "")
+    if members_limit:
+        try:
+            room.usercount = max(1, int(members_limit))
+        except ValueError:
+            pass
+
+    # Handle optional new room icon
+    if "room_icon" in request.files:
+        file = request.files["room_icon"]
+        if file and file.filename:
+            ext = os.path.splitext(file.filename)[1].lower()
+            if ext in [".jpg", ".jpeg", ".png", ".gif"]:
+                filename   = f"room_{secrets.token_hex(8)}{ext}"
+                upload_dir = "/home/vasanth/Desktop/Projects/Pro-Rooms/frontend/public/static/images/roomicons"
+                os.makedirs(upload_dir, exist_ok=True)
+                file.save(os.path.join(upload_dir, filename))
+                room.icon = f"/static/images/roomicons/{filename}"
+            else:
+                return jsonify({"error": "Unsupported image format"}), 400
+
+    db.session.commit()
+    return jsonify({"success": True, "room": room.to_dict()}), 200
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DELETE /api/rooms/<room_id>   ← Delete room (creator only)
+# ─────────────────────────────────────────────────────────────────────────────
+@rooms_bp.route("/<int:room_id>", methods=["DELETE"])
+@jwt_required()
+def delete_room(room_id):
+    """Delete a room and all its messages/members. Only the creator can do this."""
+    me   = _current_user()
+    room = Room.query.get_or_404(room_id)
+
+    if me.id != room.creator_id:
+        return jsonify({"error": "Forbidden: only the room creator can delete this room"}), 403
+
+    # Delete members and stars manually (messages cascade automatically)
+    Member.query.filter_by(room_id=room.id).delete()
+    Star.query.filter_by(room_id=room.id).delete()
+    db.session.delete(room)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Room deleted successfully"}), 200
 
 
 # ─────────────────────────────────────────────────────────────────────────────

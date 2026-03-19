@@ -211,11 +211,11 @@ try.py
 checking.py
 
 # User uploaded images
-static/images/userimages/*
-!static/images/userimages/default-avatar.png
+/frontend/public/static/images/userimages/*
+!/frontend/public/static/images/userimages/default-avatar.png
 testing.*
 
 # rooms uploaded images
-static/images/roomicons/*
-!static/images/roomicons/default_roomicon.png
+/frontend/public/static/images/roomicons/*
+!/frontend/public/static/images/roomicons/default_roomicon.png
 chacking.*

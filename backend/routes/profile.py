@@ -31,6 +31,7 @@ def _enrich_room(r, me_id: int) -> dict:
     d["star_count"]       = Star.query.filter_by(room_id=r.id).count()
     d["is_starred_by_me"] = Star.query.filter_by(user_id=me_id, room_id=r.id).first() is not None
     d["is_member"]        = Member.query.filter_by(user_id=me_id, room_id=r.id).first() is not None
+    d["is_owner"]         = me_id == r.creator_id
     return d
 
 
@@ -118,7 +119,7 @@ def update_profile(username):
     # Resolve data source: multipart (file upload) vs plain JSON
     is_multipart = request.content_type and request.content_type.startswith("multipart")
     data         = request.form if is_multipart else (request.get_json() or {})
-
+    print(data)
     # ── Update text fields ────────────────────────────────────────────────────
     user.name            = data.get("name",            user.name)
     user.bio             = data.get("bio",             user.bio)
@@ -140,15 +141,13 @@ def update_profile(username):
         user.username = new_username
 
     # ── Handle profile picture upload ─────────────────────────────────────────
-    if "picture_url" in request.files:
-        file = request.files["picture_url"]
+    if "picture" in request.files:
+        file = request.files["picture"]
         if file and file.filename:
             ext = os.path.splitext(file.filename)[1].lower()
             if ext in [".jpg", ".jpeg", ".png", ".gif"]:
                 filename   = f"{secrets.token_hex(8)}{ext}"
-                upload_dir = os.path.join(
-                    current_app.root_path, "static", "images", "userimages"
-                )
+                upload_dir = "/home/vasanth/Desktop/Projects/Pro-Rooms/frontend/public/static/images/userimages"
                 os.makedirs(upload_dir, exist_ok=True)
                 file.save(os.path.join(upload_dir, filename))
                 user.picture = f"/static/images/userimages/{filename}"
