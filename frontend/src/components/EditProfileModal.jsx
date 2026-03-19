@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { profileAPI } from "../services/api";
+import "../css/editprofileModal.css"
 
 export default function EditProfileModal({ user, onClose, onUpdated }) {
   const [form, setForm] = useState({
@@ -19,6 +20,7 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(user.picture || null);
+  const [fileName, setFileName] = useState("No file chosen");
   const fileRef = useRef(null);
 
   const handleChange = (e) => {
@@ -29,9 +31,12 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setFileName(file.name);
       const reader = new FileReader();
       reader.onload = (event) => setPreviewUrl(event.target.result);
       reader.readAsDataURL(file);
+    } else {
+      setFileName("No file chosen");
     }
   };
 
@@ -59,117 +64,6 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
 
   return (
     <>
-      <style>{`
-        .edit-profile-modal .modal-content {
-          background-color: #1A1D21 !important;
-          border: 1px solid #2D3238 !important;
-          border-radius: 16px !important;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
-        }
-        .edit-profile-modal .modal-header {
-          border-bottom: 1px solid #2D3238 !important;
-          padding: 1.25rem 1.5rem !important;
-        }
-        .edit-profile-modal .modal-body {
-          padding: 1.5rem !important;
-          background-color: #1A1D21 !important;
-        }
-        .edit-profile-modal .form-label {
-          color: #8E96A0 !important;
-          font-size: 0.85rem;
-          font-weight: 500;
-          margin-bottom: 0.5rem;
-        }
-        .edit-profile-modal .input-group-text {
-          background-color: #10191E !important;
-          color: #fff !important;
-          border: 1px solid #3E505B !important;
-          border-right: 0 !important;
-          border-radius: 10px 0 0 10px !important;
-          min-width: 45px;
-          justify-content: center;
-        }
-        .edit-profile-modal .form-control, 
-        .edit-profile-modal .form-select {
-          background-color: #10191E !important;
-          border: 1px solid #3E505B !important;
-          color: #fff !important;
-          border-radius: 0 10px 10px 0 !important;
-          padding: 0.6rem 0.75rem;
-        }
-        .edit-profile-modal .form-control:focus {
-          border-color: #2ECC71 !important;
-          box-shadow: none !important;
-        }
-        .edit-profile-modal .input-group:focus-within .input-group-text {
-          border-color: #2ECC71 !important;
-        }
-        .edit-profile-modal textarea.form-control {
-          border-radius: 10px !important;
-          padding-left: 45px !important;
-        }
-        .edit-profile-modal .textarea-container {
-          position: relative;
-        }
-        .edit-profile-modal .textarea-icon {
-          position: absolute;
-          left: 15px;
-          top: 15px;
-          color: #fff;
-          z-index: 5;
-        }
-        .edit-profile-modal .btn-save {
-          background-color: #1DB954 !important;
-          border: none !important;
-          color: white !important;
-          font-weight: 600 !important;
-          padding: 0.4rem 1.5rem !important;
-          border-radius: 8px !important;
-        }
-        .edit-profile-modal .btn-save:hover {
-          background-color: #1AA34A !important;
-        }
-        .edit-profile-modal .modal-section-title {
-          font-size: 1rem;
-          color: #fff;
-          margin-top: 1.5rem;
-          margin-bottom: 1rem;
-          font-weight: 600;
-        }
-        .edit-profile-modal .file-input-container {
-          background-color: #10191E;
-          border: 1px solid #3E505B;
-          border-radius: 10px;
-          padding: 0.4rem;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .edit-profile-modal .file-icon-box {
-          min-width: 45px;
-          display: flex;
-          justify-content: center;
-          color: #fff;
-        }
-        .edit-profile-modal .btn-choose-file {
-          background-color: #2ECC71 !important;
-          color: #000 !important;
-          border: none !important;
-          padding: 0.2rem 0.8rem !important;
-          border-radius: 6px !important;
-          font-size: 0.8rem !important;
-          font-weight: 600 !important;
-          cursor: pointer !important;
-        }
-        .edit-profile-modal .file-name {
-          color: #fff;
-          font-size: 0.9rem;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-      `}</style>
-
       <div className="modal-backdrop fade show" style={{ backdropFilter: "blur(8px)" }}></div>
       <div className="modal fade show d-block edit-profile-modal" tabIndex="-1">
         <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -216,17 +110,22 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
                   {/* Profile Picture */}
                   <div className="col-12" style={{ marginTop: "0.5rem" }}>
                     <label className="form-label">Profile Picture</label>
-                    <div className="file-input-container">
-                      <div className="file-icon-box">
-                        <i className="fas fa-image"></i>
+                    <div className="d-flex align-items-center gap-4">
+                      {previewUrl && (
+                        <div className="profile-preview-wrapper">
+                          <img src={previewUrl} alt="Preview" className="profile-preview-img" />
+                        </div>
+                      )}
+                      <div className="file-input-container flex-grow-1">
+                        <div className="file-icon-box">
+                          <i className="fas fa-image"></i>
+                        </div>
+                        <button type="button" className="btn-choose-file" onClick={() => fileRef.current?.click()}>
+                          Choose File
+                        </button>
+                        <span className="file-name">{fileName}</span>
+                        <input type="file" ref={fileRef} className="d-none" accept="image/*" onChange={handleFileChange} />
                       </div>
-                      <button type="button" className="btn-choose-file" onClick={() => fileRef.current?.click()}>
-                        Choose File
-                      </button>
-                      <span className="file-name">
-                        {fileRef.current?.files[0]?.name || "No file chosen"}
-                      </span>
-                      <input type="file" ref={fileRef} className="d-none" accept="image/*" onChange={handleFileChange} />
                     </div>
                   </div>
 

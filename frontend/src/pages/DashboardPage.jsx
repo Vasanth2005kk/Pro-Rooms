@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { roomsAPI } from "../services/api";
+import { joinRoom, toggleStar, deleteRoom } from "../js/roomHelpers";
 import Navbar from "../components/Navbar";
 import RoomRow from "../components/RoomRow";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -39,40 +40,16 @@ export default function DashboardPage() {
     setFilters((p) => ({ ...p, [name]: value }));
   };
 
-  const handleToggleStar = async (roomId) => {
-    try {
-      const { data } = await roomsAPI.toggleStar(roomId);
-      setRooms((prev) =>
-        prev.map((r) =>
-          r.id === roomId
-            ? { ...r, is_starred_by_me: data.starred, star_count: data.star_count }
-            : r
-        )
-      );
-    } catch { } // ignore
-  };
+  const handleToggleStar = (roomId) => toggleStar(roomId, setRooms);
 
-  const handleJoin = async (room) => {
-    if (room.is_member || room.privacy === "Public") {
-      if (!room.is_member) {
-        try { await roomsAPI.join({ room_id: room.id }); } catch { }
-      }
-      navigate(`/chat/${room.id}`);
-      return;
-    }
-    const password = window.prompt(`🔒 Enter 6-digit password for "${room.name}":`);
-    if (password === null) return;
-    try {
-      await roomsAPI.join({ room_id: room.id, password });
-      navigate(`/chat/${room.id}`);
-    } catch (err) {
-      alert(err.response?.data?.error || "Failed to join room.");
-    }
-  };
+  const handleJoin = (room) => joinRoom(room, navigate);
 
   const handleRoomCreated = (newRoom) => {
-    setRooms((prev) => [{ ...newRoom, star_count: 0, is_starred_by_me: false, is_member: true }, ...prev]);
+    setRooms((prev) => [{ ...newRoom, star_count: 0, is_starred_by_me: false, is_member: true, is_owner: true }, ...prev]);
   };
+
+  const handleDeleteRoom = (roomId, roomName) =>
+    deleteRoom(roomId, roomName, () => setRooms((prev) => prev.filter((r) => r.id !== roomId)));
 
   return (
     <>
@@ -188,6 +165,8 @@ export default function DashboardPage() {
                         room={room}
                         onStar={() => handleToggleStar(room.id)}
                         onJoin={() => handleJoin(room)}
+                        onEdit={room.is_owner ? () => navigate(`/chat/${room.id}`) : undefined}
+                        onDelete={room.is_owner ? () => handleDeleteRoom(room.id, room.name) : undefined}
                       />
                     ))
                   }

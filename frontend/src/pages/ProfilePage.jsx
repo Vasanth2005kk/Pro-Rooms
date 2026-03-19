@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { profileAPI } from "../services/api";
+import { profileAPI, roomsAPI } from "../services/api";
+import { joinRoom, toggleStar, deleteRoom } from "../js/roomHelpers";
 import Navbar from "../components/Navbar";
 import RoomRow from "../components/RoomRow";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -11,6 +12,7 @@ import "../css/profile.css";
 
 export default function ProfilePage() {
   const { username } = useParams();
+  const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
   const [profile, setProfile] = useState(null);
@@ -42,6 +44,28 @@ export default function ProfilePage() {
     } catch (err) {
       console.error("Failed to refresh profile", err);
     }
+  };
+
+  const handleDeleteRoom = (roomId, roomName) =>
+    deleteRoom(roomId, roomName, async () => {
+      const { data } = await profileAPI.get(username);
+      setProfile(data);
+    });
+
+  const handleJoin = (room) => joinRoom(room, navigate);
+
+  // Star toggling on profile needs a local rooms array to update.
+  // We rebuild a flat list from all room lists after toggling.
+  const makeStarHandler = (room) => async () => {
+    try {
+      const { data } = await roomsAPI.toggleStar(room.id);
+      // Refresh profile to get updated star counts
+      const { data: profileData } = await profileAPI.get(username);
+      setProfile(profileData);
+      // For immediate UI feedback, we could also mutate profile.rooms here,
+      // but a refresh is simpler and always accurate.
+      void data; // suppress unused warning
+    } catch { }
   };
 
   if (loading) return (
@@ -217,7 +241,7 @@ export default function ProfilePage() {
                 {activeTab === "public" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {publicRooms.length > 0 ? (
-                      publicRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
+                      publicRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} onEdit={r.is_owner ? () => navigate(`/chat/${r.id}`) : undefined} onDelete={r.is_owner ? () => handleDeleteRoom(r.id, r.name) : undefined} />)
                     ) : (
                       <EmptyState icon="fa-ghost" title="No public rooms" desc={`${isOwnProfile ? "You haven't" : `${user.name} hasn't`} created any public rooms yet.`} />
                     )}
@@ -227,7 +251,7 @@ export default function ProfilePage() {
                 {activeTab === "private" && isOwnProfile && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {privateRooms.length > 0 ? (
-                      privateRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
+                      privateRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} onEdit={r.is_owner ? () => navigate(`/chat/${r.id}`) : undefined} onDelete={r.is_owner ? () => handleDeleteRoom(r.id, r.name) : undefined} />)
                     ) : (
                       <EmptyState icon="fa-lock" title="No private rooms" desc="Private rooms are only visible to you." />
                     )}
@@ -237,7 +261,7 @@ export default function ProfilePage() {
                 {activeTab === "joined" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {joinedRooms.length > 0 ? (
-                      joinedRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
+                      joinedRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} />)
                     ) : (
                       <EmptyState icon="fa-door-open" title="No joined rooms" desc="Rooms you join will appear here for easy access." />
                     )}
@@ -247,7 +271,7 @@ export default function ProfilePage() {
                 {activeTab === "stars" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {starredRooms.length > 0 ? (
-                      starredRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => { }} onStar={() => { }} />)
+                      starredRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} />)
                     ) : (
                       <EmptyState icon="fa-star" title="No starred rooms" desc="Rooms you star will appear here for quick access." />
                     )}

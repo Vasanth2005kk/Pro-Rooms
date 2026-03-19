@@ -43,6 +43,11 @@ export const roomsAPI = {
     api.post("/rooms", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+  update: (id, formData) =>
+    api.put(`/rooms/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+  delete: (id) => api.delete(`/rooms/${id}`),
   join: (data) => api.post("/rooms/join", data),
   toggleStar: (roomId) => api.post("/rooms/star", { room_id: roomId }),
 };

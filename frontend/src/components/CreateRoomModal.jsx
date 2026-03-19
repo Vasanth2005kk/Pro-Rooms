@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { roomsAPI } from "../services/api";
+import "../css/createRoomModal.css";
 
 export default function CreateRoomModal({ onClose, onCreated }) {
   const [form, setForm] = useState({
@@ -55,90 +56,6 @@ export default function CreateRoomModal({ onClose, onCreated }) {
 
   return (
     <>
-      <style>{`
-        .create-room-modal .modal-content {
-          background-color: #1A1D21 !important;
-          border: 1px solid #2D3238 !important;
-          border-radius: 20px !important;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
-          overflow: hidden;
-        }
-        .create-room-modal .modal-header {
-          border-bottom: 1px solid #2D3238 !important;
-          padding: 1.25rem 1.5rem !important;
-          background: #1A1D21 !important;
-        }
-        .create-room-modal .modal-body {
-          padding: 1.5rem !important;
-          background-color: #1A1D21 !important;
-        }
-        .create-room-modal .form-label {
-          color: #8E96A0 !important;
-          font-size: 0.85rem;
-          font-weight: 500;
-          margin-bottom: 0.5rem;
-        }
-        .create-room-modal .input-group-text {
-          background-color: #10191E !important;
-          color: #fff !important;
-          border: 1px solid #3E505B !important;
-          border-right: 0 !important;
-          border-radius: 10px 0 0 10px !important;
-          min-width: 45px;
-          justify-content: center;
-        }
-        .create-room-modal .form-control, 
-        .create-room-modal .form-select {
-          background-color: #10191E !important;
-          border: 1px solid #3E505B !important;
-          color: #fff !important;
-          border-radius: 0 10px 10px 0 !important;
-          padding: 0.6rem 0.75rem;
-          transition: all 0.2s ease;
-        }
-        .create-room-modal .form-control:focus,
-        .create-room-modal .form-select:focus {
-          border-color: var(--primary) !important;
-          box-shadow: none !important;
-        }
-        .create-room-modal .input-group:focus-within .input-group-text {
-          border-color: var(--primary) !important;
-          color: var(--primary) !important;
-        }
-        .create-room-modal .modal-section-title {
-          font-size: 1rem;
-          color: #fff;
-          margin-top: 1rem;
-          margin-bottom: 1rem;
-          font-weight: 600;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-          padding-bottom: 0.5rem;
-        }
-        .create-room-modal .room-avatar {
-          transition: all 0.3s ease;
-        }
-        .create-room-modal .room-avatar:hover {
-          background: rgba(255, 255, 255, 0.08) !important;
-          border-color: var(--primary) !important;
-        }
-        .create-room-modal .btn-create-submit {
-          background-color: var(--primary) !important;
-          border: none !important;
-          font-weight: 600 !important;
-          border-radius: 8px !important;
-        }
-        .create-room-modal .members-adjust-btn {
-          background: #10191E !important;
-          border: 1px solid #3E505B !important;
-          color: #8E96A0 !important;
-          transition: all 0.2s ease;
-        }
-        .create-room-modal .members-adjust-btn:hover {
-          color: #fff !important;
-          background: #1a252b !important;
-        }
-      `}</style>
-
       <div className="modal-backdrop fade show" style={{ backdropFilter: "blur(8px)" }}></div>
       <div className="modal fade show d-block create-room-modal" tabIndex="-1">
         <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -198,7 +115,7 @@ export default function CreateRoomModal({ onClose, onCreated }) {
                           <input type="text" name="name" className="form-control" placeholder="e.g. Next.js Masters" required value={form.name} onChange={handleChange} />
                         </div>
                       </div>
-                      
+
                       <div className="row g-3">
                         <div className="col-md-6">
                           <label className="form-label">Category</label>

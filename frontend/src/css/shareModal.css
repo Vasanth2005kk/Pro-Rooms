@@ -1,0 +1,102 @@
+.share-modal .modal-content {
+    background: #1A1D21 !important;
+    border: 1px solid #2D3238 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+.share-modal .modal-header {
+    border-bottom: 1px solid #2D3238 !important;
+    padding: 1.1rem 1.5rem !important;
+    background: #1A1D21 !important;
+}
+
+.share-modal .share-url-box {
+    background: #10191E;
+    border: 1px solid #3E505B;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.share-modal .share-url-text {
+    flex: 1;
+    color: var(--primary);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: monospace;
+}
+
+.share-modal .btn-copy {
+    background: transparent;
+    border: 1px solid #3E505B;
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.share-modal .btn-copy:hover,
+.share-modal .btn-copy.copied {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #000 !important;
+}
+
+.share-modal .social-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 1.2rem;
+}
+
+.share-modal .social-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    padding: 0.8rem 0.4rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    transition: all 0.2s;
+}
+
+.share-modal .social-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.share-modal .social-btn i {
+    font-size: 1.4rem;
+}
+
+.share-modal .social-btn span {
+    font-size: 0.68rem;
+    color: #8E96A0;
+    white-space: nowrap;
+}
+
+.share-modal .btn-native-share {
+    background: linear-gradient(135deg, var(--primary), #17a34a) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    width: 100%;
+    padding: 0.65rem !important;
+    color: #000 !important;
+    margin-top: 1rem;
+    transition: opacity 0.2s;
+}
+
+.share-modal .btn-native-share:hover {
+    opacity: 0.9;
+}
