@@ -1,23 +1,14 @@
-/**
- * App.jsx
- * ───────
- * Root component. Sets up:
- *   - AuthProvider (global auth state)
- *   - React Router (all page routes)
- *   - PrivateRoute guard (redirects unauthenticated users to /login)
- */
-
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
-import LoginPage      from "./pages/LoginPage";
-import SignupPage     from "./pages/SignupPage";
-import OtpVerifyPage  from "./pages/OtpVerifyPage";
-import AuthCallback   from "./pages/AuthCallback";
-import DashboardPage  from "./pages/DashboardPage";
-import ChatPage       from "./pages/ChatPage";
-import ProfilePage    from "./pages/ProfilePage";
-import NotFoundPage   from "./pages/NotFoundPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import OtpVerifyPage from "./pages/OtpVerifyPage";
+import AuthCallback from "./pages/AuthCallback";
+import DashboardPage from "./pages/DashboardPage";
+import ChatPage from "./pages/ChatPage";
+import ProfilePage from "./pages/ProfilePage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 /** Wraps protected routes: shows spinner while loading, redirects if not authed. */
 function PrivateRoute({ children }) {
@@ -40,11 +31,11 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* ── Public routes ──────────────────────────────────────────── */}
-          <Route path="/login"          element={<LoginPage />} />
-          <Route path="/signup"         element={<SignupPage />} />
-          <Route path="/verify-otp"     element={<OtpVerifyPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/verify-otp" element={<OtpVerifyPage />} />
           {/* Google OAuth lands here after Flask redirect */}
-          <Route path="/auth/callback"  element={<AuthCallback />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* ── Protected routes ───────────────────────────────────────── */}
           <Route path="/" element={

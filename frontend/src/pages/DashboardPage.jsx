@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import RoomRow from "../components/RoomRow";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CreateRoomModal from "../components/CreateRoomModal";
+import DeleteRoomModal from "../components/DeleteRoomModal";
 import "../css/dashboard.css";
 
 export default function DashboardPage() {
@@ -15,6 +16,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
   const [filters, setFilters] = useState({ search: "", category: "", privacy: "" });
 
   const fetchRooms = useCallback(async () => {
@@ -47,9 +49,6 @@ export default function DashboardPage() {
   const handleRoomCreated = (newRoom) => {
     setRooms((prev) => [{ ...newRoom, star_count: 0, is_starred_by_me: false, is_member: true, is_owner: true }, ...prev]);
   };
-
-  const handleDeleteRoom = (roomId, roomName) =>
-    deleteRoom(roomId, roomName, () => setRooms((prev) => prev.filter((r) => r.id !== roomId)));
 
   return (
     <>
@@ -166,7 +165,7 @@ export default function DashboardPage() {
                         onStar={() => handleToggleStar(room.id)}
                         onJoin={() => handleJoin(room)}
                         onEdit={room.is_owner ? () => navigate(`/chat/${room.id}`) : undefined}
-                        onDelete={room.is_owner ? () => handleDeleteRoom(room.id, room.name) : undefined}
+                        onDelete={room.is_owner ? () => setRoomToDelete(room) : undefined}
                       />
                     ))
                   }
@@ -181,6 +180,17 @@ export default function DashboardPage() {
         <CreateRoomModal
           onClose={() => setShowCreate(false)}
           onCreated={handleRoomCreated}
+        />
+      )}
+
+      {roomToDelete && (
+        <DeleteRoomModal
+          room={roomToDelete}
+          onClose={() => setRoomToDelete(null)}
+          onDeleted={() => {
+            setRooms((prev) => prev.filter((r) => r.id !== roomToDelete.id));
+            setRoomToDelete(null);
+          }}
         />
       )}
     </>

@@ -8,6 +8,7 @@ import RoomRow from "../components/RoomRow";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CreateRoomModal from "../components/CreateRoomModal";
 import EditProfileModal from "../components/EditProfileModal";
+import DeleteRoomModal from "../components/DeleteRoomModal";
 import "../css/profile.css";
 
 export default function ProfilePage() {
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("public");
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -45,12 +47,6 @@ export default function ProfilePage() {
       console.error("Failed to refresh profile", err);
     }
   };
-
-  const handleDeleteRoom = (roomId, roomName) =>
-    deleteRoom(roomId, roomName, async () => {
-      const { data } = await profileAPI.get(username);
-      setProfile(data);
-    });
 
   const handleJoin = (room) => joinRoom(room, navigate);
 
@@ -241,7 +237,7 @@ export default function ProfilePage() {
                 {activeTab === "public" && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {publicRooms.length > 0 ? (
-                      publicRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} onEdit={r.is_owner ? () => navigate(`/chat/${r.id}`) : undefined} onDelete={r.is_owner ? () => handleDeleteRoom(r.id, r.name) : undefined} />)
+                      publicRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} onEdit={r.is_owner ? () => navigate(`/chat/${r.id}`) : undefined} onDelete={r.is_owner ? () => setRoomToDelete(r) : undefined} />)
                     ) : (
                       <EmptyState icon="fa-ghost" title="No public rooms" desc={`${isOwnProfile ? "You haven't" : `${user.name} hasn't`} created any public rooms yet.`} />
                     )}
@@ -251,7 +247,7 @@ export default function ProfilePage() {
                 {activeTab === "private" && isOwnProfile && (
                   <div className="rooms-list d-flex flex-column gap-3">
                     {privateRooms.length > 0 ? (
-                      privateRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} onEdit={r.is_owner ? () => navigate(`/chat/${r.id}`) : undefined} onDelete={r.is_owner ? () => handleDeleteRoom(r.id, r.name) : undefined} />)
+                      privateRooms.map(r => <RoomRow key={r.id} room={r} onJoin={() => handleJoin(r)} onStar={makeStarHandler(r)} onEdit={r.is_owner ? () => navigate(`/chat/${r.id}`) : undefined} onDelete={r.is_owner ? () => setRoomToDelete(r) : undefined} />)
                     ) : (
                       <EmptyState icon="fa-lock" title="No private rooms" desc="Private rooms are only visible to you." />
                     )}
@@ -287,6 +283,18 @@ export default function ProfilePage() {
       {showCreate && <CreateRoomModal onClose={() => setShowCreate(false)} onCreated={handleRoomCreated} />
       }
       {showEdit && <EditProfileModal user={user} onClose={() => setShowEdit(false)} onUpdated={handleProfileUpdated} />}
+      
+      {roomToDelete && (
+        <DeleteRoomModal
+          room={roomToDelete}
+          onClose={() => setRoomToDelete(null)}
+          onDeleted={async () => {
+            const { data } = await profileAPI.get(username);
+            setProfile(data);
+            setRoomToDelete(null);
+          }}
+        />
+      )}
     </>
   );
 }

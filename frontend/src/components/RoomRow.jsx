@@ -84,29 +84,6 @@ export default function RoomRow({ room, onStar, onJoin, onEdit, onDelete }) {
               >
                 <i className="fas fa-share-nodes me-1 text-primary"></i>
               </button>
-
-              {/* Owner-only: Edit
-              {room.is_owner && onEdit && (
-                <button
-                  className="btn btn-sm btn-dark border border-warning px-3"
-                  onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                  title="Edit Room"
-                >
-                  <i className="fas fa-edit text-warning"></i>
-                </button>
-              )}
-
-              {/* Owner-only: Delete 
-              {room.is_owner && onDelete && (
-                <button
-                  className="btn btn-sm btn-dark border border-danger px-3"
-                  onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                  title="Delete Room"
-                >
-                  <i className="fas fa-trash-alt text-danger"></i>
-                </button>
-              )} */}
-
             </div>
 
             {/* Join */}

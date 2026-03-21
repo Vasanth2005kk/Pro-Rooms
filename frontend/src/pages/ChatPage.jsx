@@ -1,24 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { chatAPI, roomsAPI } from "../services/api";
-import Navbar         from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import LoadingSpinner from "../components/LoadingSpinner";
-import EditRoomModal  from "../components/EditRoomModal";
+import EditRoomModal from "../components/EditRoomModal";
+import DeleteRoomModal from "../components/DeleteRoomModal";
 
 export default function ChatPage() {
-  const { roomId }  = useParams();
-  const navigate    = useNavigate();
+  const { roomId } = useParams();
+  const navigate = useNavigate();
 
-  const [room,     setRoom]     = useState(null);
+  const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [input,    setInput]    = useState("");
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState(null);
-  const [sending,  setSending]  = useState(false);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [sending, setSending] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const bottomRef = useRef(null);
-  const pollRef   = useRef(null);
+  const pollRef = useRef(null);
 
   /* ── Initial load ── */
   useEffect(() => {
@@ -67,28 +69,17 @@ export default function ChatPage() {
     try {
       const { data } = await chatAPI.postMessage(parseInt(roomId), content);
       setMessages((prev) => [...prev, {
-        id:          data.message.id,
-        content:     data.message.content,
-        timestamp:   new Date().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }),
+        id: data.message.id,
+        content: data.message.content,
+        timestamp: new Date().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }),
         author_name: "You",
-        is_me:       true,
+        is_me: true,
       }]);
     } catch (err) {
       alert(err.response?.data?.error || "Could not send message.");
       setInput(content);
     } finally {
       setSending(false);
-    }
-  };
-
-  /* ── Delete room ── */
-  const handleDeleteRoom = async () => {
-    if (!window.confirm(`Are you sure you want to permanently delete "${room.name}"? This cannot be undone.`)) return;
-    try {
-      await roomsAPI.delete(parseInt(roomId));
-      navigate("/dashboard");
-    } catch (err) {
-      alert(err.response?.data?.error || "Failed to delete room.");
     }
   };
 
@@ -125,9 +116,18 @@ export default function ChatPage() {
         />
       )}
 
+      {showDelete && (
+        <DeleteRoomModal
+          room={room}
+          onClose={() => setShowDelete(false)}
+          onDeleted={() => navigate("/dashboard")}
+        />
+      )}
+
       <main className="p-0">
         <div className="chat-wrapper">
-
+          <div className="chat-options">
+          </div>
           {/* ── Sidebar (desktop) ── */}
           <div className="chat-sidebar d-none d-md-flex flex-column p-3">
             <div className="d-flex align-items-center mb-4">
@@ -162,7 +162,7 @@ export default function ChatPage() {
                 <button className="btn btn-sm btn-outline-light" onClick={() => setShowEdit(true)}>
                   <i className="fas fa-edit me-2"></i>Edit Room
                 </button>
-                <button className="btn btn-sm btn-outline-danger" onClick={handleDeleteRoom}>
+                <button className="btn btn-sm btn-outline-danger" onClick={() => setShowDelete(true)}>
                   <i className="fas fa-trash-alt me-2"></i>Delete Room
                 </button>
               </div>
@@ -179,7 +179,7 @@ export default function ChatPage() {
                   <i className="fas fa-arrow-left"></i>
                 </button>
                 <div className="room-avatar me-3">
-                  <i className="fas fa-users text-primary"></i>
+                  <img src={room?.icon} alt={room?.name} className="w-100 h-100 rounded-circle object-fit-cover" />
                 </div>
                 <div>
                   <h5 className="mb-0">{room?.name}</h5>
@@ -200,7 +200,7 @@ export default function ChatPage() {
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger d-md-none"
-                      onClick={handleDeleteRoom}
+                      onClick={() => setShowDelete(true)}
                       title="Delete Room"
                     >
                       <i className="fas fa-trash-alt"></i>

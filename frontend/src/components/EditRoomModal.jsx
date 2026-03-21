@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { roomsAPI } from "../services/api";
+import DeleteRoomModal from "./DeleteRoomModal";
 import "../css/editRoomModal.css";
 
 /**
@@ -12,6 +14,8 @@ import "../css/editRoomModal.css";
  *   onUpdated(updatedRoom) — called with the fresh room data after a successful save
  */
 export default function EditRoomModal({ room, onClose, onUpdated }) {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: room.name || "",
     description: room.description || "",
@@ -26,6 +30,7 @@ export default function EditRoomModal({ room, onClose, onUpdated }) {
   const [error, setError] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(room.icon || null);
   const [saved, setSaved] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const fileRef = useRef(null);
 
   const handleChange = (e) => {
@@ -261,10 +266,26 @@ export default function EditRoomModal({ room, onClose, onUpdated }) {
                       </div>
                     )}
 
+                    {/* Danger Zone */}
+                    <div className="col-md-11 mt-4 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                      <h6 className="text-danger mb-2"><i className="fas fa-exclamation-triangle me-2"></i> Danger Zone</h6>
+                      <p className="text-white-50 small mb-3">
+                        Permanently delete this community and all of its data. This action cannot be undone.
+                      </p>
+                      <button 
+                        type="button" 
+                        className="btn btn-outline-danger" 
+                        onClick={() => setDeleting(true)}
+                        disabled={loading}
+                      >
+                        Delete Room
+                      </button>
+                    </div>
+
                   </div>
                 </form>
               ) : (
-                /* ── Success state ── */
+                /* ── Update Success state ── */
                 <div className="text-center py-5 animate-fade-in">
                   <div className="mb-4">
                     <i className="fas fa-check-circle text-success fa-5x"></i>
@@ -282,6 +303,14 @@ export default function EditRoomModal({ room, onClose, onUpdated }) {
           </div>
         </div>
       </div>
+
+      {deleting && (
+        <DeleteRoomModal
+          room={room}
+          onClose={() => setDeleting(false)}
+          onDeleted={() => navigate("/dashboard")}
+        />
+      )}
     </>
   );
 }
