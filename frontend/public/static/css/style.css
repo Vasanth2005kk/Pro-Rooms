@@ -216,7 +216,10 @@ body {
     letter-spacing: 0.07em;
     text-transform: uppercase;
     border-radius: 9999px;
-    padding: 0.3em 0.75em;
+    padding: 0.4em 0.8em;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: inline-block;
 }
 
 .badge.bg-success {

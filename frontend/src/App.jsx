@@ -8,6 +8,7 @@ import AuthCallback from "./pages/AuthCallback";
 import DashboardPage from "./pages/DashboardPage";
 import ChatPage from "./pages/ChatPage";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 /** Wraps protected routes: shows spinner while loading, redirects if not authed. */
@@ -49,6 +50,9 @@ export default function App() {
           } />
           <Route path="/profile/:username" element={
             <PrivateRoute><ProfilePage /></PrivateRoute>
+          } />
+          <Route path="/settings" element={
+            <PrivateRoute><SettingsPage /></PrivateRoute>
           } />
 
           {/* ── 404 ────────────────────────────────────────────────────── */}

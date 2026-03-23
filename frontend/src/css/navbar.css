@@ -3,13 +3,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 24px;
-    height: 60px;
+    height: 80px;
     background: rgba(16, 25, 30, 0.8);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 2px solid var(--glass-border);
     position: sticky;
     top: 0;
     z-index: 100;
+    border-radius: 0px 0px 50px 50px;
 }
 
 .navbar-brand {
@@ -17,7 +18,7 @@
     align-items: center;
     gap: 10px;
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     text-decoration: none;
     letter-spacing: 1px;
     background: linear-gradient(to right, var(--primary), var(--primary-alt));

@@ -1,24 +1,29 @@
-/*
- * Pro-Rooms — Chat Page Styles
- * Bootstrap 5 handles: d-flex, d-none, d-md-flex, flex-grow-1,
- * align-items-center, justify-content-between, gap-*, btn, badge, spinner.
- * This file keeps ONLY layout geometry, message bubbles, and
- * styles that Bootstrap cannot provide.
- */
-
 /* ─── Outer wrapper ─────────────────────────────────────────────── */
 .chat-wrapper {
     display: flex;
     height: calc(100vh - 70px);
-    /* full viewport minus navbar */
     overflow: hidden;
     background: rgba(0, 0, 0, 0.2);
 }
 
 .chat-options {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
     width: 4%;
     background: rgba(255, 255, 255, 0.05);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 3%
+}
+
+.setting-icon {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e9edef;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 10px;
 }
 
 /* ─── Sidebar ───────────────────────────────────────────────────── */
@@ -27,6 +32,8 @@
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
     width: 25%;
+    padding: 15px;
+    padding-top: 25px !important;
 }
 
 /* ─── Main chat area ────────────────────────────────────────────── */
@@ -44,6 +51,7 @@
     background: #202c33;
     z-index: 10;
     flex-shrink: 0;
+    padding: 12px;
 }
 
 /* ─── Messages area ─────────────────────────────────────────────── */

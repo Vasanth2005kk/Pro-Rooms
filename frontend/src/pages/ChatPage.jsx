@@ -36,6 +36,7 @@ export default function ChatPage() {
         setError(err.response?.data?.error || "Failed to load chat.");
       } finally {
         setLoading(false);
+        console.log("room :", room);
       }
     };
     init();
@@ -127,6 +128,7 @@ export default function ChatPage() {
       <main className="p-0">
         <div className="chat-wrapper">
           <div className="chat-options">
+            <button className="setting-icon" onClick={() => navigate("/settings")}><i className="fa-solid fa-gear"></i></button>
           </div>
           {/* ── Sidebar (desktop) ── */}
           <div className="chat-sidebar d-none d-md-flex flex-column p-3">
@@ -140,7 +142,7 @@ export default function ChatPage() {
             <div className="room-info mb-4">
               <h5 className="text-primary">{room?.name}</h5>
               <p className="text-white-50 small">{room?.description}</p>
-              {room?.topic && <span className="badge bg-secondary mb-2">{room.topic}</span>}
+              {room?.topic && room.topic.split(",").map((topic, index) => <span key={index} className="badge bg-secondary me-2 mb-2">{topic.trim()}</span>)}
             </div>
 
             <hr />
