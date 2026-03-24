@@ -162,3 +162,13 @@
     background: #374045;
     border-radius: 3px;
 }
+
+.said-description {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.said-name {
+    font-size: 2.1rem;
+    font-weight: 600;
+}

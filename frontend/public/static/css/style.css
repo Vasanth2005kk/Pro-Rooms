@@ -211,15 +211,16 @@ body {
 
 /* ── Bootstrap Badge Overrides ───────────────────────────────────── */
 .badge {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.07em;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     border-radius: 9999px;
-    padding: 0.4em 0.8em;
+    padding: 0.5em 0.9em;
     background-color: rgba(255, 255, 255, 0.1);
     color: #fff;
     display: inline-block;
+    text-align: center;
 }
 
 .badge.bg-success {
@@ -233,8 +234,8 @@ body {
 }
 
 .badge.bg-secondary {
-    background-color: rgba(62, 80, 91, 0.3) !important;
-    color: #9AA4AD !important;
+    background-color: #388bfd1a !important;
+    color: #4493f8 !important;
 }
 
 /* ── Bootstrap Alert Overrides ───────────────────────────────────── */

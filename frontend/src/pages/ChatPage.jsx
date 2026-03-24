@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EditRoomModal from "../components/EditRoomModal";
 import DeleteRoomModal from "../components/DeleteRoomModal";
+import "../css/chat.css";
 
 export default function ChatPage() {
   const { roomId } = useParams();
@@ -140,8 +141,8 @@ export default function ChatPage() {
             </div>
 
             <div className="room-info mb-4">
-              <h5 className="text-primary">{room?.name}</h5>
-              <p className="text-white-50 small">{room?.description}</p>
+              <h5 className="text-primary said-name">{room?.name}</h5>
+              <p className="text-white-50 ms-3 said-description" >{room?.description}</p>
               {room?.topic && room.topic.split(",").map((topic, index) => <span key={index} className="badge bg-secondary me-2 mb-2">{topic.trim()}</span>)}
             </div>
 
