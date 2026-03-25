@@ -99,3 +99,58 @@
         margin-top: 0.5rem;
     }
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.nav-icons i {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.nav-icons i:hover {
+    color: var(--primary);
+}
+
+.theme-toggle-btn {
+    font-size: 1.25rem;
+    color: var(--primary) !important;
+    text-shadow: 0 0 10px var(--primary);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+}
+
+/* Sun - slow rotate */
+.fa-sun.theme-toggle-btn {
+    animation: sunSpin 10s linear infinite;
+}
+
+/* Moon - subtle pulse */
+.fa-moon.theme-toggle-btn {
+    animation: moonPulse 2s ease-in-out infinite;
+}
+
+@keyframes sunSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes moonPulse {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.1); filter: brightness(1.2); }
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.2) !important;
+}
+
+.sign-out-btn {
+    text-decoration: none !important;
+    font-weight: 500;
+}
+
+.sign-out-btn:hover {
+    color: #ff4d4d !important;
+}

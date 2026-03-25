@@ -45,6 +45,23 @@ body {
     color: var(--text-main);
     line-height: 1.5;
     overflow: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.light-mode {
+    background: #f1f5f9;
+    background-image: none;
+    color: #0f172a;
+}
+
+body.light-mode .navbar {
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 2px solid #e2e8f0;
+}
+
+body.light-mode .text-white, 
+body.light-mode .navbar-brand {
+    color: #1e293b !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -178,35 +195,6 @@ body {
 .btn-outline-light:hover {
     background: rgba(255, 255, 255, 0.05);
     color: white;
-}
-
-/* ── Bootstrap Dropdown Overrides ────────────────────────────────── */
-.dropdown-menu {
-    background: #202C33;
-    /* Match login page panel */
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-    min-width: 200px;
-    overflow: hidden;
-    padding: 0.25rem 0;
-}
-
-.dropdown-item {
-    color: var(--text-main);
-    font-size: 0.9rem;
-    padding: 0.75rem 1rem;
-    transition: var(--transition);
-}
-
-.dropdown-item:hover,
-.dropdown-item:focus {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--primary);
-}
-
-.dropdown-divider {
-    border-color: var(--glass-border);
 }
 
 /* ── Bootstrap Badge Overrides ───────────────────────────────────── */

@@ -1,10 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import "../css/navbar.css";
+
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
 
   const handleLogout = async () => {
     await logout();
@@ -39,46 +43,49 @@ export default function Navbar() {
             </li> */}
           </ul>
 
-          {user && (
-            <div className="nav-actions d-flex align-items-center">
-              <div className="dropdown">
-                <div
-                  className="d-flex align-items-center gap-2"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+          {user ? (
+            <div className="nav-actions d-flex align-items-center gap-3">
+              <Link className="d-flex align-items-center gap-2 text-decoration-none" to={`/profile/${user.username}`}>
+                <img
+                  src={avatarUrl}
+                  alt="avatar"
+                  width={32}
+                  height={32}
+                  className="rounded-circle nav-avatar"
+                />
+                <span className="text-white fw-medium d-none d-sm-inline">{user.username || user.name || "Account"}</span>
+              </Link>
+              
+              <div className="nav-icons d-flex align-items-center gap-3 ms-2">
+                <i 
+                  className={`fa-solid ${theme === "dark" ? "fa-sun" : "fa-moon"} cursor-pointer theme-toggle-btn`} 
+                  onClick={() => toggleTheme(theme === "dark" ? "light" : "dark")}
+                  title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                ></i>
+
+
+                <button 
+                  onClick={handleLogout}
+                  className="btn btn-link nav-link p-0 d-flex align-items-center sign-out-btn"
                 >
-                  <img
-                    src={avatarUrl}
-                    alt="avatar"
-                    width={32}
-                    height={32}
-                    className="rounded-circle nav-avatar"
-                  />
-                  <span>{user.username || user.name || "Account"}</span>
-                  <i className="fas fa-chevron-down small text-muted"></i>
-                </div>
-                <ul className="dropdown-menu dropdown-menu-end">
-                  <li>
-                    <Link className="dropdown-item" to={`/profile/${user.username}`}>
-                      <i className="fas fa-user-circle me-2 text-muted"></i> Profile
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="#">
-                      <i className="fas fa-cog me-2 text-muted"></i> Settings
-                    </Link>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <button className="dropdown-item bg-transparent border-0 w-100 text-start" onClick={handleLogout}>
-                      <i className="fas fa-sign-out-alt me-2 text-muted"></i> Sign out
-                    </button>
-                  </li>
-                </ul>
+                  <i className="fas fa-sign-out-alt me-2"></i>
+                  <span className="d-none d-sm-inline">Sign out</span>
+                </button>
               </div>
+            </div>
+          ) : (
+            <div className="nav-actions d-flex align-items-center gap-3">
+              <div className="nav-icons d-flex align-items-center gap-3 me-2">
+                <i 
+                  className={`fa-solid ${theme === "dark" ? "fa-sun" : "fa-moon"} cursor-pointer theme-toggle-btn`} 
+                  onClick={() => toggleTheme(theme === "dark" ? "light" : "dark")}
+                  title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                ></i>
+              </div>
+
+
+              <Link to="/login" className="nav-link text-white text-decoration-none">Login</Link>
+              <Link to="/signup" className="btn btn-primary px-4 rounded-pill fw-bold">Sign Up</Link>
             </div>
           )}
         </div>

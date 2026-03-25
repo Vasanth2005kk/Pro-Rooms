@@ -1,5 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
+
 
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -28,7 +30,9 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+
       <BrowserRouter>
         <Routes>
           {/* ── Public routes ──────────────────────────────────────────── */}
@@ -60,5 +64,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
