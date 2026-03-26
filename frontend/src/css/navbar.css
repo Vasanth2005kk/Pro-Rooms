@@ -1,8 +1,8 @@
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 24px;
+    justify-content: center;
+    padding: 0;
     height: 80px;
     background: rgba(16, 25, 30, 0.8);
     backdrop-filter: blur(10px);
@@ -16,6 +16,8 @@
 .navbar-brand {
     display: flex;
     align-items: center;
+    position: relative;
+    left: 250px;
     gap: 10px;
     font-weight: 700;
     font-size: 2.5rem;
@@ -35,10 +37,15 @@
     box-shadow: 0 0 8px var(--primary);
 }
 
-.navbar-actions {
+.nav-user-controls {
+    gap: 50px;
+    width: 100%;
     display: flex;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    justify-content: flex-end;
     align-items: center;
-    gap: 10px;
+    margin-right: 45px;
 }
 
 .navbar-avatar {
@@ -80,6 +87,8 @@
 .nav-avatar {
     border-radius: 50%;
     object-fit: cover;
+    box-shadow: 0 0 10px var(--primary);
+    margin: 7px;
 }
 
 
@@ -92,30 +101,32 @@
         margin-top: 0.5rem;
     }
 
-    .navbar-actions {
+    .nav-user-controls {
         width: 100%;
         padding-top: 1rem;
         border-top: 1px solid var(--glass-border);
         margin-top: 0.5rem;
+        justify-content: space-around;
+        flex-direction: row;
     }
+}
+
+.container-nav {
+    width: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
 }
 
 .cursor-pointer {
     cursor: pointer;
 }
 
-.nav-icons i {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    transition: var(--transition);
-}
-
-.nav-icons i:hover {
-    color: var(--primary);
-}
+/* Removed .nav-icons as it was replaced by .nav-user-controls */
 
 .theme-toggle-btn {
-    font-size: 1.25rem;
+    font-size: 1.8rem;
     color: var(--primary) !important;
     text-shadow: 0 0 10px var(--primary);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -133,13 +144,27 @@
 }
 
 @keyframes sunSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes moonPulse {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.1); filter: brightness(1.2); }
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+        filter: brightness(1.2);
+    }
 }
 
 .theme-toggle-btn:hover {
