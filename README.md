@@ -34,9 +34,9 @@ The project is split into two directories: `backend/` and `frontend/`. You must 
 
 2. **Set up a Virtual Environment & Install Dependencies**:
    ```bash
-   python -m venv .venv
+   uv venv
    source .venv/bin/activate
-   pip install -r requirements.txt
+   uv pip install -r requirements.txt
    ```
 
 3. **Configure Environment Variables**:
