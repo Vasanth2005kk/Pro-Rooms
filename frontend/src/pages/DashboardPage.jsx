@@ -60,9 +60,9 @@ export default function DashboardPage() {
           <div className="row g-0 main-dash">
 
             {/* Left Sidebar / Mobile Filter */}
-            <div className="col-12 col-md-3 sidebar-panel pe-md-3 mb-3 mb-md-0">
+            <div className={`col-12 col-md-3 sidebar-panel pe-md-3 mb-md-0 ${showMobileFilters ? 'mb-3' : 'mb-1'}`}>
               {/* Mobile Only: Compact Header */}
-              <div className="d-flex d-md-none align-items-center justify-content-between mb-3 gap-2">
+              <div className="d-flex d-md-none align-items-center justify-content-between mb-2 gap-2">
                 <div className="flex-grow-1 position-relative">
                   <i className="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
                   <input
@@ -82,7 +82,8 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <div className={`glass-card p-4 h-100 d-flex flex-column gap-3 sidebar-content ${showMobileFilters ? 'show' : ''}`}>
+
+              <div className={`glass-card p-4 h-md-100 d-flex flex-column gap-3 sidebar-content ${showMobileFilters ? 'show' : ''}`}>
                 <div className="sidebar-brand text-center mb-2 d-none d-md-block">
                   <div className="brand-icon mb-2">
                     <i className="fas fa-layer-group fa-2x text-primary"></i>
@@ -94,7 +95,7 @@ export default function DashboardPage() {
                 <hr className="border-secondary" />
 
                 {/* Filter logic wrapped smoothly inside */}
-                <div className="sidebar-field">
+                <div className="sidebar-field d-none d-md-block">
                   <label className="sidebar-label">
                     <i className="fas fa-search me-1 text-primary"></i> Search
                   </label>
@@ -143,7 +144,7 @@ export default function DashboardPage() {
                   <i className="fas fa-plus me-2"></i> Create Room
                 </button>
 
-                <div className="sidebar-stats text-center mt-2">
+                <div className="room-count sidebar-stats text-center mt-2">
                   <small className="text-white-50">
                     <i className="fas fa-door-open me-1 text-primary"></i>
                     <span>{rooms.length}</span> rooms available
@@ -164,7 +165,7 @@ export default function DashboardPage() {
             {/* Right Content */}
             <div className="col-12 col-md-8">
               <div className="col-11 mx-auto">
-                <div className="d-flex align-items-center justify-content-between mb-4">
+                <div className="d-none d-md-flex align-items-center justify-content-between mb-4">
                   <div className="create-room-class">
                     <h4 className="text-white fw-bold mb-1">
                       <i className="fas fa-fire me-2 text-primary"></i>Active Rooms
