@@ -1,3 +1,4 @@
+/* ─── Navbar Base ──────────────────────────────────── */
 .navbar {
     display: flex;
     align-items: center;
@@ -13,132 +14,106 @@
     border-radius: 0px 0px 50px 50px;
 }
 
+/* ─── Inner Container ──────────────────────────────── */
+.container-nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4rem;
+}
+
+/* ─── Brand ────────────────────────────────────────── */
 .navbar-brand {
     display: flex;
     align-items: center;
-    position: relative;
-    left: 250px;
     gap: 10px;
     font-weight: 700;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     text-decoration: none;
     letter-spacing: 1px;
     background: linear-gradient(to right, var(--primary), var(--primary-alt));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    transition: var(--transition);
+    white-space: nowrap;
 }
 
-.navbar-brand .brand-dot {
-    width: 10px;
-    height: 10px;
-    background: var(--primary);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--primary);
+/* ─── Desktop Layout (≥768px) ──────────────────────── */
+@media (min-width: 768px) {
+    .navbar-brand {
+        font-size: 2.5rem;
+    }
+
+    .navbar-collapse {
+        display: flex !important;
+        align-items: center;
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    .nav-user-controls {
+        gap: 2rem;
+        margin-right: 1.5rem;
+    }
+
+    .user-profile-link {
+        margin-right: 4rem;
+    }
 }
 
+/* ─── Collapsed Nav Menu ───────────────────────────── */
+.navbar-collapse {
+    flex-grow: 1;
+}
+
+/* ─── User Controls Row ────────────────────────────── */
 .nav-user-controls {
-    gap: 50px;
-    width: 100%;
     display: flex;
-    flex-wrap: nowrap;
-    align-content: stretch;
-    justify-content: flex-end;
     align-items: center;
-    margin-right: 45px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 3rem;
 }
 
-.navbar-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-    object-fit: cover;
-    cursor: pointer;
-}
-
-
-.navbar-toggler {
-    background: transparent;
-    border: 1px solid var(--glass-border);
-    color: white;
-    font-size: 1.25rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-}
-
-.navbar-toggler:focus {
-    box-shadow: none;
-}
-
-
-
-.navbar .nav-link {
-    color: var(--text-muted) !important;
-    font-weight: 500;
+/* ─── User Profile Link ────────────────────────────── */
+.user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
     transition: var(--transition);
 }
 
-.navbar .nav-link:hover {
-    color: var(--primary) !important;
+.user-profile-link:hover {
+    opacity: 0.85;
 }
 
-
+/* ─── Avatar ───────────────────────────────────────── */
 .nav-avatar {
     border-radius: 50%;
     object-fit: cover;
     box-shadow: 0 0 10px var(--primary);
-    margin: 7px;
+    flex-shrink: 0;
 }
 
-
-@media (max-width: 767.98px) {
-
-    .navbar-collapse {
-        background: var(--bg-dark);
-        border-bottom: 1px solid var(--glass-border);
-        padding: 1rem;
-        margin-top: 0.5rem;
-    }
-
-    .nav-user-controls {
-        width: 100%;
-        padding-top: 1rem;
-        border-top: 1px solid var(--glass-border);
-        margin-top: 0.5rem;
-        justify-content: space-around;
-        flex-direction: row;
-    }
-}
-
-.container-nav {
-    width: 100%;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    padding: 0 2rem;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-/* Removed .nav-icons as it was replaced by .nav-user-controls */
-
+/* ─── Theme Toggle ─────────────────────────────────── */
 .theme-toggle-btn {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: var(--primary) !important;
     text-shadow: 0 0 10px var(--primary);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-block;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
-/* Sun - slow rotate */
 .fa-sun.theme-toggle-btn {
     animation: sunSpin 10s linear infinite;
 }
 
-/* Moon - subtle pulse */
 .fa-moon.theme-toggle-btn {
     animation: moonPulse 2s ease-in-out infinite;
 }
@@ -171,11 +146,108 @@
     transform: scale(1.2) !important;
 }
 
+/* ─── Toggler Button ───────────────────────────────── */
+.navbar-toggler {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: white;
+    font-size: 1.25rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+/* ─── Nav Link Colors ──────────────────────────────── */
+.navbar .nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* ─── Sign Out Button ──────────────────────────────── */
 .sign-out-btn {
     text-decoration: none !important;
     font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
 }
 
 .sign-out-btn:hover {
     color: #ff4d4d !important;
+}
+
+/* ─── Mobile View (≤767px) ─────────────────────────── */
+@media (max-width: 767.98px) {
+    .navbar {
+        height: auto;
+        min-height: 68px;
+        padding: 0;
+        border-radius: 0 0 24px 24px;
+    }
+
+    .container-nav {
+        padding: 0.75rem 1.25rem;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.6rem;
+    }
+
+    /* Dropdown card on mobile */
+    .navbar-collapse {
+        width: 100%;
+        background: rgba(16, 25, 30, 0.95);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1rem 1.25rem;
+        margin-top: 0.5rem;
+    }
+
+    /* ★ KEY FIX: keep controls in a horizontal row on mobile ★ */
+    .nav-user-controls {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        width: 100%;
+    }
+
+    /* Profile link takes remaining space */
+    .user-profile-link {
+        flex: 1;
+        margin-right: 0;
+        min-width: 0;
+    }
+
+    .user-profile-link span {
+        font-size: 1rem !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .theme-toggle-btn {
+        font-size: 1.35rem;
+    }
+
+    .sign-out-btn {
+        font-size: 0.95rem;
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

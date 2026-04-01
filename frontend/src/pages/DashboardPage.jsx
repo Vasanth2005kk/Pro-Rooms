@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [roomToDelete, setRoomToDelete] = useState(null);
   const [filters, setFilters] = useState({ search: "", category: "", privacy: "" });
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
@@ -58,10 +59,31 @@ export default function DashboardPage() {
           {/* Full 12-col Bootstrap Row */}
           <div className="row g-0 main-dash">
 
-            {/* Left Sidebar */}
-            <div className="col-12 col-md-3 sidebar-panel pe-md-3 mb-4 mb-md-0">
-              <div className="glass-card p-4 h-100 d-flex flex-column gap-3">
-                <div className="sidebar-brand text-center mb-2">
+            {/* Left Sidebar / Mobile Filter */}
+            <div className="col-12 col-md-3 sidebar-panel pe-md-3 mb-3 mb-md-0">
+              {/* Mobile Only: Compact Header */}
+              <div className="d-flex d-md-none align-items-center justify-content-between mb-3 gap-2">
+                <div className="flex-grow-1 position-relative">
+                  <i className="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50"></i>
+                  <input
+                    type="text"
+                    name="search"
+                    placeholder="Search rooms..."
+                    className="form-control sidebar-input ps-5"
+                    value={filters.search}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <button
+                  className={`btn ${showMobileFilters ? 'btn-primary' : 'btn-glass-mobile'} btn-filter-toggle`}
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                >
+                  <i className={`fas fa-${showMobileFilters ? 'times' : 'filter'}`}></i>
+                </button>
+              </div>
+
+              <div className={`glass-card p-4 h-100 d-flex flex-column gap-3 sidebar-content ${showMobileFilters ? 'show' : ''}`}>
+                <div className="sidebar-brand text-center mb-2 d-none d-md-block">
                   <div className="brand-icon mb-2">
                     <i className="fas fa-layer-group fa-2x text-primary"></i>
                   </div>
@@ -130,11 +152,20 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* Mobile Fixed FAB (Floating Action Button) */}
+            <button
+              className="btn btn-primary d-md-none fab-create shadow-lg"
+              onClick={() => setShowCreate(true)}
+              aria-label="Create Room"
+            >
+              <i className="fas fa-plus"></i>
+            </button>
+
             {/* Right Content */}
             <div className="col-12 col-md-8">
               <div className="col-11 mx-auto">
                 <div className="d-flex align-items-center justify-content-between mb-4">
-                  <div>
+                  <div className="create-room-class">
                     <h4 className="text-white fw-bold mb-1">
                       <i className="fas fa-fire me-2 text-primary"></i>Active Rooms
                     </h4>

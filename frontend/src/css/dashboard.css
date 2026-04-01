@@ -38,6 +38,7 @@
     border-radius: 10px !important;
     font-size: 0.88rem;
     transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 9px;
 }
 
 .sidebar-input:focus {
@@ -291,15 +292,89 @@
     animation-delay: 0.31s;
 }
 
-/* ─── Responsive ───────────────────────────────── */
-@media (max-width: 768px) {
+/* ─── Mobile Sidebar Controls ────────────────── */
+.btn-glass-mobile {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-filter-toggle i {
+    font-size: 1.1rem;
+}
+
+.sidebar-content {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 767.98px) {
+    .sidebar-panel {
+        position: relative;
+        z-index: 100;
+    }
+
+    .sidebar-content {
+        max-height: 0;
+        overflow: hidden;
+        margin: 0;
+        padding: 0 !important;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .sidebar-content.show {
+        max-height: 800px;
+        /* Large enough to fit content */
+        padding: 1.5rem !important;
+        opacity: 1;
+        visibility: visible;
+        margin-top: 0.5rem;
+        gap: 10px !important;
+    }
+
+    .btn-create {
+        display: none;
+    }
+
+    .fab-create {
+        position: fixed;
+        bottom: 2rem;
+        right: 1.5rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        z-index: 1050;
+        box-shadow: 0 8px 24px rgba(var(--bs-primary-rgb), 0.4);
+        transition: transform 0.2s;
+    }
+
+    .fab-create:active {
+        transform: scale(0.9);
+    }
+
     .sidebar-panel {
         border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        padding-bottom: 1rem;
+        /* border-bottom: 1px solid rgba(255, 255, 255, 0.06); */
+        padding: 0px 10px;
     }
 
     .room-row {
         flex-wrap: wrap;
+    }
+
+    .create-room-class,
+    .border-secondary {
+        display: none;
     }
 }
