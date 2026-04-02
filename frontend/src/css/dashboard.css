@@ -390,3 +390,89 @@
         display: none;
     }
 }
+
+/* ─── Light Mode Overrides ────────────────────────────────────── */
+body.light-mode .dashboard-container {
+    background: #f8fafc;
+}
+
+body.light-mode .glass-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .sidebar-label {
+    color: #64748b;
+}
+
+body.light-mode .sidebar-input {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+body.light-mode .room-row {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+body.light-mode .room-row:hover {
+    background: #f1f5f9;
+    border-color: #28a745;
+}
+
+body.light-mode .room-row-name {
+    color: #0f172a;
+}
+
+body.light-mode .room-row-desc {
+    color: #475569 !important;
+}
+
+body.light-mode .room-avatar {
+    background: #f1f5f9;
+}
+
+body.light-mode .text-white-50 {
+    color: #64748b !important;
+}
+
+body.light-mode .room-member-count {
+    color: #64748b;
+}
+
+body.light-mode .member-label {
+    color: #94a3b8;
+}
+
+body.light-mode .btn-dark {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+}
+
+body.light-mode .btn-dark:hover {
+    background: #e2e8f0;
+}
+
+body.light-mode .copy-id-btn {
+    color: #94a3b8;
+}
+
+body.light-mode .sidebar-brand h5 {
+    color: #0f172a;
+}
+
+body.light-mode .sidebar-brand small {
+    color: #64748b;
+}
+
+body.light-mode h4.text-white {
+    color: #0f172a !important;
+}
+
+body.light-mode .create-room-class small {
+    color: #64748b !important;
+}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ShareModal from "./ShareModal";
-
+import "../css/shareModal.css";
 const DEFAULT_ICON = "/static/images/roomicons/default_roomicon.png";
 
 export default function RoomRow({ room, onStar, onJoin, onEdit, onDelete }) {

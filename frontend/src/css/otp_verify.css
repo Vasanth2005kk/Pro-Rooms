@@ -245,3 +245,45 @@ h2.gradient-text {
         gap: 6px;
     }
 }
+
+/* ─── Light Mode Overrides ────────────────────────────────────── */
+body.light-mode .otp-page-wrapper {
+    background: #f1f5f9;
+}
+
+body.light-mode .otp-card {
+    background: #ffffff;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode h2.gradient-text {
+    color: #0f172a;
+}
+
+body.light-mode .otp-card .text-muted {
+    color: #64748b !important;
+}
+
+body.light-mode .otp-input {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+body.light-mode .otp-input:focus {
+    background: #ffffff;
+    border-color: var(--otp-green);
+}
+
+body.light-mode .timer-text {
+    color: #64748b;
+}
+
+body.light-mode .action-links {
+    border-top-color: #e2e8f0;
+}
+
+body.light-mode .otp-card .btn-link {
+    color: #64748b;
+}

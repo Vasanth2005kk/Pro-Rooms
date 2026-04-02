@@ -55,13 +55,46 @@ body.light-mode {
 }
 
 body.light-mode .navbar {
-    background: rgba(255, 255, 255, 0.8);
-    border-bottom: 2px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 body.light-mode .text-white, 
 body.light-mode .navbar-brand {
-    color: #1e293b !important;
+    color: #0f172a !important;
+}
+
+body.light-mode .text-white-50 {
+    color: rgba(15, 23, 42, 0.6) !important;
+}
+
+body.light-mode .text-muted {
+    color: #64748b !important;
+}
+
+body.light-mode .glass-card {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .form-control,
+body.light-mode .form-select {
+    background-color: #fff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+body.light-mode .form-control::placeholder {
+    color: #94a3b8;
+}
+
+body.light-mode .form-control:focus {
+    background-color: #fff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════
