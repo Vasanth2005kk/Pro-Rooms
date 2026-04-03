@@ -235,28 +235,29 @@ export default function ChatPage() {
               <div ref={bottomRef} />
             </div>
 
-            {/* Input */}
+            {/* Input Area */}
             <div className="chat-input-area p-3">
-              <form id="chat-form" className="chat-form d-flex gap-2 align-items-center" onSubmit={handleSend}>
-                <button type="button" className="btn btn-link text-white-50 p-0">
-                  <i className="far fa-smile fa-lg"></i>
+              <div className="pill-left-icons">
+                <button type="button" className="pill-icon-btn">
+                  <i className="far fa-smile"></i>
                 </button>
-                <button type="button" className="btn btn-link text-white-50 p-0">
-                  <i className="fas fa-paperclip fa-lg"></i>
+                <button type="button" className="pill-icon-btn">
+                  <i className="fas fa-at"></i>
                 </button>
-                <div className="flex-grow-1 input-group">
-                  <input
-                    type="text"
-                    id="message-input"
-                    className="form-control chat-input"
-                    placeholder="Type a message..."
-                    autoComplete="off"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    disabled={sending}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary btn-send" disabled={sending}>
+              </div>
+              <form id="chat-form" className="chat-form-pill" onSubmit={handleSend}>
+                <input
+                  type="text"
+                  id="message-input"
+                  className="pill-input"
+                  placeholder="Ask anything"
+                  autoComplete="off"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  disabled={sending}
+                />
+
+                <button type="submit" className="pill-send-btn" disabled={sending || !input.trim()}>
                   <i className="fas fa-paper-plane"></i>
                 </button>
               </form>
