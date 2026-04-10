@@ -3,13 +3,14 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { chatAPI, roomsAPI } from "../services/api";
 import Navbar from "../components/Navbar";
 import LoadingSpinner from "../components/LoadingSpinner";
-import EditRoomModal from "../components/EditRoomModal";
-import DeleteRoomModal from "../components/DeleteRoomModal";
+import { useAuth } from "../context/AuthContext";
+import { io } from "socket.io-client";
 import "../css/chat.css";
 
 export default function ChatPage() {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -17,11 +18,9 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sending, setSending] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [showDelete, setShowDelete] = useState(false);
 
   const bottomRef = useRef(null);
-  const pollRef = useRef(null);
+  const socketRef = useRef(null);
 
   /* ── Initial load ── */
   useEffect(() => {
@@ -43,17 +42,37 @@ export default function ChatPage() {
     init();
   }, [roomId]);
 
-  /* ── Message polling every 3 s ── */
+  /* ── WebSocket Connection ── */
   useEffect(() => {
-    if (!room) return;
-    pollRef.current = setInterval(async () => {
-      try {
-        const { data } = await chatAPI.getMessages(parseInt(roomId));
-        setMessages(data);
-      } catch { }
-    }, 3000);
-    return () => clearInterval(pollRef.current);
-  }, [room, roomId]);
+    if (!roomId) return;
+
+    // Connect through proxy
+    const socket = io({
+      withCredentials: true
+    });
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      console.log("Connected to SocketIO server");
+      socket.emit("join_room", { room_id: roomId });
+    });
+
+    socket.on("new_message", (msg) => {
+      // Append message if it's not already in our list (to prevent duplicates)
+      setMessages((prev) => {
+        if (prev.find((m) => m.id === msg.id)) return prev;
+        return [...prev, {
+          ...msg,
+          is_me: msg.user_id === user?.id
+        }];
+      });
+    });
+
+    return () => {
+      socket.emit("leave_room", { room_id: roomId });
+      socket.disconnect();
+    };
+  }, [roomId, user?.id]);
 
   /* ── Auto-scroll ── */
   useEffect(() => {
@@ -69,14 +88,9 @@ export default function ChatPage() {
     setSending(true);
     setInput("");
     try {
-      const { data } = await chatAPI.postMessage(parseInt(roomId), content);
-      setMessages((prev) => [...prev, {
-        id: data.message.id,
-        content: data.message.content,
-        timestamp: new Date().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }),
-        author_name: "You",
-        is_me: true,
-      }]);
+      await chatAPI.postMessage(parseInt(roomId), content);
+      // We don't append here anymore — the Socket listener will handle it!
+      // This ensures timestamps/IDs are sync'd and no double-render flickers.
     } catch (err) {
       alert(err.response?.data?.error || "Could not send message.");
       setInput(content);
@@ -107,29 +121,12 @@ export default function ChatPage() {
     <>
       <Navbar />
 
-      {/* ── Edit Room Modal (owner only) ── */}
-      {showEdit && (
-        <EditRoomModal
-          room={room}
-          onClose={() => setShowEdit(false)}
-          onUpdated={(updatedRoom) => {
-            setRoom((prev) => ({ ...prev, ...updatedRoom }));
-          }}
-        />
-      )}
 
-      {showDelete && (
-        <DeleteRoomModal
-          room={room}
-          onClose={() => setShowDelete(false)}
-          onDeleted={() => navigate("/dashboard")}
-        />
-      )}
 
       <main className="p-0">
         <div className="chat-wrapper">
           <div className="chat-options">
-            <button className="setting-icon" onClick={() => navigate("/settings")}><i className="fa-solid fa-gear"></i></button>
+            <button className="setting-icon" onClick={() => navigate(`/chat/${roomId}/settings`)}><i className="fa-solid fa-gear"></i></button>
           </div>
           {/* ── Sidebar (desktop) ── */}
           <div className="chat-sidebar d-none d-md-flex flex-column p-3">
@@ -140,7 +137,7 @@ export default function ChatPage() {
               <h4 className="mb-0">Rooms</h4>
             </div>
 
-            <div className="room-info mb-4">
+            <div className="room-info">
               <h5 className="text-primary said-name">{room?.name}</h5>
               <p className="text-white-50 ms-3 said-description" >{room?.description}</p>
               {room?.topic && room.topic.split(",").map((topic, index) => <span key={index} className="badge bg-secondary me-2 mb-2">{topic.trim()}</span>)}
@@ -155,21 +152,7 @@ export default function ChatPage() {
                 <span>You</span>
               </div>
             </div>
-
-            {/* Owner Tools — bottom of sidebar */}
-            {room?.is_owner && (
-              <div className="mt-auto pt-3 border-top border-secondary d-flex flex-column gap-2">
-                <p className="text-muted small mb-1">
-                  <i className="fas fa-crown me-1 text-warning"></i> Room Owner Tools
-                </p>
-                <button className="btn btn-sm btn-outline-light" onClick={() => setShowEdit(true)}>
-                  <i className="fas fa-edit me-2"></i>Edit Room
-                </button>
-                <button className="btn btn-sm btn-outline-danger" onClick={() => setShowDelete(true)}>
-                  <i className="fas fa-trash-alt me-2"></i>Delete Room
-                </button>
-              </div>
-            )}
+{}
           </div>
 
           {/* ── Main Chat Area ── */}
@@ -191,25 +174,7 @@ export default function ChatPage() {
               </div>
 
               <div className="header-actions d-flex align-items-center gap-1">
-                {/* Mobile-only owner buttons */}
-                {room?.is_owner && (
-                  <>
-                    <button
-                      className="btn btn-sm btn-outline-light d-md-none"
-                      onClick={() => setShowEdit(true)}
-                      title="Edit Room"
-                    >
-                      <i className="fas fa-edit"></i>
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-danger d-md-none"
-                      onClick={() => setShowDelete(true)}
-                      title="Delete Room"
-                    >
-                      <i className="fas fa-trash-alt"></i>
-                    </button>
-                  </>
-                )}
+
                 <button className="btn btn-link text-white-50">
                   <i className="fas fa-search"></i>
                 </button>

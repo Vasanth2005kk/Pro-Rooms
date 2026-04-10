@@ -7,10 +7,13 @@ All business logic lives in blueprints under routes/.
 This file only wires extensions, blueprints, and error handlers.
 """
 
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, jsonify
 
 from config     import Config
-from extensions import cors, db, jwt, login_manager, migrate, oauth_client
+from extensions import cors, db, jwt, login_manager, migrate, oauth_client, socketio
 
 # ── Import models so Flask-Migrate (Alembic) can detect the schema ────────────
 from models.user       import User       # noqa: F401
@@ -47,6 +50,9 @@ def create_app(config_class=Config):
 
     jwt.init_app(app)
     login_manager.init_app(app)
+
+    # ── SocketIO ─────────────────────────────────────────────────────────────
+    socketio.init_app(app, cors_allowed_origins=app.config["CORS_ORIGINS"])
 
     # ── Google OAuth (needed for /api/auth/google redirect flow) ────────────
     oauth_client.init_app(app)
@@ -105,4 +111,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         print("✅ Database tables verified.")
-    app.run(port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)

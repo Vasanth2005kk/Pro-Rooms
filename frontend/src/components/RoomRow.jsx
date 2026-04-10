@@ -49,7 +49,7 @@ export default function RoomRow({ room, onStar, onJoin, onEdit, onDelete }) {
                     className="badge"
                     style={{ background: "rgba(255,193,7,.15)", color: "#ffc107", fontSize: "0.65rem" }}
                   >
-                    <i className="fas fa-crown me-1"></i>Owner
+                    <i className="fas fa-crown me-1"></i>
                   </span>
                 )}
               </div>

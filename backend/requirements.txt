@@ -28,3 +28,7 @@ Flask-CORS==4.0.1             # NEW: cross-origin resource sharing
 
 # Environment variables
 python-dotenv==1.1.0
+
+# Real-time / Sockets
+Flask-SocketIO==5.5.1
+eventlet==0.39.0

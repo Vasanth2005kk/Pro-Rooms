@@ -12,6 +12,7 @@ from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from authlib.integrations.flask_client import OAuth
+from flask_socketio import SocketIO
 
 db            = SQLAlchemy()
 migrate       = Migrate()
@@ -19,3 +20,4 @@ login_manager = LoginManager()
 jwt           = JWTManager()
 cors          = CORS()
 oauth_client  = OAuth()
+socketio      = SocketIO()

@@ -55,7 +55,7 @@ export default function App() {
           <Route path="/profile/:username" element={
             <PrivateRoute><ProfilePage /></PrivateRoute>
           } />
-          <Route path="/settings" element={
+          <Route path="/chat/:roomId/settings" element={
             <PrivateRoute><SettingsPage /></PrivateRoute>
           } />
 
